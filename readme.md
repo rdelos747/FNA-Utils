@@ -14,7 +14,7 @@ Library of useful classes and utilies for FNA.
   </ItemGroup>
 ```
 
-3. run Clean build task
+3. run the Restore build task
 4. email us when you realize we forgot something
 
 # Using this in your game
@@ -28,6 +28,8 @@ Within your games `.csproj` file, add the following:
 ```
 
 Then, use `using Engine;` along with the rest of your includes within your .cs files.
+
+Here is an [example](https://github.com/rdelos747/FNA-Test-Game).
 
 # Notes
 
