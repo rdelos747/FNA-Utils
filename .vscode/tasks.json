@@ -1,0 +1,78 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Restore Project",
+      "type": "shell",
+      "command": "msbuild /t:restore",
+      "group": "build",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Clean Project",
+      "type": "shell",
+      "command": "msbuild /t:clean /p:configuration=Debug ; msbuild /t:clean /p:configuration=Release",
+      "group": "build",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build (Debug)",
+      "type": "shell",
+      "command": "msbuild",
+      "args": ["/p:configuration=Debug", "/t:build"],
+      "group": "build",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build (Release)",
+      "type": "shell",
+      "command": "msbuild",
+      "args": ["/p:configuration=Release", "/t:build"],
+      "group": "build",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build and Run (Debug)",
+      "type": "shell",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "osx": {
+        "command": "DYLD_LIBRARY_PATH=${workspaceFolder}/bin/Debug/osx/ mono ${workspaceFolder}/bin/Debug/test_game.exe"
+      },
+      "windows": {
+        "command": "cmd",
+        "args": ["/k", "${workspaceFolder}/bin/Debug/test_game.exe"]
+      },
+      "dependsOn": "Build (Debug)",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build and Run (Release)",
+      "type": "shell",
+      "group": "build",
+      "osx": {
+        "command": "DYLD_LIBRARY_PATH=${workspaceFolder}/bin/Release/osx/ mono ${workspaceFolder}/bin/Release/test_game.exe"
+      },
+      "windows": {
+        "command": "cmd",
+        "args": ["/k", "${workspaceFolder}/bin/Release/test_game.exe"]
+      },
+      "dependsOn": "Build (Release)",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build Effects",
+      "type": "shell",
+      "group": "build",
+      "osx": {
+        "command": "${workspaceFolder}/.vscode/buildEffects.sh"
+      },
+      "windows": {
+        "command": "& ${workspaceFolder}/.vscode/buildEffects.ps1"
+      },
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}

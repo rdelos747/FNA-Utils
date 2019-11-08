@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net46</TargetFramework>
+		<Platforms>x64</Platforms>
+	</PropertyGroup>
+	<PropertyGroup>
+		<EnableDefaultItems>false</EnableDefaultItems>
+		<AssemblyName>Engine</AssemblyName>
+		<RootNamespace>Engine</RootNamespace>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
+
+	<!-- Reference FNA project -->
+  <ItemGroup>
+    <ProjectReference Include="../_FNA/FNA.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Compile Include="./GameObject.cs" />
+		<Compile Include="./utils/Animation.cs" />
+		<Compile Include="./utils/TextureLoader.cs" />
+		<Compile Include="./utils/Input.cs" />
+	</ItemGroup>
+</Project>
