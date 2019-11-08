@@ -40,3 +40,83 @@ This project was initially bootstrapped with [this template](https://github.com/
 ## Also Notes
 
 We very new to FNA, monogame, and C# in general.
+
+# Code Reference
+
+See below for different classes and utilites within the engine :)
+
+# GameObject
+
+Displays a sprite on screen. The image provided can function as the whole sprite, or as a sprite sheet.
+
+Note: the term `readonly` is used loosely, and is meant to specifiy the property `{ get; private set; }`
+
+### Position vars
+
+- `rublic Vector2 position`
+- `rublic float direction`
+
+### Sprite Dimension vars
+
+- `readonly imageWidth`
+- `readonly imageHeight`
+- `readonly spriteWidth`
+- `readonly spriteHeight`
+
+`imageWidth` and `imageHeight` specify the dimensions of the image provided to the `GameObject`. If the image is supplied as a spritesheet (see `setSpriteSheet()` below), `spriteWidth` and `spriteHeight` will be the dimensions of a single cell on the sheet. Otherwise, sprite dimensions will be the same as image dimensions.
+
+- `public float spriteRotation`
+- `public float spriteScale`
+
+### Sprite sheet manipulation vars
+
+If a GameObject's image is supplied as a sprite sheet, there are a few ways to specify which frame or section of the sheet to show. The following are specified in order of precidence (if one is set, the ones below are automatically updated to match).
+
+- `protected Animation spriteSheetAnimation`
+
+GameObject will automatically run the supplied animation (but it can still be paused/ restarted in the base class), and will display the sprite based on the animation's current frame. `GameObject.currentFrame` will be updated to this value, and `GameObject.spriteClip` will represent the bounds of the sprite on the sheet. User setting either in this case will have no effect, as these values are computed every frame.
+
+- `protected int currentFrame`
+
+Sets the sprite to the current frame on the sheet. `GameObject.spriteClip` will automatically represent these bounds on the sheet.
+
+- `protected Rectangle spriteClip`
+
+The area of the spritesheet to draw, initialized to the top left frame on the sheet. If `spriteSheetAnimation` or `currentFrame` have not been set, this can be used to display any rectangular section of the sheet. This is useful when a spritesheet contains sprites of different sizes.
+
+### Other vars
+
+- `public float layerDepth`
+- `public Color drawColor`
+
+### Virtual Methods
+
+- `public GameObject()`
+
+- `public virtual void init()`
+
+Init runs once before the main loop of the engine. This is a good place to do any major setup within the derived objects.
+
+- `public virtual void load(ContentManager content)`
+
+Load is similar to Init, except it has access to the games content manager. Load should be used for setting graphical information of the object, like calling `setImage()` or `setSpriteSheet()`.
+
+- `public virtual void update()`
+
+Called every frame. Place main object logic here.
+
+- `public virtual void draw(SpriteBatch spriteBatch)`
+
+Similar to update, but requires a `SpriteBatch` to render the object's image to the view.
+
+### Image/ Sprite Initializers
+
+Below are image intializers meant to set a GameObject's sprite, meant to be called within the derived class's load method. Only one should be used per GameObject, as a GameObject only has one internal image member. Once an image is set, it cannot be removed or reset.
+
+- `protected void setImage(Texture2D newImage)`
+
+Sets the GameObject's image as a single sprite. Drawing the GameObject will display the entire image, unless a `spriteClip` is specified. Using `spriteSheetAnimation` or `currentFrame` will have no effect.
+
+- `protected void setSpriteSheet(Texture2D newImage, int cols, int rows)`
+
+Sets the GameObject's image as a sprite sheet, cut into a grid specified by `cols` and `rows`. Choosing this allows for the use of `spriteSheetAnimation` and `currentFrame` to pick the sprite to display, as well as `spriteClip`.

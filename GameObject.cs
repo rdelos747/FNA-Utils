@@ -7,30 +7,30 @@ namespace Engine {
 
   public class GameObject {
 
-    // sprite vars
+    // sprite / graphical vars
     private Texture2D image; // used as a single sprite, or a spritesheet
+    private int spriteSheetCols = 1;
+    private int spriteSheetRows = 1;
     protected int imageWidth { get; private set; }
     protected int imageHeight { get; private set; }
     protected int spriteWidth { get; private set; }
     protected int spriteHeight { get; private set; }
     protected Rectangle spriteClip;
-
+    protected Vector2 center = Vector2.Zero;
     public float spriteRotation = 0f;
     public float spriteScale = 1f;
-
     protected Animation spriteSheetAnimation;
-    private int spriteSheetCols = 1;
-    private int spriteSheetRows = 1;
+    protected int currentFrame = -1;
 
     // position vars
     public Vector2 position;
     public float direction = 0f;
-    protected Vector2 center = Vector2.Zero;
 
     // other vars
     public float layerDepth = 0.5f;
     public Color drawColor = Color.White;
 
+    // virtual methods
     public GameObject() { }
 
     public virtual void init() { }
@@ -39,17 +39,16 @@ namespace Engine {
       initializeSpriteDimensions();
     }
 
-    public virtual void update() {
-      if (spriteSheetAnimation != null) spriteSheetAnimation.run();
-    }
+    public virtual void update() { }
 
     public virtual void draw(SpriteBatch spriteBatch) {
       if (image == null) return;
+      updateSpriteDetails();
 
       spriteBatch.Draw(
         image,
         position,
-        getClip(),
+        spriteClip,
         drawColor,
         spriteRotation,
         center,
@@ -59,6 +58,7 @@ namespace Engine {
       );
     }
 
+    // image initializers
     protected void setImage(Texture2D newImage) {
       if (image != null) return;
       image = newImage;
@@ -71,7 +71,7 @@ namespace Engine {
       spriteSheetRows = rows;
     }
 
-    void initializeSpriteDimensions() {
+    private void initializeSpriteDimensions() {
       imageWidth = image.Width;
       imageHeight = image.Height;
       spriteWidth = imageWidth / spriteSheetCols;
@@ -79,13 +79,24 @@ namespace Engine {
       spriteClip = new Rectangle(0, 0, spriteWidth, spriteHeight);
     }
 
-    Rectangle getClip() {
-      if (spriteSheetAnimation == null) return spriteClip;
+    // lifecyle methods
+    private void updateSpriteDetails() {
+      // if the animation is set, update currentFrame and spriteClip to be in sync
+      if (spriteSheetAnimation != null) {
+        spriteSheetAnimation.run();
+        currentFrame = spriteSheetAnimation.getFrame();
 
-      int frame = spriteSheetAnimation.getFrame();
-      int clipX = (frame % spriteSheetCols) * spriteWidth;
-      int clipY = (frame / spriteSheetCols) * spriteHeight;
-      return new Rectangle(clipX, clipY, spriteWidth, spriteHeight);
+        int clipX = (currentFrame % spriteSheetCols) * spriteWidth;
+        int clipY = (currentFrame / spriteSheetCols) * spriteHeight;
+        spriteClip = new Rectangle(clipX, clipY, spriteWidth, spriteHeight);
+      }
+      // if current frame is set, update spriteClip to be in sync
+      else if (currentFrame >= 0) {
+        int clipX = (currentFrame % spriteSheetCols) * spriteWidth;
+        int clipY = (currentFrame / spriteSheetCols) * spriteHeight;
+        spriteClip = new Rectangle(clipX, clipY, spriteWidth, spriteHeight);
+      }
+      // otherwise, nothing is set. User is free to use spriteClip in this case
     }
   }
 }
