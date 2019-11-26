@@ -5,7 +5,7 @@ namespace Engine {
   Animation class used to iterate through a list of frames (just ints).
    */
 
-  public class Animation {
+  public class SpritesheetAnimation {
     public List<int> frames;
     public int delay;
     public int frameIndex;
@@ -14,7 +14,7 @@ namespace Engine {
 
     private int currentTime = 0;
 
-    public Animation(int[] newFrames, int startIndex = 0, int newDelay = 0) {
+    public SpritesheetAnimation(int[] newFrames, int startIndex = 0, int newDelay = 0) {
       frames = new List<int>(newFrames);
       frameIndex = startIndex;
       delay = newDelay;

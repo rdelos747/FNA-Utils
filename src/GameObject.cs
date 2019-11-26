@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
@@ -6,7 +5,7 @@ using Microsoft.Xna.Framework.Content;
 namespace Engine {
 
   public class GameObject {
-
+    private Renderer renderParent;
     // sprite / graphical vars
     private Texture2D image; // used as a single sprite, or a spritesheet
     private int spriteSheetCols = 1;
@@ -19,7 +18,10 @@ namespace Engine {
     protected Vector2 center = Vector2.Zero;
     public float spriteRotation = 0f;
     public float spriteScale = 1f;
-    protected Animation spriteSheetAnimation;
+    public bool isHidden = false;
+
+    // sprite sheet animation
+    protected SpritesheetAnimation spriteSheetAnimation;
     protected int currentFrame = -1;
 
     // position vars
@@ -30,10 +32,13 @@ namespace Engine {
     public float layerDepth = 0.5f;
     public Color drawColor = Color.White;
 
-    // virtual methods
+
     public GameObject() { }
 
-    public virtual void init() { }
+    // virtual methods
+    public virtual void init(Renderer r) {
+      renderParent = r;
+    }
 
     public virtual void load(ContentManager content) {
       initializeSpriteDimensions();
@@ -42,7 +47,7 @@ namespace Engine {
     public virtual void update() { }
 
     public virtual void draw(SpriteBatch spriteBatch) {
-      if (image == null) return;
+      if (image == null || isHidden) return;
       updateSpriteDetails();
 
       spriteBatch.Draw(
@@ -60,18 +65,20 @@ namespace Engine {
 
     // image initializers
     protected void setImage(Texture2D newImage) {
-      if (image != null) return;
+      if (image != null) return; // if image already set, bounce
       image = newImage;
     }
 
     protected void setSpriteSheet(Texture2D newImage, int cols, int rows) {
-      if (image != null) return;
+      if (image != null) return; // if image already set, bounce
       image = newImage;
       spriteSheetCols = cols;
       spriteSheetRows = rows;
     }
 
     private void initializeSpriteDimensions() {
+      if (image == null) return;
+
       imageWidth = image.Width;
       imageHeight = image.Height;
       spriteWidth = imageWidth / spriteSheetCols;
@@ -97,6 +104,15 @@ namespace Engine {
         spriteClip = new Rectangle(clipX, clipY, spriteWidth, spriteHeight);
       }
       // otherwise, nothing is set. User is free to use spriteClip in this case
+    }
+
+    // public methods
+    public void removeFromRenderer() {
+      if (renderParent == null) {
+        throw new System.NullReferenceException("Cannot kill GameObject - renderParent is null");
+      }
+      renderParent.removeObject(this);
+      renderParent = null;
     }
   }
 }
