@@ -26,6 +26,8 @@ namespace Engine {
     static private int virtualViewportX;
     static private int virtualViewportY;
 
+    static private Color _bkColor;
+
     public static int VirtualViewportX {
       get { return virtualViewportX; }
     }
@@ -42,11 +44,12 @@ namespace Engine {
       get { return _VHeight; }
     }
 
-    static public void Init(ref GraphicsDeviceManager device) {
+    static public void Init(ref GraphicsDeviceManager device, Color bkColor) {
       _Width = device.PreferredBackBufferWidth;
       _Height = device.PreferredBackBufferHeight;
       _Device = device;
       _dirtyMatrix = true;
+      _bkColor = bkColor;
       ApplyResolutionSettings();
     }
 
@@ -122,13 +125,13 @@ namespace Engine {
       // Start by reseting viewport to (0,0,1,1)
       FullViewport();
       // Clear to Black
-      _Device.GraphicsDevice.Clear(Color.Black);
+      _Device.GraphicsDevice.Clear(_bkColor);
       // Calculate Proper Viewport according to Aspect Ratio
       ResetViewport();
       // and clear that
       // This way we are gonna have black bars if aspect ratio requires it and
       // the clear color on the rest
-      _Device.GraphicsDevice.Clear(Color.Black);
+      _Device.GraphicsDevice.Clear(_bkColor);
     }
 
     static private void RecreateScaleMatrix() {

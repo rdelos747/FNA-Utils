@@ -20,7 +20,6 @@ namespace Engine {
       return keyboardState.IsKeyDown(input);
     }
 
-
     public static bool isKeyUp(Keys input) {
       return keyboardState.IsKeyUp(input);
     }

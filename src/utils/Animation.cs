@@ -3,33 +3,74 @@ using Microsoft.Xna.Framework;
 
 namespace Engine {
 
+  public enum AnimationType {
+    CURVE,
+    STEP
+  }
+
   public class Animation {
 
     int elapsedTime = 0;
+    int maxTime = 0;
+    int numPoints = 0;
+    public int index { get; private set; }
+    public bool loop = true;
+    public AnimationType animationType;
 
     Curve curve = new Curve();
 
-    public Animation(float initialValue = 0) {
-      curve.Keys.Add(new CurveKey(0, initialValue));
+    public Animation(bool setLoop = true, AnimationType type = AnimationType.CURVE) {
+      loop = setLoop;
+      animationType = type;
+      index = 0;
     }
 
     public void addKeyframe(int time, float value) {
       curve.Keys.Add(new CurveKey(time, value));
+      maxTime = time;
+      numPoints++;
     }
 
     public void reset() {
       elapsedTime = 0;
+      index = 0;
       smoothTangents();
     }
 
     public float update(GameTime gameTime, ref float value) {
       float lastValue = value;
       value = curve.Evaluate(elapsedTime); // ref value represents actual point on curve
+
+      if (animationType == AnimationType.STEP) {
+        value = curve.Keys[index].Value;
+      }
       if (float.IsNaN(value)) {
         value = 0;
       }
-      elapsedTime += gameTime.ElapsedGameTime.Milliseconds;
+
+      updateTime(gameTime);
       return value - lastValue; // return delta 
+    }
+
+    public float update(GameTime gameTime) {
+      float value = animationType == AnimationType.STEP ? curve.Keys[index].Value : curve.Evaluate(elapsedTime);
+
+      if (float.IsNaN(value)) {
+        value = 0;
+      }
+      updateTime(gameTime);
+      return value;
+    }
+
+    private void updateTime(GameTime gameTime) {
+      elapsedTime += gameTime.ElapsedGameTime.Milliseconds;
+      if (index < numPoints - 1 && elapsedTime >= curve.Keys[index + 1].Position) {
+        index++;
+      }
+      if (loop && elapsedTime > maxTime) {
+        elapsedTime = 0;
+        index = 0;
+      }
     }
 
     private void smoothTangents() {

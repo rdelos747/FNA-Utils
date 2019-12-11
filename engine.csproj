@@ -19,10 +19,12 @@
 	<ItemGroup>
 		<Compile Include="src/GameObject.cs" />
 		<Compile Include="src/Renderer.cs" />
+		<Compile Include="src/defaults/EngineDefaults.cs" />
 		<Compile Include="src/utils/Animation.cs" />
+		<Compile Include="src/utils/Colors.cs" />
+		<Compile Include="src/utils/EngineState.cs" />
 		<Compile Include="src/utils/Input.cs" />
 		<Compile Include="src/utils/Resolution.cs" />
-		<Compile Include="src/utils/SpritesheetAnimation.cs" />
 		<Compile Include="src/utils/TextureLoader.cs" />
 		<Compile Include="src/utils/Utils.cs" />
 	</ItemGroup>
