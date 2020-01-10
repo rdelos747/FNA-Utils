@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Engine {
   public class Renderer : Game {
@@ -11,18 +10,20 @@ namespace Engine {
     private List<GameObject> objects = new List<GameObject>();
     private bool isFullScreen = false;
 
-    private Texture2D boundsTest;
+    public static Texture2D systemRect { get; private set; }
 
     protected GraphicsDeviceManager graphics;
     protected SpriteBatch spriteBatch;
-
-    public Dictionary<string, Keys> inputMap { get; private set; }
 
     public int count { get; private set; }
 
     public EngineState engineState;
 
-    public Renderer(int resWidth, int resHeight, Color bkColor, bool startFullScreen, bool allowResize, Dictionary<string, Keys> inMap) {
+    //protected Menu pauseMenu;
+    protected Store<EngineDefaults.Settings> gameSettings;
+    protected Menu pauseMenu;
+
+    public Renderer(int resWidth, int resHeight, Color bkColor, bool startFullScreen, bool allowResize) {
       graphics = new GraphicsDeviceManager(this);
       Content.RootDirectory = "Content";
 
@@ -32,10 +33,16 @@ namespace Engine {
       Resolution.SetVirtualResolution(resWidth, resHeight);
       Resolution.SetResolution(resWidth, resHeight, isFullScreen);
 
-      inputMap = inMap;
-
       Window.AllowUserResizing = allowResize;
       Window.ClientSizeChanged += onResize;
+
+      // The base constructor (this function) runs before derived,
+      // so we can set the default input map here. If the derived
+      // game wants to use a custom map, they can do so after this
+      // runs, eg in their constructor.
+      Input.setInputMap(EngineDefaults.inputMap);
+
+      gameSettings = new Store<EngineDefaults.Settings>(EngineDefaults.reducer, new EngineDefaults.Settings());
     }
 
     private void onResize(Object sender, EventArgs e) {
@@ -51,8 +58,8 @@ namespace Engine {
     override protected void LoadContent() {
       spriteBatch = new SpriteBatch(GraphicsDevice);
 
-      boundsTest = new Texture2D(GraphicsDevice, 1, 1);
-      boundsTest.SetData(new Color[] { Color.White });
+      systemRect = new Texture2D(GraphicsDevice, 1, 1);
+      systemRect.SetData(new Color[] { Color.White });
 
       base.LoadContent();
 
@@ -61,13 +68,19 @@ namespace Engine {
 
     override protected void Update(GameTime gameTime) {
       Input.update();
+      defaultUpdate();
+
+      if (engineState == EngineState.QUIT) {
+        this.Exit();
+      }
+
       if (engineState == EngineState.RUNNING) {
-        updateObjects(gameTime);
+        updateGame(gameTime);
       }
       base.Update(gameTime);
     }
 
-    protected virtual void updateObjects(GameTime gameTime) { }
+    protected virtual void updateGame(GameTime gameTime) { }
 
     override protected void Draw(GameTime gameTime) {
 
@@ -82,38 +95,43 @@ namespace Engine {
         Resolution.getTransformationMatrix()
       );
 
-      drawObjects(gameTime);
+      drawObjects();
       spriteBatch.End();
 
       base.Draw(gameTime);
     }
 
-    void drawObjects(GameTime gameTime) {
+    private void drawObjects() {
       for (int i = 0; i < objects.Count; i++) {
         GameObject obj = objects[i];
-        obj.draw(spriteBatch, gameTime);
-        if (obj.bounds != null && obj.showBounds) {
-          int ox1 = (int)(obj.x + obj.bounds.X);
-          int oy1 = (int)(obj.y + obj.bounds.Y);
-          spriteBatch.Draw(boundsTest, new Rectangle(ox1, oy1, obj.bounds.Width, obj.bounds.Height), Color.Blue * 0.5f);
-        }
+        obj.draw(spriteBatch);
       }
     }
 
-    private Dictionary<string, Keys> getDefaultInputMap() {
-      Dictionary<string, Keys> temp = new Dictionary<string, Keys>();
-      temp.Add("primary", Keys.X);
-      temp.Add("secondary", Keys.Z);
-      temp.Add("up", Keys.Up);
-      temp.Add("down", Keys.Down);
-      temp.Add("left", Keys.Left);
-      temp.Add("right", Keys.Right);
-      temp.Add("pause", Keys.Escape);
-      return temp;
-    }
+    private void defaultUpdate() {
+      if (Input.keyPressed(EngineDefaults.keyPause)) {
+        if (engineState == EngineState.PAUSED) {
+          engineState = EngineState.RUNNING;
+          if (pauseMenu != null) {
+            pauseMenu.close();
+            pauseMenu = null;
+          }
+        }
+        else if (engineState == EngineState.RUNNING) {
+          engineState = EngineState.PAUSED;
+          pauseMenu = new PauseMenu(this);
+          pauseMenu.dispatch = gameSettings.dispatch;
+          pauseMenu.init();
+        }
+      }
 
-    protected void setInputMapKey(string key, Keys val) {
-      inputMap[key] = val;
+      if (Input.keyPressed(EngineDefaults.keyQuit)) {
+        engineState = EngineState.QUIT;
+      }
+
+      if (pauseMenu != null) {
+        pauseMenu.update();
+      }
     }
 
     public void addObject(GameObject obj) {

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
 namespace Engine {
@@ -8,20 +9,34 @@ namespace Engine {
     private static MouseState mouseState;
     private static MouseState lastMouseState;
 
+    private static Dictionary<string, Keys> inputMap = new Dictionary<string, Keys>();
+
+    public static float mouseX;
+    public static float mouseY;
+
     public static void update() {
       lastKeyboardState = keyboardState;
       keyboardState = Keyboard.GetState();
 
       lastMouseState = mouseState;
       mouseState = Mouse.GetState();
+
+      mouseX = mouseState.X;
+      mouseY = mouseState.Y;
     }
 
     public static bool isKeyDown(Keys input) {
       return keyboardState.IsKeyDown(input);
     }
+    public static bool isKeyDown(string mapKey) {
+      return hasKey(mapKey) && isKeyDown(inputMap[mapKey]);
+    }
 
     public static bool isKeyUp(Keys input) {
       return keyboardState.IsKeyUp(input);
+    }
+    public static bool isKeyUp(string mapKey) {
+      return hasKey(mapKey) && isKeyUp(inputMap[mapKey]);
     }
 
     public static bool keyPressed(Keys input) {
@@ -29,6 +44,9 @@ namespace Engine {
         return true;
       else
         return false;
+    }
+    public static bool keyPressed(string mapKey) {
+      return hasKey(mapKey) && keyPressed(inputMap[mapKey]);
     }
 
     public static bool mouseLeftDown() {
@@ -58,6 +76,23 @@ namespace Engine {
       else
         return false;
     }
+
+    public static void setInputMapKey(string key, Keys val) {
+      inputMap[key] = val;
+    }
+
+    public static void setInputMap(Dictionary<string, Keys> newMap) {
+      inputMap = newMap;
+    }
+
+    public static bool hasKey(string key) {
+      return inputMap.ContainsKey(key);
+    }
+
+    // public static Keys getKey(string key) {
+    //   //return inputMap.ContainsKey(key);
+    //   return hasKey
+    // }
 
     // /// <summary>
     // /// Gets mouse coordinates adjusted for virtual resolution and camera position.

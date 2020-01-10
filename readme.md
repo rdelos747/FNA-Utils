@@ -52,95 +52,143 @@ We very new to FNA, monogame, and C# in general.
 
 
 
+# Engine Lifecycle
 
-# Code Reference
+_The `Renderer` class manages rendering of GameObjects. This class extends XNA's `Game` class, and mainly takes care of the boilerplate around loading and drawing objects._
 
-See below for different classes and utilites within the engine :)
+_Every frame, `Renderer` will loop over all `GameObjects` added via `addObject()` and call their `draw` method. `Renderer` also provides a virtual `updateObjects()` method, but this does nothing about of the box. `updateObjects()` should be overridden in whatever class is derrived from `Renderer`._
 
-_Note: the term `readonly` is used loosely, and is ~usually~ meant to specifiy the property `{ get; private set; }`_
+## Initialization
 
+1. `Renderer` constructor intializes `Input.inputMap` and other default game settings, most of which are located in the `/defaults` directory.
+2. FNA calls `Renderer.initalize()` and `Renderer.loadContent()`. Both are virtual, but generally `loadContent()` is not needed.
 
+## Game Loop
 
-
-# Renderer
-
-_Manages rendering of GameObjects. This class extends XNA's `Game` class, and mainly takes care of the boilerplate around loading and drawing objects._
-
-Every frame, `Renderer` will loop over all `GameObjects` added via `addObject()` and call their `draw` method. `Renderer` also provides a virtual `updateObjects()` method, but this does nothing about of the box. `updateObjects()` should be overridden in whatever class is derrived from `Renderer`. 
-
-`public Renderer(int resolutionWidth, int resolutionHeight, bool start fullscreen, bool allowResize, Dictionary<string, Keys> inputMap)`
-
-### Public vars:
-
-`readonly int count`
-
-- Number of `GameObject`s the `Renderer` currently holds.
-
-`readonly Dictionary<string, Keys> inputMap`
-
-- Holds a mapping of input keys (strings) to their corresponding `Keys` values. This is meant to make switching the key mapping during game time a bit easier, as the strings that map to input keys can remain constant in game code, while the keys themselves can change at any time via `setInputMapKey()` method below.
-
-- Note: this is set only in `Renderer`'s constructor, so the dictionary keys will never change after this. This is intentionally done so that all possible input types must be defined upfront. The actual keyboard inputs that map to these can be changed at any time, of course.
-
-### Virtual Methods:
-
-`protected void Initialize()`
-
-`protected void updateObjects()`
-
-### Public Methods:
-
-`public int addObject(GameObject obj)`
-
-- Adds a `GameObject` to be rendered.
-
-`public void removeObject(GameObject obj)`
-
-- Removes a `GameObjects` from the `Renderer`s list of GameObjects. This is public but should be avoided from outside the engine. `GameObject.removeFromRenderer()` is preferred.
-
-`public void setInputMapKey(string inputKey, Keys value)`
-
-- Sets the `Renderer`'s `inputMap` for a given key to a new value. The supplied key must already exist on the `inputMap`.
+1. FNA calls `Renderer.Update()`, which is meant to handle behind-the-scenes functions such as refreshing `Input`'s state.
+2. Renderer calls its private `defaultUpdate()` method, which will handle any default functionality that the user has not manually overridden. For example, if the default `inputMap` is still present, or if the user defined `inputMap` contains a key `engine_pause` that is triggered, then `defaultUpdate()` will toggle the `engineState` between `RUNNING` and `PAUSED`. Within `defailtUpdate()` is also code for displaying the default pause menu, or whatever pause menu the user attaches to `Renderer.pauseMenu`.
+3. If `Renderer.engineState` is set to `EngineState.QUIT`, the game will exit here.
+4. If `Renderer.engineState` is set to `EngineState.RUNNING`, `Renderer.updateGame()` is called, which should be overridden in the derrived class. This is the starting point for user-defined game updates.
+5. FNA calls `Renderer.Draw()`, which draws every `GameObject` that has been added so far with `Renderer.addObject()`.
+6. Repeat.
 
 
 
 
-# Engine Defaults
+# `Renderer` Examples
 
-_Static class containing constant values meant for initializing the `Renderer`. It is very possible that these will not be used in whatever object inherents `Renderer`, as custom values could better fit the game's use case._
+## Creating a game with `Renderer`
 
-`public static readonly Dictionary<string, Keys> inputMap`
+```c#
+// MyGame.cs
 
-_defines a basic input map with the following values:_
-- `"primary": Keys.X`
-- `"secondary": Keys.Z`
-- `"up": Keys.Up`
-- `"down": Keys.Down`
-- `"left": Keys.Left`
-- `"right": Keys.Right`
+using Engine;
+
+public class Car : GameObject {
+  int speed = 0;
+
+  public Car() {}
+
+  public void update() {
+    speed++;
+  }
+}
+
+public class Game1 : Renderer {
+    Car car;
+
+    public Game1() : base(
+      1280,             // window width
+      720,              // window height
+      Color.Black,      // background color
+      false,            // start full screen
+      true              // allow resize
+    ) { }
+
+    override protected void Initialize() {
+      car = new Car(); 
+      addObject(car);
+      base.Initialize();
+    }
+
+    override protected void updateGame(GameTime gameTime) {
+      car.update(gameTime);
+    }
+  }
+
+// Program.cs
+class Program {
+
+    public static void Main(string[] args) {
+      
+      using (Game game = new Game1()) {
+        game.Run();
+      }
+    }
+  }
+```
+
+In the example above, note that we also created a `GameObject` called Car, and used `addObject()` to add it to our `Renderer`. 
+
+
+
+## Using the `inputMap`
+
+The static `Input` helper contains functions for grabbing the current key/ mouse press. For example, you can check if a specific XNA `Key` is down.
+```C#
+using Microsoft.Xna.Framework.Input;
+using Engine;
+
+Input.isKeyDown(Keys.Up);
+```
+
+`Input` also contains an `inputMap` dictionary that associates strings to `Key` values. With the `inputMap` set, you can check for key events by passing in a string. This makes it easy to change the actual `Key` mid-game, as the string we use to check never changes.
+```C#
+Dictionary<string, Keys> myMap = new Dictionary<string, Keys>() {
+  {"primary", Keys.X},
+  {"secondary", Keys.Z},
+  {"up", Keys.Up},
+  {"down", Keys.Down},
+  {"left", Keys.Left},
+  {"right", Keys.Right}
+};
+
+Input.setInputMap(myMap);
+
+Input.hasKey("primary") 
+// returns true
+
+Input.hasKey("banana") 
+// returns false
+
+Input.isKeyUp("tomato") 
+// does not throw an error if the key does not exist, just returns false
+
+Input.isKeyUp("primary"); 
+// will return true if Keys.X is Up
+
+Input.setInputMapKey("primary", Keys.Enter); 
+// change the key that "primary" points to
+
+Input.isKeyUp("primary"); 
+// will return true if Keys.Enter is up
+```
+
+Renderer automatically initializes `Input.inputMap` with default values found in `defaults/EngineDefaults.cs`, but this can be changed at any time in your game.
 
 
 
 
-# GameObject
 
-_Displays a sprite on screen. The image provided can function as the whole sprite, or as a sprite sheet._
 
-`public GameObject()`
 
-### Position vars:
+# `GameObject` examples
 
-`public Vector2 position`
+_The `GameObject` class displays a sprite on screen, and allows the user to manipulate various attributes such as the position, direction, etc. The image provided to a `GameObject` can function as the whole sprite, or as a sprite sheet. Bounds and collision detection are also available._
 
-`public float direction`
+As noted above, we use `Renderer.addObject(obj)` to add our `GameObject`s to the `Renderer`. The calling of `addObject(obj)` automaticaly triggers `obj.init()`, so if your derrived `GameObject` overrides `init()`, remember to call `base.init()` in that function, as forgetting to do so will prevent other `GameObject` methods from working properly within the `Renderer.`
 
-`public Rectangle bounds`
-
-`public int colisionLayer`
-
-- Box around `GameObject` used for collision detection. Initialized to `(0, 0, spriteWidth, spriteHeight)`. 
-
-### Sprite Dimension vars:
+## Sprite Dimension vars:
 
 `protected readonly int imageWidth`
 
@@ -150,7 +198,19 @@ _Displays a sprite on screen. The image provided can function as the whole sprit
 
 `public readonly int spriteHeight`
 
-- `imageWidth` and `imageHeight` specify the dimensions of the image provided to the `GameObject`. If the image is supplied as a spritesheet (see `setSpriteSheet()` below), `spriteWidth` and `spriteHeight` will be the dimensions of a single cell on the sheet. Otherwise, sprite dimensions will be the same as image dimensions.
+_`imageWidth` and `imageHeight` specify the dimensions of the image provided to the `GameObject`. If the image is supplied as a spritesheet (see `setSpriteSheet()` below), `spriteWidth` and `spriteHeight` will be the dimensions of a single cell on the sheet. Otherwise, sprite dimensions will be the same as image dimensions._
+
+## Position vars:
+
+`public Vector2 position`
+
+`public float direction`
+
+`public Rectangle bounds`
+
+- Initialized to (0, 0), the top left of the image or sprite cell. 
+
+`public int colisionLayer`
 
 `public float spriteRotation`
 
@@ -160,19 +220,65 @@ _Displays a sprite on screen. The image provided can function as the whole sprit
 
 `public bool showBounds`
 
-- Initialized to (0, 0), the top left of the image or sprite cell. 
+## Other vars:
 
-### Sprite sheet manipulation vars:
+`public float layerDepth`
+
+`public Color drawColor`
+
+`public bool isHidden`
+
+`public Color boundsColor = Color.Blue`;
+
+`public float boundsAlpha = 0.5f`;
+
+## Creating a `GameObject` with an image
+```c#
+using Engine
+
+public class Player: GameObject {
+
+  public Player() {}
+
+  public override void load(ContentManager content) {
+    setImage(TextureLoader.Load("myimage.png"))
+  }
+}
+```
+
+Sets the `GameObject`'s image as a single sprite. Drawing the `GameObject` will display the entire image, unless a `spriteClip` is specified. Changing the values of `GameObject.animation` or `GameObject.currentFrame` will have no effect.
+
+## Creating a `GameObject` with a sprite sheet
+```C#
+using Engine
+
+public class Player: GameObject {
+
+  public player() {}
+
+  public override void load(ContentManager content) {
+    setSpriteSheet(TextureLoader.Load("mysheet.png"), 4, 4);
+  }
+}
+```
+
+Sets the `GameObject`'s image as a sprite sheet, cut into a grid specified by cols and rows (in this case, 4 x 4). Choosing this allows for the use of `animation` and `currentFrame` to pick the sprite to display, as well as `spriteClip`.
+
+## Using a `GameObject`'s sprite sheet
 
 _If a GameObject's image is supplied as a sprite sheet, there are a few ways to specify which frame or section of the sheet to show. The following are specified in order of precidence (if one is set, the ones below are automatically updated to match)._
 
-`protected Animation animation`
+1. `protected Animation animation`
+2. `protected int currentFrame`
+3. `protected Rectangle spriteClip`
 
-- GameObject will automatically run the supplied `animation`, and will display the sprite based on the animation's current frame. `GameObject.currentFrame` will be updated to this value, and `GameObject.spriteClip` will represent the bounds of the sprite on the sheet. User setting either `GameObject.currentFrame` or `GameObject.spriteClip` in this case will have no effect, as these values are computed every frame.
+## Using a `GameObject`'s `animation`
 
-- `Animation` is used so that the user can define custom lengths for each frame, rathen than being forced into a linear frame time. Internally, every frame the engine will call the supplied `animation`'s `update(GameTime gameTime)` method, and casts the return value to an int to be used as the `currentFrame`. The `animation`'s `animationType` should be set to `AnimationType.STEP` for the easiest results. 
+GameObject will automatically run the supplied `animation`, and will display the sprite based on the animation's current frame. `GameObject.currentFrame` will be updated to this value, and `GameObject.spriteClip` will represent the bounds of the sprite on the sheet. User setting either `GameObject.currentFrame` or `GameObject.spriteClip` in this case will have no effect, as these values are computed every frame.
 
-- Below is an example of setting a custom looping frame animation that animates through a sprite sheet's frames 5 through 10.
+`Animation` is used so that the user can define custom lengths for each frame, rathen than being forced into a linear frame time. Internally, every frame the engine will call the supplied `animation`'s `update(GameTime gameTime)` method, and casts the return value to an int to be used as the `currentFrame`. The `animation`'s `animationType` should be set to `AnimationType.STEP` for the easiest results. 
+
+Below is an example of setting a custom looping frame animation that animates through a sprite sheet's frames 5 through 10.
 ```c#
 public class MyClass : GameObject {
   Animation runAnimation = new Animation(true, AnimationType.STEP);
@@ -181,6 +287,14 @@ public class MyClass : GameObject {
 
   public override void load(ContentManager content){
     setSpriteSheet(TextureLoader.Load("mysheet.png", content), 4, 4);
+
+    /*
+      The sheet added can be though of as a box cut into equal smaller boxes, labeled as follows:
+       0,  1,  2,  3,
+       4,  5,  6,  7,
+       8,  9, 10, 11,
+      12, 13, 14, 15
+    */
 
     runAnimation.addKeyframe(0, 5);
     runAnimation.addKeyframe(100, 6);
@@ -194,129 +308,74 @@ public class MyClass : GameObject {
 }
 ``` 
 
-`protected int currentFrame`
+When `Renderer` loops over each `GameObject`, it automatically handles the progression of each animation. As mentioned above, the value of `currentFrame` will be updated during each game loop to reflect the animation's current position. The same applys to `spriteClip`.
 
-- Sets the sprite to the current frame on the sheet. `GameObject.spriteClip` will automatically represent these bounds on the sheet.
+## Using a `GameObject`'s `currentFrame`
 
-`protected Rectangle spriteClip`
+For situations where you don't necessarily want to _animate_ changes between different sprite sheet frames, but still want control over which frame to display, use `GameObject.spriteClip`.
 
-- The area of the spritesheet to draw, initialized to the top left frame on the sheet. If `spriteSheetAnimation` or `currentFrame` have not been set, this can be used to display any rectangular section of the sheet. This is useful when a spritesheet contains sprites of different sizes.
+```c#
+public class MyClass : GameObject {
+  int hp = 10;
+  int healthyFrame = 10;
+  int lowHealthFrame = 11;
+  int veryLowHealthFrame = 12;
 
-### Other vars:
+  public MyClass() {}
 
-`public float layerDepth`
+  public override void load(ContentManager content){
+    setSpriteSheet(TextureLoader.Load("mysheet.png", content), 4, 4);
 
-`public Color drawColor`
+    currentFrame = healthyFrame;
+  }
 
-`public bool isHidden`
+  public void takeDamage() {
+    hp--;
 
-### Virtual Methods:
+    if (hp < 5) {
+      currentFrame = lowHealthFrame;
+    }
+    else if (hp < 2) {
+      curretFrame = veryLowHealthFrame;
+    }
+  }
+}
+```
 
-_Note: `GameObject` does not come with a virtual `update` function - this must be implimented in the derrived class._
+## Using a `GameObject`'s `spriteClip`
 
-`public virtual void init(Renderer renderer)`
+It is certainly possible to use a spritesheet that contains cells of different sizes. For this, use `spriteClip` to specify a rectangle on the sheet to display.
 
-- Init runs once before the main loop of the engine. This is a good place to do any major setup within the derived objects. 
-
-- Alternatively, for simple usecases, it is best to not override `init()` and let the `base` version handle initialization.
-
-`public virtual void load(ContentManager content)`
-
-- Load is similar to Init, except it has access to the games content manager. Load should be used for setting graphical information of the object, like calling `setImage()` or `setSpriteSheet()`.
-
-`public virtual void draw(SpriteBatch spriteBatch)`
-
-- Called every frame by `Renderer`. Requires a `SpriteBatch` to render the object's image to the view. For most purposes this does not need to be overriden in the derrived class.
-
-### Image/ Sprite Initializers:
-
-_Below are image intializers meant to set a GameObject's sprite, meant to be called within the derived class's load method. Only one should be used per GameObject, as a GameObject only has one internal image member. Once an image is set, it cannot be removed or reset._
-
-`protected void setImage(Texture2D newImage)`
-
-- Sets the GameObject's image as a single sprite. Drawing the GameObject will display the entire image, unless a `spriteClip` is specified. Using `spriteSheetAnimation` or `currentFrame` will have no effect.
-
-`protected void setSpriteSheet(Texture2D newImage, int cols, int rows)`
-
-- Sets the GameObject's image as a sprite sheet, cut into a grid specified by `cols` and `rows`. Choosing this allows for the use of `spriteSheetAnimation` and `currentFrame` to pick the sprite to display, as well as `spriteClip`.
-
-### Public Methods:
+## Removing a `GameObject` from the `Renderer`
 
 `public void removeFromRenderer()`
 
-- Removes an object from the `Renderer`, if it was added via `Renderer.addObject()`. 
+```c#
+public class MyClass : GameObject {
+  int hp = 10;
 
-`public bool objectInBounds(GameObject obj, float offX = 0, float offY = 0, int cl = 0)`
+  public MyClass() {}
 
-- Returns if passed in GameObject `obj`'s bounds overlap with the caling GameObject's bounds. 
-- `offX` and `offY` can be used to offset the calling object's bounding box.
-- `cl` specifies the collision layer of the object to check. All `GameObject`'s `collisionLayer`s are initialized to 0.
+  public override void load(ContentManager content){
+    setSpriteSheet(TextureLoader.Load("mysheet.png", content), 4, 4);
+  }
 
-`public bool objectInBounds<T>(List<T> objs, float offX = 0, float offY = 0, int cl = 0)`
+  public void takeDamage() {
+    hp--;
 
-- Override for `objectInBounds` that operates over a list of `T` objects, where `T` is derrived from `GameObject`. Returns whether or not a collision occured.
-
-`public bool objectInBounds<T>(List<T> objs, out T value, float offX = 0, float offY = 0, int cl = 0)`
-
-- Override for `objectInBounds` that operates over a list of `T` objects, where `T` is derrived from `GameObject`. Returns whether or not a collision occured. In this override, `T value` must be provided, and will be set to the first object found, or `null` otherwise.
-
-
-
-
-# Utils
-
-_Static helper class._
-
-`public static int rand(int n, int m)`
-
-- Returns a random int between `n` and `m` (inclusive)
-
-`public static bool chance(int n)`
-
-- Returns if a random int between 0 and 100 is less than `n`. Eg, a 30% chance can be represented by `Utils.chance(30)`.
+    if (hp == 0) {
+      removeFromRenderer()
+    }
+  }
+}
+```
 
 
+## `GameObject` collision
+
+TODO
 
 
-# Animation
+# `Animation` Examples
 
-_Helper class for animating a value over time along a curve made of keyframes. `Animation` essentially wraps XNA's `Curve` class._
-
-`public Animation(bool setLoop = true, AnimationType type = AnimationType.CURVE)`
-
-- `Animation` constructor.
-
-`public int index`
-
-- Represents
-
-`public void reset()`
-
-- Resets the animation back to the start.
-
-`public void addKeyframe(int time, float value)` 
-
-- Adds a point to the curve at time `time` (in milliseconds), with value `value`.
-
-`public float update(GameTime gameTime, ref float value)`
-
-- Updates the animation's current time based on passed in `GameTime`, and set ref `value` to the current position on the animation's curve. Returns the delta between the value passed in the updated value. If for some reason the value along the curve is `NaN`, `value` is then set to 0.
-
-`public float update(GameTime gameTime)`
-
-- Returns the value of the curve at time `gametime`. If for some reason the value along the curve is `NaN`, value is then set to 0.
-
-
-
-
-# AnimationType
-
-_Static enum specifying how an `Animation`'s curve should be interpeted when calling its `update()` method._
-
-`AnimationType.CURVE`
-
-- The curve will be evauluated along its normal curve. 
-
-`AnimationType.STEP`
-
--  The curve will be evaluated as if it were a step function. This is meant for sprite animations.
+TODO

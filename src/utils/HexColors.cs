@@ -1,7 +1,15 @@
+using Microsoft.Xna.Framework;
+
 namespace Engine {
-  public static class Colors {
+  public sealed class Hex {
     // public string rgbtohex()
     // public string hextorgb()
+
+    public readonly Color color;
+
+    private Hex(string value) {
+      // color = some hexToColor()
+    }
 
     public const string darkBlue1 = "#1d2b53";
     public const string darkBlue2 = "#20273e";

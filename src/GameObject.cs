@@ -29,7 +29,18 @@ namespace Engine {
     // sprite sheet animation
     //protected SpritesheetAnimation spriteSheetAnimation;
     protected Animation animation;
-    protected int currentFrame = -1;
+    private int _currentFrame = -1;
+    protected int currentFrame {
+      get => _currentFrame;
+      set {
+        _currentFrame = value;
+        if (_currentFrame >= 0) {
+          int clipX = (_currentFrame % spriteSheetCols) * spriteWidth;
+          int clipY = (_currentFrame / spriteSheetCols) * spriteHeight;
+          spriteClip = new Rectangle(clipX, clipY, spriteWidth, spriteHeight);
+        }
+      }
+    }
 
     // position vars
     public float x;
@@ -37,6 +48,8 @@ namespace Engine {
     public float direction = 0f;
     public Rectangle bounds;
     public bool showBounds = false;
+    public Color boundsColor = Color.Blue;
+    public float boundsAlpha = 0.5f;
     protected int collisionLayer = 0;
 
     // other vars
@@ -55,23 +68,26 @@ namespace Engine {
       initializeSpriteDimensions();
     }
 
-    public virtual void draw(SpriteBatch spriteBatch, GameTime gameTime) {
-      if (image == null || isHidden) return;
-      updateSpriteDetails(gameTime);
-
+    public virtual void draw(SpriteBatch spriteBatch) { // should this be virtual
       Vector2 position = new Vector2(x, y);
+      if (isHidden) return;
+      if (image != null) {
+        spriteBatch.Draw(
+          image,
+          position,
+          spriteClip,
+          drawColor,
+          spriteRotation,
+          center,
+          spriteScale,
+          SpriteEffects.None,
+          layerDepth
+        );
+      }
 
-      spriteBatch.Draw(
-        image,
-        position,
-        spriteClip,
-        drawColor,
-        spriteRotation,
-        center,
-        spriteScale,
-        SpriteEffects.None,
-        layerDepth
-      );
+      if (bounds != null && showBounds) {
+        spriteBatch.Draw(Renderer.systemRect, new Rectangle((int)(x + bounds.X), (int)(y + bounds.Y), bounds.Width, bounds.Height), boundsColor * boundsAlpha);
+      }
     }
 
     // image initializers
@@ -100,25 +116,11 @@ namespace Engine {
     }
 
     // lifecyle methods
-    private void updateSpriteDetails(GameTime gameTime) {
+    protected void animate(GameTime gameTime) {
       // if the animation is set, update currentFrame and spriteClip to be in sync
-      //if (spriteSheetAnimation != null) {
       if (animation != null) {
-        //spriteSheetAnimation.run();
-        //currentFrame = spriteSheetAnimation.getFrame();
         currentFrame = (int)animation.update(gameTime);
-
-        int clipX = (currentFrame % spriteSheetCols) * spriteWidth;
-        int clipY = (currentFrame / spriteSheetCols) * spriteHeight;
-        spriteClip = new Rectangle(clipX, clipY, spriteWidth, spriteHeight);
       }
-      // if current frame is set, update spriteClip to be in sync
-      else if (currentFrame >= 0) {
-        int clipX = (currentFrame % spriteSheetCols) * spriteWidth;
-        int clipY = (currentFrame / spriteSheetCols) * spriteHeight;
-        spriteClip = new Rectangle(clipX, clipY, spriteWidth, spriteHeight);
-      }
-      // otherwise, nothing is set. User is free to use spriteClip in this case
     }
 
     // public methods

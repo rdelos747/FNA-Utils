@@ -28,6 +28,13 @@ namespace Engine {
 
     static private Color _bkColor;
 
+    static int thing {
+      get {
+        return 3;
+      }
+      set { }
+    }
+
     public static int VirtualViewportX {
       get { return virtualViewportX; }
     }
