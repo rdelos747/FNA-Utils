@@ -9,9 +9,10 @@ namespace Engine {
 
   public static class TextureLoader {
     const bool usingPipeline = false;
+    public static ContentManager Content;
 
-    public static Texture2D Load(string filePath, ContentManager content) {
-      Texture2D image = content.Load<Texture2D>(filePath);
+    public static Texture2D Load(string filePath) {
+      Texture2D image = Content.Load<Texture2D>(filePath);
 
       if (usingPipeline == false)
         PremultiplyTexture(image);
