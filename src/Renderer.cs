@@ -12,26 +12,22 @@ namespace Engine {
 
   public class Renderer : Game {
 
-    //private List<GameObject> objects = new List<GameObject>();
-    //private List<Node> nodes = new List<Node>();
-
-    private FontLib systemFontLib;
-    private Font systemFont;
-    private Text fpsCounter;
+    //private FontLib systemFontLib;
+    //private Font systemFont;
+    private TextObject fpsCounter;
 
     protected GraphicsDeviceManager graphics;
     protected SpriteBatch spriteBatch;
-    protected EngineSettings engineSettings;
-    protected Menu pauseMenu;
+    //protected EngineSettings engineSettings;
+    protected Element pauseMenu;
 
     private Node root;
 
-    //public int count { get; private set; }
     public EngineState engineState;
     public static Texture2D systemRect { get; private set; }
 
     public Renderer() {
-      engineSettings = new EngineSettings(this);
+      //engineSettings = new EngineSettings(this);
       Input.setInputMap(EngineDefaults.inputMap);
 
       graphics = new GraphicsDeviceManager(this);
@@ -46,9 +42,8 @@ namespace Engine {
       Window.ClientSizeChanged += onResize;
       IsMouseVisible = EngineDefaults.mouseVisible;
 
-      //root = new Node(Content);
       root = new Node();
-      //root.Bounds = new Rectangle(0,0,)
+      root.Bounds = new Rectangle(0, 0, EngineDefaults.width, EngineDefaults.height);
     }
 
     private void onResize(Object sender, EventArgs e) {
@@ -68,9 +63,11 @@ namespace Engine {
 
       base.LoadContent();
 
-      systemFontLib = new FontLib(EngineDefaults.fontPath, GraphicsDevice);
-      systemFont = systemFontLib.createFont(EngineDefaults.fontSize);
-      fpsCounter = new Text(systemFont);
+      EngineDefaults.SystemFontLibrary = new FontLib(EngineDefaults.fontPath, GraphicsDevice);
+      EngineDefaults.SystemFontReg = EngineDefaults.SystemFontLibrary.createFont(EngineDefaults.fontSizeReg);
+      EngineDefaults.SystemFontLarge = EngineDefaults.SystemFontLibrary.createFont(EngineDefaults.fontSizeLarge);
+      //fpsCounter = new TextObject(systemFont);
+
       engineState = EngineState.RUNNING;
     }
 
@@ -94,7 +91,8 @@ namespace Engine {
 
       Resolution.BeginDraw();
       spriteBatch.Begin(
-        SpriteSortMode.BackToFront,
+        //SpriteSortMode.BackToFront,
+        SpriteSortMode.Deferred,
         BlendState.AlphaBlend,
         SamplerState.LinearClamp,
         DepthStencilState.Default,
@@ -103,7 +101,7 @@ namespace Engine {
         Resolution.getTransformationMatrix()
       );
 
-      root.draw(spriteBatch, 0, 0);
+      root.Draw(spriteBatch, 0, 0);
 
       spriteBatch.End();
 
@@ -114,18 +112,11 @@ namespace Engine {
       if (Input.keyPressed(EngineDefaults.keyPause)) {
         if (engineState == EngineState.PAUSED) {
           engineState = EngineState.RUNNING;
-          pauseMenu.removeFromParent();
-          // if (pauseMenu != null) {
-          //   pauseMenu.close();
-          //   pauseMenu = null;
-          // }
+          pauseMenu.RemoveFromParent();
         }
         else if (engineState == EngineState.RUNNING) {
           engineState = EngineState.PAUSED;
-          pauseMenu = new PauseMenu();
-          addChild(pauseMenu);
-          // pauseMenu.dispatch = engineSettings.dispatch;
-          // pauseMenu.init();
+          pauseMenu = new PauseMenu(this);
         }
       }
 
@@ -133,15 +124,13 @@ namespace Engine {
         engineState = EngineState.QUIT;
       }
 
-      // if (pauseMenu != null) {
-      //   pauseMenu.update();
-      // }
+      if (pauseMenu != null) {
+        pauseMenu.Update(Input.mouseX, Input.mouseY);
+      }
     }
 
-
-
-    public void addChild(Node n) {
-      root.addChild(n);
+    public void AddChildToRoot(Node n) {
+      root.AddChild(n);
     }
   }
 }

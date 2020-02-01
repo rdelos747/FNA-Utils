@@ -12,9 +12,21 @@ namespace Engine {
 
   public class Node : IDisposable {
 
-    private Node Parent;
-    private List<Node> Nodes = new List<Node>();
     private bool Disposed = false;
+
+    // child node stuff
+    private List<Node> _nodes = new List<Node>();
+    public List<Node> Nodes {
+      get {
+        return _nodes;
+      }
+      private set {
+        _nodes = value;
+      }
+    }
+
+    public Node Parent { get; private set; }
+
 
     // Position stuff
     public float X;
@@ -46,43 +58,35 @@ namespace Engine {
     public bool ShowBounds = false;
     public Color BoundsColor = Color.Blue;
     public float BoundsAlpha = 0.5f;
+    public bool IsHidden = false;
 
     public Node() { }
 
-    // public Node(ContentManager content) {
-    //   // This is mainly used to inject the content
-    //   // manager into the root node.
-    //   this.Content = content;
-    // }
-
-    public void addChild(Node n) {
+    public void AddChild(Node n) {
       if (n.Parent == null) {
-        Nodes.Add(n);
+        _nodes.Add(n);
         n.Parent = this;
-        // n.Content = Content;
-        // n.load(Content);
       }
     }
 
-    public void removeFromParent() {
+    public void RemoveFromParent(bool isMe = true) {
       if (Parent != null) {
+        foreach (Node n in _nodes) {
+          n.RemoveFromParent(false);
+        }
+        // then, handle ourselves
+        _nodes.Clear();
 
-        // if we have children, go down that path first
-        for (int i = 0; i < Nodes.Count; i++) {
-          Nodes[i].removeFromParent();
-          Nodes.Remove(Nodes[i]);
+        if (isMe) {
+          Parent._nodes.Remove(this);
         }
 
-        // then, handle ourselves
-        Parent.Nodes.Remove(this);
         Parent = null;
         Dispose();
       }
     }
 
-    //public virtual void load(ContentManager content) { }
-
-    public virtual void draw(SpriteBatch spriteBatch, float lastX, float lastY) {
+    public virtual void Draw(SpriteBatch spriteBatch, float lastX, float lastY) {
       float worldX = lastX + X;
       float worldY = lastY + Y;
 
@@ -93,16 +97,11 @@ namespace Engine {
           BoundsColor * BoundsAlpha
         );
       }
-      for (int i = 0; i < Nodes.Count; i++) {
-        Node n = Nodes[i];
-        n.draw(spriteBatch, worldX, worldY);
+      for (int i = 0; i < _nodes.Count; i++) {
+        Node n = _nodes[i];
+        n.Draw(spriteBatch, worldX, worldY);
       }
     }
-
-    // public Vector2 getPositionInParent() {
-    //   return new Vector2();
-    // }
-
 
     public void Dispose() {
       Dispose(true);

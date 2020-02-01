@@ -1,43 +1,63 @@
-// using System;
-// using System.Collections.Generic;
-// using Microsoft.Xna.Framework;
-// using Microsoft.Xna.Framework.Graphics;
-// using Microsoft.Xna.Framework.Content;
+using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
+namespace Engine {
 
+  public sealed class Button : Element {
 
-// namespace Engine {
-//   // public sealed class Button : GameObject {
-//   //   public string message;
-//   //   public bool selected = false;
+    public Action OnClick;
 
-//   //   public Button(string newMessage, int x = 0, int y = 0, int w = 10, int h = 10) {
-//   //     bounds = new Rectangle(x, y, w, h);
-//   //     showBounds = true;
-//   //   }
+    // public Color BackgroundColor = EngineDefaults.ButtonBackgroundColor;
+    // public float BackgroundAlpha = EngineDefaults.ButtonBackgroundAlpha;
+    // public Color SelectedColor = EngineDefaults.ButtonSelectedColor;
+    // public float SelectedAlpha = EngineDefaults.ButtonSelectedAlpha;
+    // public Color TextColor = EngineDefaults.ButtonTextColor;
+    // public Color TextSelectedColor = EngineDefaults.ButtonTextSelectedColor;
 
-//   //   public override void update() {
-//   //     if (Input.mouseLeftClicked() && pointInBounds(Input.mouseX, Input.mouseY)) {
-//   //       return message;
-//   //     }
+    // public TextObject Text;
 
-//   //     if (Input.keyPressed(EngineDefaults.keyPrimary) && selected) {
-//   //       return message;
-//   //     }
+    public Button(int x = 0, int y = 0, int w = EngineDefaults.ButtonWidth, int h = EngineDefaults.ButtonHeight, Font font = null) : base(x, y, w, h) {
+      ShowBounds = true;
+      IsSelectable = true;
 
-//   //     return null;
-//   //   }
+      // Text = new TextObject(font);
+      // Text.X = 10;
+      // Text.Y = Bounds.Height / 2;
+      // Text.VerticalAlignment = VerticalAlignment.CENTER;
+      // AddChild(Text);
+    }
 
-//   //   // public void draw(SpriteBatch spriteBatch, GameTime gameTime) {
-//   //   //   if (bounds != null) {
-//   //   //     spriteBatch.Draw(Renderer.systemRect, bounds, bkColor * bkAlpha);
-//   //   //   }
-//   //   // }
-//   // }
+    public override void SetSelected() {
+      Selected = true;
+      BoundsColor = SelectedColor;
+      BoundsAlpha = SelectedAlpha;
+      //Text.Color = TextSelectedColor;
+      Label.Color = TextSelectedColor;
+    }
 
-//   public class Button : Element {
-//     public Button(Menu p, int x = 0, int y = 0, int w = 0, int h = 0) : base(p, x, y, w, h) {
+    public override void SetUnselected() {
+      Selected = false;
+      BoundsColor = BackgroundColor;
+      BoundsAlpha = BackgroundAlpha;
+      //Text.Color = TextColor;
+      Label.Color = TextColor;
+    }
 
-//     }
-//   }
-// }
+    public override void Update(float mouseX, float mouseY) {
+      if (OnClick != null) {
+        if (Input.mouseLeftClicked() && pointInBounds(mouseX, mouseY)) {
+          OnClick();
+        }
+
+        if (Input.keyPressed(EngineDefaults.keyPrimary) && Selected) {
+          OnClick();
+        }
+      }
+
+      base.Update(mouseX, mouseY);
+    }
+  }
+}

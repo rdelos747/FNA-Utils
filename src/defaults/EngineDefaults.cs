@@ -14,7 +14,25 @@ namespace Engine {
     public const bool mouseVisible = false;
 
     public const string fontPath = "content/system_font.ttf";
-    public const int fontSize = 20;
+    public const int fontSizeReg = 20;
+    public const int fontSizeLarge = 50;
+    public static FontLib SystemFontLibrary;
+    public static Font SystemFontReg;
+    public static Font SystemFontLarge;
+
+    public static readonly Color PauseMenuBackground = Color.Black;
+    public const float PauseMenuAlpha = 0.5f;
+
+    public const int ElementTextPad = 10;
+
+    public const int ButtonWidth = 100;
+    public const int ButtonHeight = 50;
+    public static readonly Color ButtonBackgroundColor = Color.Black;
+    public const float ButtonBackgroundAlpha = 0.0f;
+    public static readonly Color ButtonSelectedColor = Color.White;
+    public const float ButtonSelectedAlpha = 0.1f;
+    public static readonly Color ButtonTextColor = Color.White;
+    public static readonly Color ButtonTextSelectedColor = Color.White;
 
     public const string keyPrimary = "primary";
     public const string keySecondary = "secondary";

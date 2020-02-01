@@ -22,7 +22,7 @@ namespace Engine {
     public float spriteRotation = 0f;
     public float spriteScale = 1f;
 
-    public bool isHidden = false;
+    //public bool isHidden = false;
 
     // sprite sheet animation
     protected Animation animation;
@@ -44,7 +44,8 @@ namespace Engine {
     protected int collisionLayer = 0;
 
     // other vars
-    public float layerDepth = 0.5f;
+    //public float layerDepth = 0.5f;
+    public int layerDepth = 0;
     public Color drawColor = Color.White;
 
 
@@ -64,9 +65,10 @@ namespace Engine {
     //   initializeSpriteDimensions();
     // }
 
-    public override void draw(SpriteBatch spriteBatch, float lastX, float lastY) { // should this be virtual
+    public override void Draw(SpriteBatch spriteBatch, float lastX, float lastY) { // should this be virtual
       Vector2 position = new Vector2(lastX + X, lastY + Y);
-      if (isHidden) return;
+      if (IsHidden) return;
+
       if (image != null) {
         spriteBatch.Draw(
           image,
@@ -81,7 +83,7 @@ namespace Engine {
         );
       }
 
-      base.draw(spriteBatch, lastX, lastY);
+      base.Draw(spriteBatch, lastX, lastY);
     }
 
     // image initializers
@@ -132,7 +134,7 @@ namespace Engine {
     }
 
     public bool objectInBounds(GameObject obj, float offX = 0, float offY = 0, int cl = 0) {
-      if (Bounds.IsEmpty || obj == null || obj.Bounds == null || isHidden == true || obj.collisionLayer != cl) {
+      if (Bounds.IsEmpty || obj == null || obj.Bounds == null || IsHidden == true || obj.collisionLayer != cl) {
         return false;
       }
 
