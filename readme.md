@@ -54,14 +54,15 @@ We very new to FNA, monogame, and C# in general.
 
 # Engine Lifecycle
 
-_The `Renderer` class manages rendering of GameObjects. This class extends XNA's `Game` class, and mainly takes care of the boilerplate around loading and drawing objects._
+_The `Renderer` class manages rendering of `Nodes`. The `Renderer` class extends XNA's `Game` class, and mainly takes care of the boilerplate around loading and drawing objects._
 
-_Every frame, `Renderer` will loop over all `GameObjects` added via `addObject()` and call their `draw` method. `Renderer` also provides a virtual `updateObjects()` method, but this does nothing about of the box. `updateObjects()` should be overridden in whatever class is derrived from `Renderer`._
+_Every frame, `Renderer` will loop over all `Nodes` added via `addChild()` and call their `draw` method. `Renderer` also provides a virtual `updateObjects()` method, but this does nothing about of the box. `updateObjects()` should be overridden in whatever class is derrived from `Renderer`._
 
 ## Initialization
 
 1. `Renderer` constructor intializes `Input.inputMap` and other default game settings, most of which are located in the `/defaults` directory.
 2. FNA calls `Renderer.initalize()` and `Renderer.loadContent()`. Both are virtual, but generally `loadContent()` is not needed.
+3. `Renderer` is also initialized with a root `Node`. All children added to the Renderer are decendants of this node.
 
 ## Game Loop
 
@@ -69,7 +70,7 @@ _Every frame, `Renderer` will loop over all `GameObjects` added via `addObject()
 2. Renderer calls its private `defaultUpdate()` method, which will handle any default functionality that the user has not manually overridden. For example, if the default `inputMap` is still present, or if the user defined `inputMap` contains a key `engine_pause` that is triggered, then `defaultUpdate()` will toggle the `engineState` between `RUNNING` and `PAUSED`. Within `defailtUpdate()` is also code for displaying the default pause menu, or whatever pause menu the user attaches to `Renderer.pauseMenu`.
 3. If `Renderer.engineState` is set to `EngineState.QUIT`, the game will exit here.
 4. If `Renderer.engineState` is set to `EngineState.RUNNING`, `Renderer.updateGame()` is called, which should be overridden in the derrived class. This is the starting point for user-defined game updates.
-5. FNA calls `Renderer.Draw()`, which draws every `GameObject` that has been added so far with `Renderer.addObject()`.
+5. FNA calls `Renderer.Draw()`, which draws every `Node` that has been added so far with `Renderer.addChildToRoot()`. If any of these children have children of their own, it will call their draw methods, and so on.
 6. Repeat.
 
 
@@ -107,7 +108,7 @@ public class Game1 : Renderer {
 
     override protected void Initialize() {
       car = new Car(); 
-      addObject(car);
+      addChildToRoot(car);
       base.Initialize();
     }
 
@@ -128,7 +129,7 @@ class Program {
   }
 ```
 
-In the example above, note that we also created a `GameObject` called Car, and used `addObject()` to add it to our `Renderer`. 
+In the example above, note that we also created a `GameObject` called Car, and used `addChildToRoot()` to add it to our `Renderer`'s root node. 
 
 
 
@@ -178,15 +179,88 @@ Renderer automatically initializes `Input.inputMap` with default values found in
 
 
 
+# The `Node` class
+_The `Node` class is the engine's basic drawable object, and is the base class for other objects such as `GameObject` and `TextObject`. A `Node` on its own, however, will not render anything to the screen, but instead can be thought of as a parent for other object. Children added to a node will respect its relative coordiate system and bounds._
+
+## Members
+
+`public float X`
+
+The X coordinate of the node within its parent;
+
+`public float Y`
+
+The Y coordinate of the node within its parent;
+
+`public Vector2 Origin`
+
+The offset within a `Node`'s bounds to place `X` and `Y`.
+
+When `Origin` is set, `Bounds.X` is automatically set to `-(Origin.X/2)`, and `Bounds.Y` is set to `-(Origin.Y/2)`. 
+
+`public Rectangle Bounds`
+
+The bounding box around a `Node`'s `X` and `Y`. `Bounds.X` and `Bounds.Y` represent the distance that the `Bounds`'s top left corner is from `X` and `Y`.
+
+In most cases, it is sufficient to set _either_ `Bounds` or `Origin`, but not both. 
+
+`public bool ShowBounds = false`
+
+If `true`, the bounding box of a `Node` will be filled in with the color/ alpha specified by `BoundsColor` and `BoundsAlpha`.
+
+`public Color BoundsColor = Color.Blue`
+
+`public float BoundsAlpha = 0.5f`
+
+`public bool IsHidden = false`
+
+## Methods
+
+`public void AddChild(Node n)`
+
+Adds `Node` _n_ to the current `Node` as a child, iff _n_ does not yet have a parent.
+
+`public void RemoveFromParent(bool isMe = true)`
+
+Removes the calling `Node` from its parent, and recurrsively removes all children nodes as well. 
+
+## Node Examples
+
+```c#
+public class Tile : GameObject {
+  // Tile game logic here 
+}
+
+public class Level : Node {
+  private List<Tile> tiles;
+  private int Tile_W = 20;
+  private int Tile_H = 10;
+
+  public Level() {
+    // add a bunch of children to our node
+    for (int j = 0; j < 10; j++) {
+      for (int i = 0; i < 10; i++) {
+        Tile t = new Tile(i * Tile_w, j * Tile_H);
+        AddChild(t);
+      }
+    }
+
+    // if we change the parent's coordiates, all children will be affected
+    X = 20;
+  }
+}
+```
 
 
 
 
-# `GameObject` examples
+# The `GameObject` class
 
-_The `GameObject` class displays a sprite on screen, and allows the user to manipulate various attributes such as the position, direction, etc. The image provided to a `GameObject` can function as the whole sprite, or as a sprite sheet. Bounds and collision detection are also available._
+`Public GameObject : Node`
 
-As noted above, we use `Renderer.addObject(obj)` to add our `GameObject`s to the `Renderer`. The calling of `addObject(obj)` automaticaly triggers `obj.init()`, so if your derrived `GameObject` overrides `init()`, remember to call `base.init()` in that function, as forgetting to do so will prevent other `GameObject` methods from working properly within the `Renderer.`
+_The `GameObject` class displays a sprite on screen. The image provided to a `GameObject` can function as the whole sprite, or as a sprite sheet. Bounds and collision detection are also available._
+
+As noted above, we use `Node.addChild(obj)` to add a `GameObject` to an existing `Node` as a child. 
 
 ## Sprite Dimension vars:
 
@@ -200,15 +274,8 @@ As noted above, we use `Renderer.addObject(obj)` to add our `GameObject`s to the
 
 _`imageWidth` and `imageHeight` specify the dimensions of the image provided to the `GameObject`. If the image is supplied as a spritesheet (see `setSpriteSheet()` below), `spriteWidth` and `spriteHeight` will be the dimensions of a single cell on the sheet. Otherwise, sprite dimensions will be the same as image dimensions._
 
-## Position vars:
-
-`public Vector2 position`
 
 `public float direction`
-
-`public Rectangle bounds`
-
-- Initialized to (0, 0), the top left of the image or sprite cell. 
 
 `public int colisionLayer`
 
@@ -308,7 +375,7 @@ public class MyClass : GameObject {
 }
 ``` 
 
-When `Renderer` loops over each `GameObject`, it automatically handles the progression of each animation. As mentioned above, the value of `currentFrame` will be updated during each game loop to reflect the animation's current position. The same applys to `spriteClip`.
+When `Renderer`'s `Draw` method loops over each `GameObject`, it automatically handles the progression of its animation. As mentioned above, the value of `currentFrame` will be updated during each game loop to reflect the animation's current position. The same applys to `spriteClip`.
 
 ## Using a `GameObject`'s `currentFrame`
 
@@ -346,115 +413,65 @@ public class MyClass : GameObject {
 
 It is certainly possible to use a spritesheet that contains cells of different sizes. For this, use `spriteClip` to specify a rectangle on the sheet to display.
 
-## Removing a `GameObject` from the `Renderer`
-
-`public void removeFromRenderer()`
-
-```c#
-public class MyClass : GameObject {
-  int hp = 10;
-
-  public MyClass() {}
-
-  public override void load(ContentManager content){
-    setSpriteSheet(TextureLoader.Load("mysheet.png", content), 4, 4);
-  }
-
-  public void takeDamage() {
-    hp--;
-
-    if (hp == 0) {
-      removeFromRenderer()
-    }
-  }
-}
-```
-
-
 ## `GameObject` collision
 
 TODO
 
+# The `FontLib` class
 
-# `Settings` Examples
+`public FontLib(string fontPath, GraphicsDevice graphics)`
 
-_The `Settings` class is loosely modelled after the concept of reducers in Redux and other state management tools. The `Settings` class itself is just an abstract class with a virtual `reducer()` function and a public `dispatch()` method that invokes this reducer, and contains no data to manage out of the box. The class that derrives from `Settings` should bring in or define whatever data it wants to manage, and override the `reducer()` with whatever logic needed. Then, other classes that want to manipulate this data can call the `dispatch()` method._
+_Used to create fonts for a specific font file. For now, ttf files are sourced from the client game folder's `content` directory._
 
-Below is a simple example of how `Renderer` manages its settings.
 ```c#
-namespace Engine {
-  public static class SettingTypes {
-    public const string MENU_OPEN = "MENU_OPEN";
-    public const string MENU_CLOSE = "MENU_CLOSE";
-    public const string MENU_CLICK = "MENU_CLICK";
-  }
-
-  public sealed class EngineSettings : Settings {
-    // Here, we say that we want EngineSettings to manage our Renderer,
-    // but any data can be put here, such as game scores, lives,
-    // game volume, etc...
-    private Renderer renderer;
-
-    public EngineSettings(Renderer renderer) {
-      this.renderer = renderer;
-    }
-
-    protected override void reducer(string action, object payload) {
-      switch (action) {
-        case SettingTypes.MENU_CLICK:
-          Console.WriteLine("in update thing");
-          break;
-        case SettingTypes.MENU_OPEN:
-          Console.WriteLine("in opem");
-          renderer.IsMouseVisible = true;
-          break;
-        case SettingTypes.MENU_CLOSE:
-          Console.WriteLine("in close");
-          renderer.IsMouseVisible = false;
-          break;
-        default:
-          Console.WriteLine("in default");
-          break;
-      }
-    }
-  }
-}
+FontLib FontLibrary = new FontLib("path/to/my/font", GraphicsDevice);
+Font FontReg = FontLibrary.CreateFont(20);
+Font FontLarge = FontLibrary.CreateFont(50);
 ```
 
-Now we can define a consumer or subscriber to these settings. This example uses the common `Menu` class, which is explained in more detail later on.
+# The `Font` class
+
+TLDR: To draw text with a `TextObject`, you must supply a `Font`, which is made from a `FontLib` and a specific point size.
+
+`Font`s are used as a cache for textures created from a `FontLib` at a particular point size. The first time we need a character, the `Font` will generate a texture for it, and use metrics from the `FontLib` to specify how it should be placed when drawing to the screen. 
+
+__
+
+# The `TextObject` class
+
+`Public TextObject : Node`
+
+_`TextObject`s are special nodes use for drawing text to the screen. When drawn, the text is rendered_
+
+## Vars
+
+`public Font Font`
+
+The `Font` property just calls `SetText` when set.
+
+`public string Text`
+
+`public VerticalAlignment VerticalAlignment = VerticalAlignment.NONE`
+
+Uses the `VerticalAlignment` enum:
+
 ```c#
-namespace Engine {
-  public sealed class PauseMenu : Menu {
-    public PauseMenu(Renderer p) : base(p, 0, 0, 100, 100) { }
-
-    public override void init() {
-      // The Element and Menu classes are designed to dispatch actions out of the box.
-      // All we need to do is let the Element know what action to dispatch.
-      Element e = new Element(this);
-      e.message = SettingTypes.MENU_CLICK;
-      addElement(e);
-
-      base.init();
-
-      // When we finish setting up out menu, we can let the settings know
-      // by dispatching an event.
-      dispatch(SettingTypes.MENU_OPEN);
-    }
-
-    public override void close() {
-      dispatch(SettingTypes.MENU_CLOSE);
-      base.close();
-    }
+public enum VerticalAlignment {
+    NONE,
+    TOP,
+    CENTER
   }
-}
 ```
 
-Finally, we should actually hook up our menu to the `Settings` store. Below is an example from within a `Renderer`.
-```c#
-pauseMenu = new PauseMenu(this);
-pauseMenu.dispatch = engineSettings.dispatch;
-pauseMenu.init();
-```
+`public Color Color = Color.White`
+
+## Methods
+
+`public TextObject(Font font = null, int x = 0, int y = 0, string text = null)`
+
+If the provided `Font` is null, the default system font will be used.
+
+`public void SetText(string t)`
 
 # `Animation` Examples
 

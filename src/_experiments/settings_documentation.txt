@@ -1,0 +1,79 @@
+# `Settings` Examples
+
+_The `Settings` class is loosely modelled after the concept of reducers in Redux and other state management tools. The `Settings` class itself is just an abstract class with a virtual `reducer()` function and a public `dispatch()` method that invokes this reducer, and contains no data to manage out of the box. The class that derrives from `Settings` should bring in or define whatever data it wants to manage, and override the `reducer()` with whatever logic needed. Then, other classes that want to manipulate this data can call the `dispatch()` method._
+
+Below is a simple example of how `Renderer` manages its settings.
+```c#
+namespace Engine {
+  public static class SettingTypes {
+    public const string MENU_OPEN = "MENU_OPEN";
+    public const string MENU_CLOSE = "MENU_CLOSE";
+    public const string MENU_CLICK = "MENU_CLICK";
+  }
+
+  public sealed class EngineSettings : Settings {
+    // Here, we say that we want EngineSettings to manage our Renderer,
+    // but any data can be put here, such as game scores, lives,
+    // game volume, etc...
+    private Renderer renderer;
+
+    public EngineSettings(Renderer renderer) {
+      this.renderer = renderer;
+    }
+
+    protected override void reducer(string action, object payload) {
+      switch (action) {
+        case SettingTypes.MENU_CLICK:
+          Console.WriteLine("in update thing");
+          break;
+        case SettingTypes.MENU_OPEN:
+          Console.WriteLine("in opem");
+          renderer.IsMouseVisible = true;
+          break;
+        case SettingTypes.MENU_CLOSE:
+          Console.WriteLine("in close");
+          renderer.IsMouseVisible = false;
+          break;
+        default:
+          Console.WriteLine("in default");
+          break;
+      }
+    }
+  }
+}
+```
+
+Now we can define a consumer or subscriber to these settings. This example uses the common `Menu` class, which is explained in more detail later on.
+```c#
+namespace Engine {
+  public sealed class PauseMenu : Menu {
+    public PauseMenu(Renderer p) : base(p, 0, 0, 100, 100) { }
+
+    public override void init() {
+      // The Element and Menu classes are designed to dispatch actions out of the box.
+      // All we need to do is let the Element know what action to dispatch.
+      Element e = new Element(this);
+      e.message = SettingTypes.MENU_CLICK;
+      addElement(e);
+
+      base.init();
+
+      // When we finish setting up out menu, we can let the settings know
+      // by dispatching an event.
+      dispatch(SettingTypes.MENU_OPEN);
+    }
+
+    public override void close() {
+      dispatch(SettingTypes.MENU_CLOSE);
+      base.close();
+    }
+  }
+}
+```
+
+Finally, we should actually hook up our menu to the `Settings` store. Below is an example from within a `Renderer`.
+```c#
+pauseMenu = new PauseMenu(this);
+pauseMenu.dispatch = engineSettings.dispatch;
+pauseMenu.init();
+```

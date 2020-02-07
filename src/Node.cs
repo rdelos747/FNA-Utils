@@ -40,7 +40,8 @@ namespace Engine {
       }
       set {
         _origin = value;
-        _bounds = new Rectangle((int)-_origin.X, (int)-_origin.Y, _bounds.Width, _bounds.Height);
+        //_bounds = new Rectangle((int)-_origin.X, (int)-_origin.Y, _bounds.Width, _bounds.Height);
+        _bounds = new Rectangle((int)-(_origin.X / 2), (int)-(_origin.Y / 2), _bounds.Width, _bounds.Height);
       }
     }
 
@@ -52,7 +53,7 @@ namespace Engine {
       }
       set {
         _bounds = value;
-        _origin = new Vector2(-_bounds.X, -_bounds.Y);
+        _origin = new Vector2(-(_bounds.X * 2), -(_bounds.Y * 2));
       }
     }
     public bool ShowBounds = false;
@@ -87,19 +88,20 @@ namespace Engine {
     }
 
     public virtual void Draw(SpriteBatch spriteBatch, float lastX, float lastY) {
-      float worldX = lastX + X;
-      float worldY = lastY + Y;
+      float relativeX = lastX + X;
+      float relativeY = lastY + Y;
 
       if (!_bounds.IsEmpty && ShowBounds) {
         spriteBatch.Draw(
           Renderer.systemRect,
-          new Rectangle((int)(worldX + _bounds.X), (int)(worldY + _bounds.Y), _bounds.Width, _bounds.Height),
+          new Rectangle((int)(relativeX + _bounds.X), (int)(relativeY + _bounds.Y), _bounds.Width, _bounds.Height),
+          //new Rectangle((int)(relativeX) - _bounds.X, (int)(relativeY) - _bounds.Y, _bounds.Width, _bounds.Height),
           BoundsColor * BoundsAlpha
         );
       }
       for (int i = 0; i < _nodes.Count; i++) {
         Node n = _nodes[i];
-        n.Draw(spriteBatch, worldX, worldY);
+        n.Draw(spriteBatch, relativeX, relativeY);
       }
     }
 

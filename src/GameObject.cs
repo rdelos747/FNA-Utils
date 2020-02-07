@@ -18,7 +18,6 @@ namespace Engine {
     public int spriteHeight { get; private set; }
 
     protected Rectangle spriteClip;
-    protected Vector2 center = Vector2.Zero;
     public float spriteRotation = 0f;
     public float spriteScale = 1f;
 
@@ -65,7 +64,7 @@ namespace Engine {
     //   initializeSpriteDimensions();
     // }
 
-    public override void Draw(SpriteBatch spriteBatch, float lastX, float lastY) { // should this be virtual
+    public override void Draw(SpriteBatch spriteBatch, float lastX, float lastY) {
       Vector2 position = new Vector2(lastX + X, lastY + Y);
       if (IsHidden) return;
 
@@ -76,7 +75,7 @@ namespace Engine {
           spriteClip,
           drawColor,
           spriteRotation,
-          center,
+          Origin,
           spriteScale,
           SpriteEffects.None,
           layerDepth
