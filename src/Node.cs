@@ -32,18 +32,18 @@ namespace Engine {
     public float X;
     public float Y;
 
-    // Origin Stuff
-    private Vector2 _origin = new Vector2();
-    public Vector2 Origin {
-      get {
-        return _origin;
-      }
-      set {
-        _origin = value;
-        //_bounds = new Rectangle((int)-_origin.X, (int)-_origin.Y, _bounds.Width, _bounds.Height);
-        _bounds = new Rectangle((int)-(_origin.X / 2), (int)-(_origin.Y / 2), _bounds.Width, _bounds.Height);
-      }
-    }
+    // // Origin Stuff
+    // private Vector2 _origin = new Vector2();
+    // public Vector2 Origin {
+    //   get {
+    //     return _origin;
+    //   }
+    //   set {
+    //     _origin = value;
+    //     //_bounds = new Rectangle((int)-_origin.X, (int)-_origin.Y, _bounds.Width, _bounds.Height);
+    //     //_bounds = new Rectangle((int)-(_origin.X / 2), (int)-(_origin.Y / 2), _bounds.Width, _bounds.Height);
+    //   }
+    // }
 
     // Bounds stuff
     private Rectangle _bounds = new Rectangle();
@@ -53,13 +53,15 @@ namespace Engine {
       }
       set {
         _bounds = value;
-        _origin = new Vector2(-(_bounds.X * 2), -(_bounds.Y * 2));
+        //_origin = new Vector2(-(_bounds.X * 2), -(_bounds.Y * 2));
       }
     }
     public bool ShowBounds = false;
     public Color BoundsColor = Color.Blue;
     public float BoundsAlpha = 0.5f;
     public bool IsHidden = false;
+
+    public bool ShowCenter = false;
 
     public Node() { }
 
@@ -95,10 +97,26 @@ namespace Engine {
         spriteBatch.Draw(
           Renderer.systemRect,
           new Rectangle((int)(relativeX + _bounds.X), (int)(relativeY + _bounds.Y), _bounds.Width, _bounds.Height),
-          //new Rectangle((int)(relativeX) - _bounds.X, (int)(relativeY) - _bounds.Y, _bounds.Width, _bounds.Height),
-          BoundsColor * BoundsAlpha
+        //new Rectangle((int)(relativeX) - _bounds.X, (int)(relativeY) - _bounds.Y, _bounds.Width, _bounds.Height),
+        // new Rectangle(
+        //   (int)(relativeX - (_bounds.Width / 2)),
+        //   (int)(relativeY - (_bounds.Height / 2)),
+        //   _bounds.Width,
+        //   _bounds.Height
+        // ),
+        BoundsColor * BoundsAlpha
         );
       }
+
+      // for position debugging
+      if (ShowCenter) {
+        spriteBatch.Draw(
+          Renderer.systemRect,
+          new Rectangle((int)(relativeX), (int)(relativeY), 2, 2),
+          Color.Red
+        );
+      }
+
       for (int i = 0; i < _nodes.Count; i++) {
         Node n = _nodes[i];
         n.Draw(spriteBatch, relativeX, relativeY);

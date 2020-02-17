@@ -1,23 +1,30 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
 
 namespace Engine {
 
-  public sealed class Button : Element {
+  public sealed class KeySwitcher : Element {
 
     public Action OnClick;
 
-    public Button(Font font = null) : base(font) {
+    public TextObject KeyLabel;
+
+    public KeySwitcher(string key, Font font = null) : base(font) {
       ShowBounds = true;
       IsSelectable = true;
 
       Bounds = new Rectangle(0, -(EngineDefaults.ButtonHeight / 2), EngineDefaults.ButtonWidth, EngineDefaults.ButtonHeight);
+      Label.Text = key;
       Label.VerticalAlignment = VerticalAlignment.CENTER;
 
       ShowCenter = true;
+
+      KeyLabel = new TextObject(font);
+      KeyLabel.VerticalAlignment = VerticalAlignment.CENTER;
+      KeyLabel.Text = Input.KeyAsText(key);
+      KeyLabel.X = 200;
+
+      AddChild(KeyLabel);
     }
 
     public override void SetSelected() {
@@ -32,20 +39,6 @@ namespace Engine {
       BoundsColor = BackgroundColor;
       BoundsAlpha = BackgroundAlpha;
       Label.Color = TextColor;
-    }
-
-    public override void Update(float mouseX, float mouseY) {
-      if (OnClick != null) {
-        if (Input.MouseLeftClicked() && pointInBounds(mouseX, mouseY)) {
-          OnClick();
-        }
-
-        if (Input.KeyPressed(EngineDefaults.keyPrimary) && Selected) {
-          OnClick();
-        }
-      }
-
-      base.Update(mouseX, mouseY);
     }
   }
 }

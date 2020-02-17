@@ -8,7 +8,6 @@ using SharpFont;
 namespace Engine {
 
   public enum VerticalAlignment {
-    NONE,
     TOP,
     CENTER
   }
@@ -42,7 +41,23 @@ namespace Engine {
       }
     }
 
-    public VerticalAlignment VerticalAlignment = VerticalAlignment.NONE;
+    protected Vector2 TextOrigin = new Vector2();
+    private VerticalAlignment _verticalAlignment;
+    //public VerticalAlignment VerticalAlignment = VerticalAlignment.TOP;
+    public VerticalAlignment VerticalAlignment {
+      get {
+        return _verticalAlignment;
+      }
+      set {
+        _verticalAlignment = value;
+
+        Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
+
+        if (_text != null) {
+          SetText(_text);
+        }
+      }
+    }
 
     public Color Color = Color.White;
 
@@ -80,8 +95,10 @@ namespace Engine {
         spriteBatch.Draw(
           glyph.texture,
           new Vector2(
-            (Points[i].Item2.X + position.X) - Origin.X,
-            (Points[i].Item2.Y + position.Y) - Origin.Y
+            (Points[i].Item2.X + position.X) - TextOrigin.X,
+            (Points[i].Item2.Y + position.Y) - TextOrigin.Y
+          // (Points[i].Item2.X + position.X) - Bounds.X,
+          // (Points[i].Item2.Y + position.Y) - Bounds.Y
           ),
           new Rectangle(0, 0, glyph.width, glyph.height),
           Color
@@ -141,13 +158,13 @@ namespace Engine {
         maxHeight = Math.Max(maxHeight, py + glyph.height);
       }
 
-      Bounds = new Rectangle(Bounds.X, Bounds.Y, maxWidth, maxHeight);
+      Bounds = new Rectangle(0, 0, maxWidth, maxHeight);
 
-      if (VerticalAlignment == VerticalAlignment.CENTER) {
-        Origin = new Vector2(0, Bounds.Height / 2);
+      if (_verticalAlignment == VerticalAlignment.CENTER) {
+        TextOrigin = new Vector2(0, Bounds.Height / 2);
       }
-      else if (VerticalAlignment == VerticalAlignment.TOP) {
-        Origin = new Vector2(0, 0);
+      else if (_verticalAlignment == VerticalAlignment.TOP) {
+        TextOrigin = new Vector2(0, 0);
       }
     }
   }

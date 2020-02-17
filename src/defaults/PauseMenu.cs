@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace Engine {
@@ -11,14 +12,20 @@ namespace Engine {
   public sealed class PauseMenu : Element {
     private Renderer Renderer;
 
+    private string CurrentPageName = PauseMenuPage.Home;
+
     private Element CurrentPage;
     private Element Title;
     private Element SubTitle;
 
-    const int MENU_LEFT = 50;
-    const int MENU_TOP = 200;
-    const int TITLE_MARGIN = EngineDefaults.fontSizeLarge;
-    const int SUB_TITLE_MARGIN = 75;
+    const int TITLE_Y_MARGIN = EngineDefaults.fontSizeLarge;
+    const int SUB_TITLE_Y_MARGIN = 75;
+
+    private Dictionary<string, int> IndexStore = new Dictionary<string, int>() {
+      {PauseMenuPage.Home, 0},
+      {PauseMenuPage.Settings, 0},
+      {PauseMenuPage.Controls, 0}
+    };
 
     public PauseMenu(Renderer renderer) {
       Renderer = renderer;
@@ -29,19 +36,16 @@ namespace Engine {
       BoundsColor = EngineDefaults.PauseMenuBackground;
       BoundsAlpha = EngineDefaults.PauseMenuAlpha;
 
-      LeftOffset = MENU_LEFT;
-      TopOffset = MENU_TOP;
-
-      Title = new Element();
-      Title.Label.Font = EngineDefaults.SystemFontLarge;
-      Title.Label.Text = "Menu";
-      AddChildAsElement(Title, 0, 0);
+      X = EngineDefaults.MenuLeft;
+      Y = EngineDefaults.MenuTop;
+      Label.Font = EngineDefaults.SystemFontLarge;
+      Label.Text = "Menu";
 
       SubTitle = new Element();
       SubTitle.Label.Text = PauseMenuPage.Home;
-      AddChildAsElement(SubTitle, 0, TITLE_MARGIN);
+      AddChildAsElement(SubTitle, 0, TITLE_Y_MARGIN);
 
-      TopOffset += SUB_TITLE_MARGIN;
+      TopOffset += SUB_TITLE_Y_MARGIN;
 
       SetPage(PauseMenuPage.Home);
 
@@ -50,21 +54,24 @@ namespace Engine {
 
     public void SetPage(String page) {
       if (CurrentPage != null) {
+        IndexStore[CurrentPageName] = CurrentPage.CurrentSelectedChildIndex;
         CurrentPage.RemoveFromParent();
       }
 
+      CurrentPageName = page;
       SubTitle.Label.Text = page;
 
+      int idx = IndexStore[page];
       if (page == PauseMenuPage.Home) {
-        CurrentPage = new PauseMenuHome(SetPage, CloseMenu, ExitGame);
+        CurrentPage = new PauseMenuHome(idx, SetPage, CloseMenu, ExitGame);
         AddChildAsElement(CurrentPage, 0, 0);
       }
       else if (page == PauseMenuPage.Settings) {
-        CurrentPage = new PauseMenuSettings(SetPage);
+        CurrentPage = new PauseMenuSettings(idx, SetPage);
         AddChildAsElement(CurrentPage, 0, 0);
       }
       else if (page == PauseMenuPage.Controls) {
-        CurrentPage = new PauseMenuControls(SetPage);
+        CurrentPage = new PauseMenuControls(idx, SetPage);
         AddChildAsElement(CurrentPage, 0, 0);
       }
     }
@@ -86,13 +93,12 @@ namespace Engine {
 
 
   public sealed class PauseMenuHome : Element {
-    //private Renderer Renderer;
-
     const int BTN_MARGIN = 50;
 
     private Action CloseMenu;
 
-    public PauseMenuHome(Action<String> setPage, Action closeMenu, Action exitGame) {
+    public PauseMenuHome(int startIndex, Action<String> setPage, Action closeMenu, Action exitGame) {
+      CurrentSelectedChildIndex = startIndex;
       CloseMenu = closeMenu;
 
       Button resumeButton = new Button();
@@ -116,7 +122,7 @@ namespace Engine {
     }
 
     public override void Update(float mouseX, float mouseY) {
-      if (Input.keyPressed(EngineDefaults.keySecondary)) {
+      if (Input.KeyPressed(EngineDefaults.keySecondary)) {
         CloseMenu();
       }
 
@@ -128,13 +134,20 @@ namespace Engine {
     const int BTN_MARGIN = 50;
     private Action<string> SetPage;
 
-    public PauseMenuSettings(Action<String> setPage) {
+    public PauseMenuSettings(int startIndex, Action<String> setPage) {
+      CurrentSelectedChildIndex = startIndex;
+
       SetPage = setPage;
+
+      Button testButton = new Button();
+      testButton.OnClick = () => { setPage(PauseMenuPage.Controls); };
+      testButton.Label.Text = "test";
+      AddChildAsElement(testButton, 0, 0);
 
       Button controlsButton = new Button();
       controlsButton.OnClick = () => { setPage(PauseMenuPage.Controls); };
       controlsButton.Label.Text = "Controls";
-      AddChildAsElement(controlsButton, 0, 0);
+      AddChildAsElement(controlsButton, 0, BTN_MARGIN);
 
       Button cancelButton = new Button();
       cancelButton.OnClick = () => { setPage(PauseMenuPage.Home); };
@@ -143,7 +156,7 @@ namespace Engine {
     }
 
     public override void Update(float mouseX, float mouseY) {
-      if (Input.keyPressed(EngineDefaults.keySecondary)) {
+      if (Input.KeyPressed(EngineDefaults.keySecondary)) {
         SetPage(PauseMenuPage.Home);
       }
 
@@ -154,23 +167,32 @@ namespace Engine {
   public sealed class PauseMenuControls : Element {
     const int BTN_MARGIN = 50;
     private Action<string> SetPage;
+    private List<KeySwitcher> KeySwitchers;
 
-    public PauseMenuControls(Action<String> setPage) {
+    public PauseMenuControls(int startIndex, Action<String> setPage) {
+      CurrentSelectedChildIndex = startIndex;
+
       SetPage = setPage;
 
-      // Button controlsButton = new Button();
-      // controlsButton.OnClick = () => { setPage(PauseMenuPage.Home); };
-      // controlsButton.Label.Text = "Controls";
-      // AddChildAsElement(controlsButton, 0, 0);
+
+
+      // KeySwitcher test = new KeySwitcher(EngineDefaults.keyPrimary);
+      // AddChildAsElement(test, 0, 0);
 
       Button cancelButton = new Button();
       cancelButton.OnClick = () => { setPage(PauseMenuPage.Settings); };
       cancelButton.Label.Text = "Cancel";
-      AddChildAsElement(cancelButton, 0, BTN_MARGIN);
+      AddChildAsElement(cancelButton, 0, 0);
+
+      foreach (string key in Input.InputMap.Keys) {
+        KeySwitcher k = new KeySwitcher(key);
+
+        AddChildAsElement(k, 0, BTN_MARGIN);
+      }
     }
 
     public override void Update(float mouseX, float mouseY) {
-      if (Input.keyPressed(EngineDefaults.keySecondary)) {
+      if (Input.KeyPressed(EngineDefaults.keySecondary)) {
         SetPage(PauseMenuPage.Settings);
       }
 

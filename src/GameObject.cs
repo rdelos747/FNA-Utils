@@ -14,6 +14,7 @@ namespace Engine {
 
     protected int imageWidth { get; private set; }
     protected int imageHeight { get; private set; }
+    protected Vector2 ImageOrigin = new Vector2();
     public int spriteWidth { get; private set; }
     public int spriteHeight { get; private set; }
 
@@ -66,6 +67,7 @@ namespace Engine {
 
     public override void Draw(SpriteBatch spriteBatch, float lastX, float lastY) {
       Vector2 position = new Vector2(lastX + X, lastY + Y);
+      //Vector2 center = new Vector2(Bounds.X, Bounds.Y);
       if (IsHidden) return;
 
       if (image != null) {
@@ -75,7 +77,7 @@ namespace Engine {
           spriteClip,
           drawColor,
           spriteRotation,
-          Origin,
+          ImageOrigin,
           spriteScale,
           SpriteEffects.None,
           layerDepth

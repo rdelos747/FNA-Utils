@@ -35,6 +35,7 @@
 
 		<Compile Include="src/common/menu/Button.cs" />
 		<Compile Include="src/common/menu/Element.cs" />
+		<Compile Include="src/common/menu/KeySwitcher.cs" />
 
 		<Compile Include="src/defaults/EngineDefaults.cs" />
 		<!-- <Compile Include="src/defaults/EngineSettings.cs" /> -->

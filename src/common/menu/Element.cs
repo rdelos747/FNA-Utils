@@ -18,7 +18,7 @@ namespace Engine {
     private int SelectIndex = -1;
 
     private int NumSelectableChildren = 0;
-    private int CurrentSelectedChildIndex = 0;
+    public int CurrentSelectedChildIndex { get; protected set; } = 0;
 
     public int TopOffset = 0;
     public int LeftOffset = 0;
@@ -32,22 +32,23 @@ namespace Engine {
 
     public TextObject Label;
 
-    public Element(int x = 0, int y = 0, int w = 0, int h = 0, Font font = null) {
-      X = x;
-      Y = y;
-      Bounds = new Rectangle(0, 0, w, h);
+    public Element(Font font = null) {
+      //X = x;
+      //Y = y;
+
+      //Bounds = new Rectangle(0, 0, w, h);
       BoundsAlpha = 1f;
 
       Label = new TextObject(font);
-      Label.X = EngineDefaults.ElementTextPad;
-      Label.Y = Bounds.Height / 2;
-      Label.VerticalAlignment = VerticalAlignment.CENTER;
+      //Label.X = EngineDefaults.ElementTextPad;
+      //Label.Y = Bounds.Height / 2;
+      //Label.VerticalAlignment = VerticalAlignment.CENTER;
       AddChild(Label);
     }
 
     public virtual void Update(float mouseX, float mouseY) {
       // handle selection by mouse click
-      if (IsSelectable && Input.mouseLeftClicked() && pointInBounds(mouseX, mouseY)) {
+      if (IsSelectable && Input.MouseLeftClicked() && pointInBounds(mouseX, mouseY)) {
         Element parent = Parent as Element;
         if (parent != null) {
           parent.UnselectAllChildren();
@@ -57,16 +58,16 @@ namespace Engine {
 
       // handle child selection index by arrow keys
       if (NumSelectableChildren > 0) {
-        if (Input.keyPressed(EngineDefaults.keyDown)) {
+        if (Input.KeyPressed(EngineDefaults.keyDown)) {
           CurrentSelectedChildIndex++;
-          if (CurrentSelectedChildIndex == NumSelectableChildren) {
+          if (CurrentSelectedChildIndex >= NumSelectableChildren) {
             CurrentSelectedChildIndex = 0;
           }
         }
 
-        if (Input.keyPressed(EngineDefaults.keyUp)) {
+        if (Input.KeyPressed(EngineDefaults.keyUp)) {
           CurrentSelectedChildIndex--;
-          if (CurrentSelectedChildIndex == -1) {
+          if (CurrentSelectedChildIndex <= -1) {
             CurrentSelectedChildIndex = NumSelectableChildren - 1;
           }
         }
@@ -94,8 +95,6 @@ namespace Engine {
         }
       }
     }
-
-    public virtual void Init() { }
 
     public virtual void SetSelected() { }
     public virtual void SetUnselected() { }

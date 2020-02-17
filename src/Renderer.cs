@@ -19,7 +19,7 @@ namespace Engine {
     protected GraphicsDeviceManager graphics;
     protected SpriteBatch spriteBatch;
     //protected EngineSettings engineSettings;
-    protected Element pauseMenu;
+    //protected Element pauseMenu;
 
     private Node root;
 
@@ -28,7 +28,12 @@ namespace Engine {
 
     public Renderer() {
       //engineSettings = new EngineSettings(this);
-      Input.setInputMap(EngineDefaults.inputMap);
+
+
+      /*
+        move this to user space, this shouldn't be here
+      */
+      Input.SetInputMap(EngineDefaults.inputMap);
 
       graphics = new GraphicsDeviceManager(this);
       Content.RootDirectory = "Content";
@@ -73,19 +78,29 @@ namespace Engine {
 
     override protected void Update(GameTime gameTime) {
       Input.update();
-      defaultUpdate();
+
+      /*
+        move this to user space, this shouldn't be here
+      */
+      //defaultUpdate();
+      UpdateGame(gameTime);
 
       if (engineState == EngineState.QUIT) {
         this.Exit();
       }
 
-      if (engineState == EngineState.RUNNING) {
-        updateGame(gameTime);
-      }
+      // if (engineState == EngineState.RUNNING) {
+      //   UpdateGame(gameTime);
+      // }
+      // else if (engineState == EngineState.PAUSED) {
+      //   UpdatePause(gameTime);
+      // }
       base.Update(gameTime);
     }
 
-    protected virtual void updateGame(GameTime gameTime) { }
+    protected virtual void UpdateGame(GameTime gameTime) { }
+
+    // protected virtual void UpdatePause(GameTime gameTime) { }
 
     override protected void Draw(GameTime gameTime) {
 
@@ -108,26 +123,29 @@ namespace Engine {
       base.Draw(gameTime);
     }
 
-    private void defaultUpdate() {
-      if (Input.keyPressed(EngineDefaults.keyPause)) {
-        if (engineState == EngineState.PAUSED) {
-          engineState = EngineState.RUNNING;
-          pauseMenu.RemoveFromParent();
-        }
-        else if (engineState == EngineState.RUNNING) {
-          engineState = EngineState.PAUSED;
-          pauseMenu = new PauseMenu(this);
-        }
-      }
+    /*
+      move this to user space, this shouldn't be here
+    */
+    // private void defaultUpdate() {
+    //   if (Input.KeyPressed(EngineDefaults.keyPause)) {
+    //     if (engineState == EngineState.PAUSED) {
+    //       engineState = EngineState.RUNNING;
+    //       pauseMenu.RemoveFromParent();
+    //     }
+    //     else if (engineState == EngineState.RUNNING) {
+    //       engineState = EngineState.PAUSED;
+    //       pauseMenu = new PauseMenu(this);
+    //     }
+    //   }
 
-      if (Input.keyPressed(EngineDefaults.keyQuit)) {
-        engineState = EngineState.QUIT;
-      }
+    //   if (Input.KeyPressed(EngineDefaults.keyQuit)) {
+    //     engineState = EngineState.QUIT;
+    //   }
 
-      if (pauseMenu != null) {
-        pauseMenu.Update(Input.mouseX, Input.mouseY);
-      }
-    }
+    //   if (pauseMenu != null) {
+    //     pauseMenu.Update(Input.MouseX, Input.MouseY);
+    //   }
+    // }
 
     public void AddChildToRoot(Node n) {
       root.AddChild(n);

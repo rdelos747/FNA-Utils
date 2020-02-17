@@ -34,10 +34,13 @@ namespace Engine {
     public static readonly Color ButtonTextColor = Color.White;
     public static readonly Color ButtonTextSelectedColor = Color.White;
 
+    public const int MenuTop = 200;
+    public const int MenuLeft = 50;
+
     public const string keyPrimary = "primary";
     public const string keySecondary = "secondary";
-    public const string keyPause = "engine_pause";
-    public const string keyQuit = "engine_quit";
+    public const string keyPause = "pause";
+    public const string keyQuit = "quit";
     public const string keyUp = "up";
     public const string keyDown = "down";
     public const string keyLeft = "left";

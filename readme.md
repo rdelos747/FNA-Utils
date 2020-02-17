@@ -78,6 +78,8 @@ _Every frame, `Renderer` will loop over all `Nodes` added via `addChild()` and c
 
 # `Renderer` Examples
 
+`public class Renderer : Game`
+
 ## Creating a game with `Renderer`
 
 ```c#
@@ -180,33 +182,28 @@ Renderer automatically initializes `Input.inputMap` with default values found in
 
 
 # The `Node` class
+
+`public class Node : IDisposable`
+
 _The `Node` class is the engine's basic drawable object, and is the base class for other objects such as `GameObject` and `TextObject`. A `Node` on its own, however, will not render anything to the screen, but instead can be thought of as a parent for other object. Children added to a node will respect its relative coordiate system and bounds._
 
-## Members
+## Vars
 
 `public float X`
 
-The X coordinate of the node within its parent;
+- The X coordinate of the node within its parent;
 
 `public float Y`
 
-The Y coordinate of the node within its parent;
-
-`public Vector2 Origin`
-
-The offset within a `Node`'s bounds to place `X` and `Y`.
-
-When `Origin` is set, `Bounds.X` is automatically set to `-(Origin.X/2)`, and `Bounds.Y` is set to `-(Origin.Y/2)`. 
+- The Y coordinate of the node within its parent;
 
 `public Rectangle Bounds`
 
-The bounding box around a `Node`'s `X` and `Y`. `Bounds.X` and `Bounds.Y` represent the distance that the `Bounds`'s top left corner is from `X` and `Y`.
-
-In most cases, it is sufficient to set _either_ `Bounds` or `Origin`, but not both. 
+- The bounding box around a `Node's` `X` and `Y`. `Bounds.X` and `Bounds.Y` represent the distance that the `Bounds` top left corner is placed from `X` and `Y`.
 
 `public bool ShowBounds = false`
 
-If `true`, the bounding box of a `Node` will be filled in with the color/ alpha specified by `BoundsColor` and `BoundsAlpha`.
+- If `true`, the bounding box of a `Node` will be filled in with the color/ alpha specified by `BoundsColor` and `BoundsAlpha`.
 
 `public Color BoundsColor = Color.Blue`
 
@@ -218,11 +215,11 @@ If `true`, the bounding box of a `Node` will be filled in with the color/ alpha 
 
 `public void AddChild(Node n)`
 
-Adds `Node` _n_ to the current `Node` as a child, iff _n_ does not yet have a parent.
+- Adds `Node` _n_ to the current `Node` as a child, iff _n_ does not yet have a parent.
 
 `public void RemoveFromParent(bool isMe = true)`
 
-Removes the calling `Node` from its parent, and recurrsively removes all children nodes as well. 
+- Removes the calling `Node` from its parent, and recurrsively removes all children nodes as well. 
 
 ## Node Examples
 
@@ -272,7 +269,17 @@ As noted above, we use `Node.addChild(obj)` to add a `GameObject` to an existing
 
 `public readonly int spriteHeight`
 
-_`imageWidth` and `imageHeight` specify the dimensions of the image provided to the `GameObject`. If the image is supplied as a spritesheet (see `setSpriteSheet()` below), `spriteWidth` and `spriteHeight` will be the dimensions of a single cell on the sheet. Otherwise, sprite dimensions will be the same as image dimensions._
+- _`imageWidth` and `imageHeight` specify the dimensions of the image provided to the `GameObject`. If the image is supplied as a spritesheet (see `setSpriteSheet()` below), `spriteWidth` and `spriteHeight` will be the dimensions of a single cell on the sheet. Otherwise, sprite dimensions will be the same as image dimensions._
+
+`protected Vector2 ImageOrigin`
+
+- The offset within a `GameObjects` image to place `X` and `Y`.
+
+- For example, if a `GameObject` is using an image as its sprite that is 64 * 64 pixles, we can place `X` and `Y` in the center of the sprite by doing the following:
+
+```c#
+Origin = new Vector2(32, 32);
+```
 
 
 `public float direction`
@@ -313,7 +320,7 @@ public class Player: GameObject {
 }
 ```
 
-Sets the `GameObject`'s image as a single sprite. Drawing the `GameObject` will display the entire image, unless a `spriteClip` is specified. Changing the values of `GameObject.animation` or `GameObject.currentFrame` will have no effect.
+Sets the `GameObject's` image as a single sprite. Drawing the `GameObject` will display the entire image, unless a `spriteClip` is specified. Changing the values of `GameObject.animation` or `GameObject.currentFrame` will have no effect.
 
 ## Creating a `GameObject` with a sprite sheet
 ```C#
@@ -329,11 +336,11 @@ public class Player: GameObject {
 }
 ```
 
-Sets the `GameObject`'s image as a sprite sheet, cut into a grid specified by cols and rows (in this case, 4 x 4). Choosing this allows for the use of `animation` and `currentFrame` to pick the sprite to display, as well as `spriteClip`.
+Sets the `GameObject's` image as a sprite sheet, cut into a grid specified by cols and rows (in this case, 4 x 4). Choosing this allows for the use of `animation` and `currentFrame` to pick the sprite to display, as well as `spriteClip`.
 
 ## Using a `GameObject`'s sprite sheet
 
-_If a GameObject's image is supplied as a sprite sheet, there are a few ways to specify which frame or section of the sheet to show. The following are specified in order of precidence (if one is set, the ones below are automatically updated to match)._
+_If a `GameObject's` image is supplied as a sprite sheet, there are a few ways to specify which frame or section of the sheet to show. The following are specified in order of precidence (if one is set, the ones below are automatically updated to match)._
 
 1. `protected Animation animation`
 2. `protected int currentFrame`
@@ -343,7 +350,7 @@ _If a GameObject's image is supplied as a sprite sheet, there are a few ways to 
 
 GameObject will automatically run the supplied `animation`, and will display the sprite based on the animation's current frame. `GameObject.currentFrame` will be updated to this value, and `GameObject.spriteClip` will represent the bounds of the sprite on the sheet. User setting either `GameObject.currentFrame` or `GameObject.spriteClip` in this case will have no effect, as these values are computed every frame.
 
-`Animation` is used so that the user can define custom lengths for each frame, rathen than being forced into a linear frame time. Internally, every frame the engine will call the supplied `animation`'s `update(GameTime gameTime)` method, and casts the return value to an int to be used as the `currentFrame`. The `animation`'s `animationType` should be set to `AnimationType.STEP` for the easiest results. 
+`Animation` is used so that the user can define custom lengths for each frame, rathen than being forced into a linear frame time. Internally, every frame the engine will call the supplied `animation's` `update(GameTime gameTime)` method, and casts the return value to an int to be used as the `currentFrame`. The `animation's` `animationType` should be set to `AnimationType.STEP` for the easiest results. 
 
 Below is an example of setting a custom looping frame animation that animates through a sprite sheet's frames 5 through 10.
 ```c#
@@ -375,7 +382,7 @@ public class MyClass : GameObject {
 }
 ``` 
 
-When `Renderer`'s `Draw` method loops over each `GameObject`, it automatically handles the progression of its animation. As mentioned above, the value of `currentFrame` will be updated during each game loop to reflect the animation's current position. The same applys to `spriteClip`.
+When `Renderer's` `Draw` method loops over each `GameObject`, it automatically handles the progression of its animation. As mentioned above, the value of `currentFrame` will be updated during each game loop to reflect the animation's current position. The same applys to `spriteClip`.
 
 ## Using a `GameObject`'s `currentFrame`
 
@@ -419,9 +426,11 @@ TODO
 
 # The `FontLib` class
 
+`public class FontLib`
+
 `public FontLib(string fontPath, GraphicsDevice graphics)`
 
-_Used to create fonts for a specific font file. For now, ttf files are sourced from the client game folder's `content` directory._
+- _Used to create fonts for a specific font file. For now, ttf files are sourced from the client game folder's `content` directory._
 
 ```c#
 FontLib FontLibrary = new FontLib("path/to/my/font", GraphicsDevice);
@@ -431,9 +440,11 @@ Font FontLarge = FontLibrary.CreateFont(50);
 
 # The `Font` class
 
+`public class Font`
+
 TLDR: To draw text with a `TextObject`, you must supply a `Font`, which is made from a `FontLib` and a specific point size.
 
-`Font`s are used as a cache for textures created from a `FontLib` at a particular point size. The first time we need a character, the `Font` will generate a texture for it, and use metrics from the `FontLib` to specify how it should be placed when drawing to the screen. 
+`Fonts` are used as a cache for textures created from a `FontLib` at a particular point size. The first time we need a character, the `Font` will generate a texture for it, and use metrics from the `FontLib` to specify how it should be placed when drawing to the screen. 
 
 __
 
@@ -441,19 +452,21 @@ __
 
 `Public TextObject : Node`
 
-_`TextObject`s are special nodes use for drawing text to the screen. When drawn, the text is rendered_
+_`TextObjects` are special nodes use for drawing text to the screen. When drawn, the text is rendered_
 
 ## Vars
 
 `public Font Font`
 
-The `Font` property just calls `SetText` when set.
+- The `Font` property just calls `SetText` when set.
+
+`protected Vector2 TextOrigin`
 
 `public string Text`
 
 `public VerticalAlignment VerticalAlignment = VerticalAlignment.NONE`
 
-Uses the `VerticalAlignment` enum:
+- Uses the `VerticalAlignment` enum:
 
 ```c#
 public enum VerticalAlignment {
@@ -469,10 +482,203 @@ public enum VerticalAlignment {
 
 `public TextObject(Font font = null, int x = 0, int y = 0, string text = null)`
 
-If the provided `Font` is null, the default system font will be used.
+- If the provided `Font` is null, the default system font will be used.
 
 `public void SetText(string t)`
+
+# The `Element` Class
+
+`public class Element : GameObject`
+
+_`Elements` are special `GameObjects` that assist with building UIs like menus._
+
+## Vars
+
+`public bool Selected = false`
+`public bool IsSelectable = false`
+
+`public int TopOffset = 0`
+
+`public int LeftOffset = 0`
+
+`public Color BackgroundColor = EngineDefaults.ButtonBackgroundColor`
+
+`public float BackgroundAlpha = EngineDefaults.ButtonBackgroundAlpha`
+
+`public Color SelectedColor = EngineDefaults.ButtonSelectedColor`
+
+`public float SelectedAlpha = EngineDefaults.ButtonSelectedAlpha`
+
+`public Color TextColor = EngineDefaults.ButtonTextColor`
+
+`public Color TextSelectedColor = EngineDefaults.ButtonTextSelectedColor`
+
+`public TextObject Label`
+
+## Methods
+
+`public Element(Font font = null)`
+
+- All `Elements` contain one `TextObject` called `Label` to display basic text. It will be rendered in the default engine font unless another is specified.
+
+- By Default, `Elements` are not selectable.
+
+- `Elements` and their derrived classes (`Button`, `KeySwitcher`, etc...) are meant to be added with `AddChildAsElement`, which handles placing `Elements` within their parent. It is for this reason that the `Element` constructor does not take parameters for `X`, `Y`, or other placement related attribute. However, Since `Elements` are derrived from `Node`, it is possible to manually set these attributes if `AddChildAsElement` isn't fit for the situation.
+
+`public virtual void Update(float mouseX, float mouseY)`
+
+- Base version of `Update` handles mouse and keyboard interactions for selecting/ unselecting the `Element` and its direct children. It also loops over all child `Nodes` and calling their `Update` methods. 
+
+`public virtual void SetSelected()`
+
+`public virtual void SetUnselected()`
+
+- These do nothing out of the box, but should be overridden to specifiy selection behavior in the derrived class.
+
+`private void UnselectAllChildren()`
+
+- Sets all child `Nodes` to their unselected state, by calling `SetUnselected()` on each.
+
+`public void AddChildAsElement(Element el, int left, int right)`
+
+- Adds the `Element` normally (calls `AddChild()` internally), and also increments the calling `Element's` `LeftOffset` and `RightOffset` values based on the passed in `left` and `right` params. `el.X` and `el.Y` are set to these updated offset values. 
+
+
+In the example below, we can easily set the location of each button by specifying its offset from the last.
+
+```c#
+public sealed class PauseMenuHome : Element {
+  const int BTN_MARGIN = 50;
+
+    public PauseMenuHome() {
+      Button resumeButton = new Button();
+      resumeButton.Label.Text = "Resume Game";
+      AddChildAsElement(resumeButton, 0, 0);
+
+      Button settingsButton = new Button();
+      settingsButton.Label.Text = "Settings";
+      AddChildAsElement(settingsButton, 0, BTN_MARGIN);
+
+      Button aboutButton = new Button();
+      aboutButton.Label.Text = "About";
+      AddChildAsElement(aboutButton, 0, BTN_MARGIN);
+
+      Button exitButton = new Button();
+      exitButton.Label.Text = "Exit Game";
+      AddChildAsElement(exitButton, 0, BTN_MARGIN);
+    }
+}
+```
+
+# The `Button` Class
+
+`Public Button : Element`
+
+`Buttons` are special `Elements` that are selectable and call an `OnClick` `Action` when clicked.
+
+## Vars
+
+`public Action OnClick`
+
+- The default `Update` method for a `Button` will trigger its `OnClick` callback when clicked, or when it is selected and the primary key is pressed.
+
+- For example, `OnClick` is attached like so:
+
+```c#
+public class PauseMenu : Element {
+
+  public PauseMenu(Renderer renderer) {
+    Renderer.AddChildToRoot(this);
+
+    // create the button element
+    Button resumeButton = new Button();
+
+    // set the buttons OnClick to our callback
+    resumeButton.OnClick = () => { closeMenu(); };
+
+    // give the button some text
+    resumeButton.Label.Text = "Resume Game";
+
+    // add our button to our parent element
+    AddChildAsElement(resumeButton, 0, 0);
+  }
+
+  // our actual method to call, in this case it closes the menu
+  public void CloseMenu() {
+    Renderer.engineState = EngineState.RUNNING;
+    RemoveFromParent();
+  }
+}
+```
+
+## Methods
+
+`public Button(Font font = null) : base(font)`
+
+- The `Button` constructor enables `ShowBounds` and `IsSelectable`.
+
+`public override void SetSelected()`
+
+- Sets `.Selected` to `true`. Sets `.BoundsColor` to `SelectedColor`, as well as `.BoundsAlpha` to `SelectedAlpha`. Also sets `.Label.Color` to `TextSelectedColor`.
+
+`public override void SetUnselected()`
+
+- Sets `.Selected` to `false`, and resets `.BoundsColor` to `BackgroundColor`, `.BoundsAlpha` to `BackgroundAlpha`, and `Label.Color` to `TextColor`.
+
+`public override void Update(float mouseX, float mouseY)`
+
+- If an `OnClick` action has been specified, `Update` will check if either the mouse left click has occured within the `Button's` bounds, or if the `Button` is selected and the primary key is pressed. If so, `OnClick` is called. `Update` concludes by calling the base `Element` `Update` method.
+
+If a `Button` is a child of an `Element`, that `Element` will handle calling the `Button's` lifecycle events (assuming the parent, or some ancestor `Element` has its `.Update` method called). For this reason, you should not need to manually invoke a `Button's` `Update`, `SetSelected`, or `SetUnselected` unless it is used in a situation that `Element` does not support out of the box.
 
 # `Animation` Examples
 
 TODO
+
+
+
+
+
+#
+#
+#
+#
+#
+#
+
+<!--  <<< Template >>> -->
+## Readme API Template
+
+# The `Class` Class
+
+_Description_
+
+Other info
+
+## Vars
+
+`public int VarOne`
+
+- Description about `VarOne`
+
+`public int VarOne`
+
+`protected int VarThree`
+
+## Methods
+
+`public Class(int something)`
+
+- Notes (if any) about the constructor
+
+`protected virtual OverrideMe()`
+
+## Examples
+
+Here is how to do something
+
+```c#
+class Class {
+  // yes
+}
+```
