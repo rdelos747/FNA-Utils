@@ -15,7 +15,6 @@ namespace Engine {
       IsSelectable = true;
 
       Bounds = new Rectangle(0, -(EngineDefaults.ButtonHeight / 2), EngineDefaults.ButtonWidth, EngineDefaults.ButtonHeight);
-      Label.VerticalAlignment = VerticalAlignment.CENTER;
 
       ShowCenter = true;
     }
@@ -40,7 +39,7 @@ namespace Engine {
           OnClick();
         }
 
-        if (Input.KeyPressed(EngineDefaults.keyPrimary) && Selected) {
+        if (Input.KeyPressed(EngineDefaults.KeyPrimary) && Selected) {
           OnClick();
         }
       }

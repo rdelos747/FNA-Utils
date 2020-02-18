@@ -1,5 +1,5 @@
 namespace Engine {
-  public enum EngineState {
+  public enum EngineStates {
     PAUSED,
     QUIT,
     RUNNING

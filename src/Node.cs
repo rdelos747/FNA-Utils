@@ -95,15 +95,8 @@ namespace Engine {
 
       if (!_bounds.IsEmpty && ShowBounds) {
         spriteBatch.Draw(
-          Renderer.systemRect,
+          Renderer.SystemRect,
           new Rectangle((int)(relativeX + _bounds.X), (int)(relativeY + _bounds.Y), _bounds.Width, _bounds.Height),
-        //new Rectangle((int)(relativeX) - _bounds.X, (int)(relativeY) - _bounds.Y, _bounds.Width, _bounds.Height),
-        // new Rectangle(
-        //   (int)(relativeX - (_bounds.Width / 2)),
-        //   (int)(relativeY - (_bounds.Height / 2)),
-        //   _bounds.Width,
-        //   _bounds.Height
-        // ),
         BoundsColor * BoundsAlpha
         );
       }
@@ -111,7 +104,7 @@ namespace Engine {
       // for position debugging
       if (ShowCenter) {
         spriteBatch.Draw(
-          Renderer.systemRect,
+          Renderer.SystemRect,
           new Rectangle((int)(relativeX), (int)(relativeY), 2, 2),
           Color.Red
         );

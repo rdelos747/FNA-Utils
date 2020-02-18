@@ -64,7 +64,7 @@ namespace Engine {
     public TextObject(Font font = null, int x = 0, int y = 0, string text = null) {
       _font = font;
       if (_font == null) {
-        _font = EngineDefaults.SystemFontReg;
+        _font = Renderer.SystemFontLib.CreateFont(EngineDefaults.FontSizeReg);
       }
 
       Bounds = new Rectangle(0, 0, 10, _font.lineHeight);

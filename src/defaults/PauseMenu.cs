@@ -12,14 +12,17 @@ namespace Engine {
   public sealed class PauseMenu : Element {
     private Renderer Renderer;
 
+    private Font FontLarge;
+    private Font FontReg;
+
     private string CurrentPageName = PauseMenuPage.Home;
 
     private Element CurrentPage;
     private Element Title;
     private Element SubTitle;
 
-    const int TITLE_Y_MARGIN = EngineDefaults.fontSizeLarge;
-    const int SUB_TITLE_Y_MARGIN = 75;
+    private int TITLE_Y_MARGIN = EngineDefaults.FontSizeLarge;
+    private int SUB_TITLE_Y_MARGIN = 75;
 
     private Dictionary<string, int> IndexStore = new Dictionary<string, int>() {
       {PauseMenuPage.Home, 0},
@@ -27,9 +30,18 @@ namespace Engine {
       {PauseMenuPage.Controls, 0}
     };
 
-    public PauseMenu(Renderer renderer) {
+    public PauseMenu(Renderer renderer, FontLib fontLib = null) {
       Renderer = renderer;
       Renderer.AddChildToRoot(this);
+
+      if (fontLib != null) {
+        FontReg = fontLib.CreateFont(EngineDefaults.FontSizeReg);
+        FontLarge = fontLib.CreateFont(EngineDefaults.FontSizeLarge);
+      }
+      else {
+        FontReg = Renderer.SystemFontLib.CreateFont(EngineDefaults.FontSizeReg);
+        FontLarge = Renderer.SystemFontLib.CreateFont(EngineDefaults.FontSizeLarge);
+      }
 
       Bounds = new Rectangle(0, 0, Parent.Bounds.Width, Parent.Bounds.Height);
       ShowBounds = true;
@@ -38,10 +50,11 @@ namespace Engine {
 
       X = EngineDefaults.MenuLeft;
       Y = EngineDefaults.MenuTop;
-      Label.Font = EngineDefaults.SystemFontLarge;
+
+      Label.Font = FontLarge;
       Label.Text = "Menu";
 
-      SubTitle = new Element();
+      SubTitle = new Element(FontReg);
       SubTitle.Label.Text = PauseMenuPage.Home;
       AddChildAsElement(SubTitle, 0, TITLE_Y_MARGIN);
 
@@ -82,12 +95,12 @@ namespace Engine {
 
     private void CloseMenu() {
       Renderer.IsMouseVisible = false;
-      Renderer.engineState = EngineState.RUNNING;
+      Renderer.EngineState = EngineStates.RUNNING;
       RemoveFromParent();
     }
 
     private void ExitGame() {
-      Renderer.engineState = EngineState.QUIT;
+      Renderer.EngineState = EngineStates.QUIT;
     }
   }
 
@@ -122,7 +135,7 @@ namespace Engine {
     }
 
     public override void Update(float mouseX, float mouseY) {
-      if (Input.KeyPressed(EngineDefaults.keySecondary)) {
+      if (Input.KeyPressed(EngineDefaults.KeySecondary)) {
         CloseMenu();
       }
 
@@ -156,7 +169,7 @@ namespace Engine {
     }
 
     public override void Update(float mouseX, float mouseY) {
-      if (Input.KeyPressed(EngineDefaults.keySecondary)) {
+      if (Input.KeyPressed(EngineDefaults.KeySecondary)) {
         SetPage(PauseMenuPage.Home);
       }
 
@@ -192,7 +205,7 @@ namespace Engine {
     }
 
     public override void Update(float mouseX, float mouseY) {
-      if (Input.KeyPressed(EngineDefaults.keySecondary)) {
+      if (Input.KeyPressed(EngineDefaults.KeySecondary)) {
         SetPage(PauseMenuPage.Settings);
       }
 

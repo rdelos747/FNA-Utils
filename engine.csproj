@@ -42,6 +42,7 @@
 		<Compile Include="src/defaults/PauseMenu.cs" />
 		
 		<Compile Include="src/utils/Animation.cs" />
+		<Compile Include="src/utils/EngineSettings.cs" />
 		<Compile Include="src/utils/EngineState.cs" />
 		<Compile Include="src/utils/Font.cs" />
 		<Compile Include="src/utils/HexColors.cs" />

@@ -56,21 +56,21 @@ We very new to FNA, monogame, and C# in general.
 
 _The `Renderer` class manages rendering of `Nodes`. The `Renderer` class extends XNA's `Game` class, and mainly takes care of the boilerplate around loading and drawing objects._
 
-_Every frame, `Renderer` will loop over all `Nodes` added via `addChild()` and call their `draw` method. `Renderer` also provides a virtual `updateObjects()` method, but this does nothing about of the box. `updateObjects()` should be overridden in whatever class is derrived from `Renderer`._
+_Every frame, `Renderer` will loop over all `Nodes` added via `addChildToRoot()`, as well as all of those `Nodes'` children added via `AddChild()`, and call their `draw` method. `Renderer` also provides a virtual `updateGame()` method, but this does nothing about of the box. `updateGame()` should be overridden in whatever class is derrived from `Renderer`._
 
 ## Initialization
 
-1. `Renderer` constructor intializes `Input.inputMap` and other default game settings, most of which are located in the `/defaults` directory.
-2. FNA calls `Renderer.initalize()` and `Renderer.loadContent()`. Both are virtual, but generally `loadContent()` is not needed.
-3. `Renderer` is also initialized with a root `Node`. All children added to the Renderer are decendants of this node.
+1. When `Renderer's` constructor is called, a few important XNA attributes are initialized, including the `GraphicsDeviceManager` and the `Content` directory location. 
+2. FNA calls `Renderer.initalize()`. This is virtual, and at the very least, the derrived version must call `base.Initialize()` and pass an instance of `EngineSettings`. Generally, this is also where we do custom game setup, such as declaring our initial game objects. See below for an example.
+3. FNA calls `Renderer.loadContent()`. This is also virtual are virtual, but generally `loadContent()` is not needed in the derrived class space.
 
 ## Game Loop
 
 1. FNA calls `Renderer.Update()`, which is meant to handle behind-the-scenes functions such as refreshing `Input`'s state.
-2. Renderer calls its private `defaultUpdate()` method, which will handle any default functionality that the user has not manually overridden. For example, if the default `inputMap` is still present, or if the user defined `inputMap` contains a key `engine_pause` that is triggered, then `defaultUpdate()` will toggle the `engineState` between `RUNNING` and `PAUSED`. Within `defailtUpdate()` is also code for displaying the default pause menu, or whatever pause menu the user attaches to `Renderer.pauseMenu`.
+2. `Renderer.updateGame()` is called, which should be overridden in the derrived class. This is the starting point for user-defined game updates.
 3. If `Renderer.engineState` is set to `EngineState.QUIT`, the game will exit here.
-4. If `Renderer.engineState` is set to `EngineState.RUNNING`, `Renderer.updateGame()` is called, which should be overridden in the derrived class. This is the starting point for user-defined game updates.
-5. FNA calls `Renderer.Draw()`, which draws every `Node` that has been added so far with `Renderer.addChildToRoot()`. If any of these children have children of their own, it will call their draw methods, and so on.
+4. `base.Update` is called, returning control to FNA.
+5. FNA calls `Renderer.Draw()`, which draws every `Node` that is a descendent of the root `Node`.
 6. Repeat.
 
 
@@ -98,20 +98,25 @@ public class Car : GameObject {
 }
 
 public class Game1 : Renderer {
-    Car car;
+    Car Car;
 
-    public Game1() : base(
-      1280,             // window width
-      720,              // window height
-      Color.Black,      // background color
-      false,            // start full screen
-      true              // allow resize
-    ) { }
+    public Game1() : base() { }
 
     override protected void Initialize() {
-      car = new Car(); 
-      addChildToRoot(car);
-      base.Initialize();
+      // This is where we do the bulk of our setup
+
+      // First, lets use some custom settings.
+      EngineSettings gameSettings = new EngineSettings();
+      gameSettings.SystemFontPath = "./Content/system_font.ttf";
+      gameSettings.AllowResize = false;
+
+      // Now, before we can add anything to our root, we need to
+      // initialize the base with our customSettings.
+      base.Initialize(customSettings);
+
+      // Lastly, lets set up our actual game objects.
+      Car = new Car(); 
+      addChildToRoot(Car);
     }
 
     override protected void updateGame(GameTime gameTime) {
@@ -132,6 +137,39 @@ class Program {
 ```
 
 In the example above, note that we also created a `GameObject` called Car, and used `addChildToRoot()` to add it to our `Renderer`'s root node. 
+
+
+## Using `EngineSettings`
+
+`EngineSettings` is a class that encapsulates all settings a `Renderer` can take during initialization, all of which are initialized to defaults found within the static `EngineDefaults` class.
+
+Below is an example using default values. 
+```c#
+public class MyGame : Renderer {
+  public Game1() : base() { }
+
+  override protected void Initialize() {
+    EngineSettings gameSettings = new EngineSettings();
+    base.Initialize(gameSettings);
+  }
+}
+```
+
+Below is an example using custom values. Since `EngineSettings` is `sealed`, we cannot extend it to add new members, and thus are limited to only settings that the `Renderer` expects.
+```c#
+public class MyGame : Renderer {
+  public Game1() : base() { }
+
+  override protected void Initialize() {
+    EngineSettings gameSettings = new EngineSettings();
+    gameSettings.SystemFontPath = "./Content/system_font.ttf";
+    gameSettings.AllowResize = false;
+    gameSettings.StartMouseVisible = true;
+
+    base.Initialize(gameSettings);
+  }
+}
+```
 
 
 
@@ -437,6 +475,10 @@ FontLib FontLibrary = new FontLib("path/to/my/font", GraphicsDevice);
 Font FontReg = FontLibrary.CreateFont(20);
 Font FontLarge = FontLibrary.CreateFont(50);
 ```
+
+## Note about the `SystemFontLib`
+
+During the initialization phase, the `Renderer` attempts to create the static `SystemFontLib`, based on the path given by the supplied `EngineSettings` object. For this reason, the `EngineSettings` object must contain a valid `SystemFontPath`, otherwise the `Renderer` will crash.
 
 # The `Font` class
 

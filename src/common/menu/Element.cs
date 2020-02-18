@@ -33,16 +33,11 @@ namespace Engine {
     public TextObject Label;
 
     public Element(Font font = null) {
-      //X = x;
-      //Y = y;
-
-      //Bounds = new Rectangle(0, 0, w, h);
       BoundsAlpha = 1f;
 
       Label = new TextObject(font);
-      //Label.X = EngineDefaults.ElementTextPad;
-      //Label.Y = Bounds.Height / 2;
-      //Label.VerticalAlignment = VerticalAlignment.CENTER;
+      Label.VerticalAlignment = VerticalAlignment.CENTER;
+
       AddChild(Label);
     }
 
@@ -58,14 +53,14 @@ namespace Engine {
 
       // handle child selection index by arrow keys
       if (NumSelectableChildren > 0) {
-        if (Input.KeyPressed(EngineDefaults.keyDown)) {
+        if (Input.KeyPressed(EngineDefaults.KeyDown)) {
           CurrentSelectedChildIndex++;
           if (CurrentSelectedChildIndex >= NumSelectableChildren) {
             CurrentSelectedChildIndex = 0;
           }
         }
 
-        if (Input.KeyPressed(EngineDefaults.keyUp)) {
+        if (Input.KeyPressed(EngineDefaults.KeyUp)) {
           CurrentSelectedChildIndex--;
           if (CurrentSelectedChildIndex <= -1) {
             CurrentSelectedChildIndex = NumSelectableChildren - 1;

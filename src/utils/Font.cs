@@ -24,7 +24,7 @@ namespace Engine {
       library = new Library();
     }
 
-    public Font createFont(int size) {
+    public Font CreateFont(int size) {
       if (!fonts.TryGetValue(size, out var font)) {
         font = new Font(this, size, fontBytes, graphicsDevice);
       }

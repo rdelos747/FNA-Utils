@@ -12,101 +12,89 @@ namespace Engine {
 
   public class Renderer : Game {
 
-    //private FontLib systemFontLib;
-    //private Font systemFont;
-    private TextObject fpsCounter;
+    protected GraphicsDeviceManager Graphics;
+    protected SpriteBatch SpriteBatch;
 
-    protected GraphicsDeviceManager graphics;
-    protected SpriteBatch spriteBatch;
-    //protected EngineSettings engineSettings;
-    //protected Element pauseMenu;
+    private Node Root;
 
-    private Node root;
+    public EngineStates EngineState;
+    public static Texture2D SystemRect { get; private set; }
 
-    public EngineState engineState;
-    public static Texture2D systemRect { get; private set; }
+    public static FontLib SystemFontLib;
+
+
+    /*
+
+TODO: if we use `EngineSettngs`, here would be the place to explain that. As of right now, there is no easy way to pass settings through...
+- However, if some kind of settings object is used, it might be more straightforward to pass that to `Initialize`
+
+    */
 
     public Renderer() {
-      //engineSettings = new EngineSettings(this);
-
-
-      /*
-        move this to user space, this shouldn't be here
-      */
-      Input.SetInputMap(EngineDefaults.inputMap);
-
-      graphics = new GraphicsDeviceManager(this);
+      Graphics = new GraphicsDeviceManager(this);
       Content.RootDirectory = "Content";
       TextureLoader.Content = Content;
-
-      Resolution.Init(ref graphics, Color.Black);
-      Resolution.SetVirtualResolution(EngineDefaults.width, EngineDefaults.height);
-      Resolution.SetResolution(EngineDefaults.width, EngineDefaults.height, EngineDefaults.fullScreen);
-
-      Window.AllowUserResizing = EngineDefaults.allowResize;
-      Window.ClientSizeChanged += onResize;
-      IsMouseVisible = EngineDefaults.mouseVisible;
-
-      root = new Node();
-      root.Bounds = new Rectangle(0, 0, EngineDefaults.width, EngineDefaults.height);
     }
 
     private void onResize(Object sender, EventArgs e) {
       Rectangle resizedBounds = GraphicsDevice.Viewport.Bounds;
-      Resolution.SetResolution(resizedBounds.Width, resizedBounds.Height, EngineDefaults.fullScreen);
+      Resolution.SetResolution(resizedBounds.Width, resizedBounds.Height, EngineDefaults.FullScreen);
     }
 
-    override protected void Initialize() {
+    protected virtual void Initialize(EngineSettings settings) {
+      /*
+      Initialize any values that are based on EngineSettings
+      */
+      Resolution.Init(ref Graphics, settings.BackgroundColor);
+      Resolution.SetVirtualResolution(settings.VirtualWidth, settings.VirtualHeight);
+      Resolution.SetResolution(settings.ScreenWidth, settings.ScreenHeight, settings.StartFullscreen);
+
+      Window.AllowUserResizing = settings.AllowResize;
+      Window.ClientSizeChanged += onResize;
+      IsMouseVisible = settings.StartMouseVisible;
+
+      Input.SetInputMap(settings.InputMap);
+
+      SystemFontLib = new FontLib(settings.SystemFontPath, GraphicsDevice);
+
+      Root = new Node();
+      Root.Bounds = new Rectangle(0, 0, EngineDefaults.Width, EngineDefaults.Height);
+
       base.Initialize();
     }
 
     override protected void LoadContent() {
-      spriteBatch = new SpriteBatch(GraphicsDevice);
+      SpriteBatch = new SpriteBatch(GraphicsDevice);
 
-      systemRect = new Texture2D(GraphicsDevice, 1, 1);
-      systemRect.SetData(new Color[] { Color.White });
+      /*
+      Set they system rectangle, which is used for drawing bounds. 
+      */
+      SystemRect = new Texture2D(GraphicsDevice, 1, 1);
+      SystemRect.SetData(new Color[] { Color.White });
 
       base.LoadContent();
 
-      EngineDefaults.SystemFontLibrary = new FontLib(EngineDefaults.fontPath, GraphicsDevice);
-      EngineDefaults.SystemFontReg = EngineDefaults.SystemFontLibrary.createFont(EngineDefaults.fontSizeReg);
-      EngineDefaults.SystemFontLarge = EngineDefaults.SystemFontLibrary.createFont(EngineDefaults.fontSizeLarge);
-      //fpsCounter = new TextObject(systemFont);
-
-      engineState = EngineState.RUNNING;
+      EngineState = EngineStates.RUNNING;
     }
 
     override protected void Update(GameTime gameTime) {
       Input.update();
 
-      /*
-        move this to user space, this shouldn't be here
-      */
-      //defaultUpdate();
       UpdateGame(gameTime);
 
-      if (engineState == EngineState.QUIT) {
+      if (EngineState == EngineStates.QUIT) {
         this.Exit();
       }
 
-      // if (engineState == EngineState.RUNNING) {
-      //   UpdateGame(gameTime);
-      // }
-      // else if (engineState == EngineState.PAUSED) {
-      //   UpdatePause(gameTime);
-      // }
       base.Update(gameTime);
     }
 
     protected virtual void UpdateGame(GameTime gameTime) { }
 
-    // protected virtual void UpdatePause(GameTime gameTime) { }
-
     override protected void Draw(GameTime gameTime) {
 
       Resolution.BeginDraw();
-      spriteBatch.Begin(
-        //SpriteSortMode.BackToFront,
+      SpriteBatch.Begin(
         SpriteSortMode.Deferred,
         BlendState.AlphaBlend,
         SamplerState.LinearClamp,
@@ -116,39 +104,15 @@ namespace Engine {
         Resolution.getTransformationMatrix()
       );
 
-      root.Draw(spriteBatch, 0, 0);
+      Root.Draw(SpriteBatch, 0, 0);
 
-      spriteBatch.End();
+      SpriteBatch.End();
 
       base.Draw(gameTime);
     }
 
-    /*
-      move this to user space, this shouldn't be here
-    */
-    // private void defaultUpdate() {
-    //   if (Input.KeyPressed(EngineDefaults.keyPause)) {
-    //     if (engineState == EngineState.PAUSED) {
-    //       engineState = EngineState.RUNNING;
-    //       pauseMenu.RemoveFromParent();
-    //     }
-    //     else if (engineState == EngineState.RUNNING) {
-    //       engineState = EngineState.PAUSED;
-    //       pauseMenu = new PauseMenu(this);
-    //     }
-    //   }
-
-    //   if (Input.KeyPressed(EngineDefaults.keyQuit)) {
-    //     engineState = EngineState.QUIT;
-    //   }
-
-    //   if (pauseMenu != null) {
-    //     pauseMenu.Update(Input.MouseX, Input.MouseY);
-    //   }
-    // }
-
     public void AddChildToRoot(Node n) {
-      root.AddChild(n);
+      Root.AddChild(n);
     }
   }
 }
