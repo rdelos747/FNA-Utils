@@ -36,9 +36,9 @@
 		<Compile Include="src/common/menu/Button.cs" />
 		<Compile Include="src/common/menu/Element.cs" />
 		<Compile Include="src/common/menu/KeySwitcher.cs" />
+		<Compile Include="src/common/menu/List.cs" />
 
 		<Compile Include="src/defaults/EngineDefaults.cs" />
-		<!-- <Compile Include="src/defaults/EngineSettings.cs" /> -->
 		<Compile Include="src/defaults/PauseMenu.cs" />
 		
 		<Compile Include="src/utils/Animation.cs" />
@@ -48,7 +48,6 @@
 		<Compile Include="src/utils/HexColors.cs" />
 		<Compile Include="src/utils/Input.cs" />
 		<Compile Include="src/utils/Resolution.cs" />
-		<!-- <Compile Include="src/utils/Settings.cs" /> -->
 		<Compile Include="src/utils/TextureLoader.cs" />
 		<Compile Include="src/utils/Utils.cs" />
 	</ItemGroup>

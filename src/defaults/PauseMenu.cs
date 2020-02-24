@@ -192,15 +192,18 @@ namespace Engine {
       // KeySwitcher test = new KeySwitcher(EngineDefaults.keyPrimary);
       // AddChildAsElement(test, 0, 0);
 
+      List list = new List(1);
+      AddChildAsElement(list, 0, 0);
+
       Button cancelButton = new Button();
       cancelButton.OnClick = () => { setPage(PauseMenuPage.Settings); };
       cancelButton.Label.Text = "Cancel";
-      AddChildAsElement(cancelButton, 0, 0);
+      list.AddChildAsElement(cancelButton, 0, 0);
 
       foreach (string key in Input.InputMap.Keys) {
         KeySwitcher k = new KeySwitcher(key);
 
-        AddChildAsElement(k, 0, BTN_MARGIN);
+        list.AddChildAsElement(k, 0, BTN_MARGIN);
       }
     }
 

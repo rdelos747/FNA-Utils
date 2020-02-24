@@ -90,6 +90,8 @@ namespace Engine {
     }
 
     public virtual void Draw(SpriteBatch spriteBatch, float lastX, float lastY) {
+      if (IsHidden) return;
+
       float relativeX = lastX + X;
       float relativeY = lastY + Y;
 
