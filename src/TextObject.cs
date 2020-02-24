@@ -61,11 +61,11 @@ namespace Engine {
 
     public Color Color = Color.White;
 
-    public TextObject(Font font = null, int x = 0, int y = 0, string text = null) {
+    public TextObject(Font font, int x = 0, int y = 0, string text = null) {
       _font = font;
-      if (_font == null) {
-        _font = Renderer.SystemFontLib.CreateFont(EngineDefaults.FontSizeReg);
-      }
+      // if (_font == null) {
+      //   _font = Renderer.SystemFontLib.CreateFont(EngineDefaults.FontSizeReg);
+      // }
 
       Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
 

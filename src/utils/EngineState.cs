@@ -1,7 +1,7 @@
-namespace Engine {
-  public enum EngineStates {
-    PAUSED,
-    QUIT,
-    RUNNING
-  }
-}
+// namespace Engine {
+//   public enum EngineStates {
+//     PAUSED,
+//     QUIT,
+//     RUNNING
+//   }
+// }

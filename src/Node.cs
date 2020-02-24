@@ -6,6 +6,12 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Engine {
 
+  // public static class SystemRect {
+  //   public static Texture2D Texture;
+
+
+  // }
+
   /*
   Basic unit that the renderer stores and loops over for drawing
   */
@@ -32,20 +38,9 @@ namespace Engine {
     public float X;
     public float Y;
 
-    // // Origin Stuff
-    // private Vector2 _origin = new Vector2();
-    // public Vector2 Origin {
-    //   get {
-    //     return _origin;
-    //   }
-    //   set {
-    //     _origin = value;
-    //     //_bounds = new Rectangle((int)-_origin.X, (int)-_origin.Y, _bounds.Width, _bounds.Height);
-    //     //_bounds = new Rectangle((int)-(_origin.X / 2), (int)-(_origin.Y / 2), _bounds.Width, _bounds.Height);
-    //   }
-    // }
-
     // Bounds stuff
+    public static Texture2D BoundsTexture;
+
     private Rectangle _bounds = new Rectangle();
     public Rectangle Bounds {
       get {
@@ -97,7 +92,7 @@ namespace Engine {
 
       if (!_bounds.IsEmpty && ShowBounds) {
         spriteBatch.Draw(
-          Renderer.SystemRect,
+          BoundsTexture,
           new Rectangle((int)(relativeX + _bounds.X), (int)(relativeY + _bounds.Y), _bounds.Width, _bounds.Height),
         BoundsColor * BoundsAlpha
         );
@@ -106,7 +101,7 @@ namespace Engine {
       // for position debugging
       if (ShowCenter) {
         spriteBatch.Draw(
-          Renderer.SystemRect,
+          BoundsTexture,
           new Rectangle((int)(relativeX), (int)(relativeY), 2, 2),
           Color.Red
         );

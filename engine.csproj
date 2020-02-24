@@ -30,7 +30,7 @@
 	<ItemGroup>
 		<Compile Include="src/GameObject.cs" />
 		<Compile Include="src/Node.cs" />
-		<Compile Include="src/Renderer.cs" />
+		<!-- <Compile Include="src/Renderer.cs" /> -->
 		<Compile Include="src/TextObject.cs" />
 
 		<Compile Include="src/common/menu/Button.cs" />
@@ -39,11 +39,11 @@
 		<Compile Include="src/common/menu/List.cs" />
 
 		<Compile Include="src/defaults/EngineDefaults.cs" />
-		<Compile Include="src/defaults/PauseMenu.cs" />
+		<!-- <Compile Include="src/defaults/PauseMenu.cs" /> -->
 		
 		<Compile Include="src/utils/Animation.cs" />
-		<Compile Include="src/utils/EngineSettings.cs" />
-		<Compile Include="src/utils/EngineState.cs" />
+		<!-- <Compile Include="src/utils/EngineSettings.cs" />
+		<Compile Include="src/utils/EngineState.cs" /> -->
 		<Compile Include="src/utils/Font.cs" />
 		<Compile Include="src/utils/HexColors.cs" />
 		<Compile Include="src/utils/Input.cs" />

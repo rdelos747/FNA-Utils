@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Engine {
-  static class Resolution {
+  public static class Resolution {
     static private GraphicsDeviceManager _Device = null;
 
     static private int _Width = 800;
