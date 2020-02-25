@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
-namespace Engine {
+namespace Utils {
 
   public sealed class Button : Element {
 
@@ -14,7 +14,7 @@ namespace Engine {
       ShowBounds = true;
       IsSelectable = true;
 
-      Bounds = new Rectangle(0, -(EngineDefaults.ButtonHeight / 2), EngineDefaults.ButtonWidth, EngineDefaults.ButtonHeight);
+      Bounds = new Rectangle(0, -(MenuDefaults.ButtonHeight / 2), MenuDefaults.ButtonWidth, MenuDefaults.ButtonHeight);
 
       ShowCenter = true;
     }
@@ -34,12 +34,15 @@ namespace Engine {
     }
 
     public override void Update(float mouseX, float mouseY) {
-      if (OnClick != null) {
+      // use our menu controller, or the passed in menu controller
+
+      if (MC != null && OnClick != null) {
         if (Input.MouseLeftClicked() && pointInBounds(mouseX, mouseY)) {
           OnClick();
         }
 
-        if (Input.KeyPressed(EngineDefaults.KeyPrimary) && Selected) {
+
+        if (Input.KeyPressed(MC.KeySelect) && Selected) {
           OnClick();
         }
       }

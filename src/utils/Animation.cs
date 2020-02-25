@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 
-namespace Engine {
+namespace Utils {
 
   public enum AnimationType {
     CURVE,

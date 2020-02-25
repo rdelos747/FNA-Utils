@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SharpFont;
 
-namespace Engine {
+namespace Utils {
 
   public enum VerticalAlignment {
     TOP,
@@ -61,10 +61,12 @@ namespace Engine {
 
     public Color Color = Color.White;
 
+    public static Font BaseFont;
+
     public TextObject(Font font = null, int x = 0, int y = 0, string text = null) {
       _font = font;
       if (_font == null) {
-        _font = Renderer.SystemFontLib.CreateFont(EngineDefaults.FontSizeReg);
+        _font = BaseFont;
       }
 
       Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
