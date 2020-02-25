@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace Engine {
+namespace Utils {
   public sealed class Hex {
     // public string rgbtohex()
     // public string hextorgb()

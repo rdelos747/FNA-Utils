@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
-namespace Engine {
+namespace Utils {
   public static class Input {
     private static KeyboardState KeyboardState = Keyboard.GetState();
     private static KeyboardState LastKeyboardState;

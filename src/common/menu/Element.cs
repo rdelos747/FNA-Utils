@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
-namespace Engine {
+namespace Utils {
 
   public class Element : GameObject {
     /*
@@ -23,14 +23,16 @@ namespace Engine {
     public int TopOffset = 0;
     public int LeftOffset = 0;
 
-    public Color BackgroundColor = EngineDefaults.ButtonBackgroundColor;
-    public float BackgroundAlpha = EngineDefaults.ButtonBackgroundAlpha;
-    public Color SelectedColor = EngineDefaults.ButtonSelectedColor;
-    public float SelectedAlpha = EngineDefaults.ButtonSelectedAlpha;
-    public Color TextColor = EngineDefaults.ButtonTextColor;
-    public Color TextSelectedColor = EngineDefaults.ButtonTextSelectedColor;
+    public Color BackgroundColor = MenuDefaults.ButtonBackgroundColor;
+    public float BackgroundAlpha = MenuDefaults.ButtonBackgroundAlpha;
+    public Color SelectedColor = MenuDefaults.ButtonSelectedColor;
+    public float SelectedAlpha = MenuDefaults.ButtonSelectedAlpha;
+    public Color TextColor = MenuDefaults.ButtonTextColor;
+    public Color TextSelectedColor = MenuDefaults.ButtonTextSelectedColor;
 
     public TextObject Label;
+
+    public MenuController MC;
 
     public Element(Font font = null) {
       BoundsAlpha = 1f;
@@ -42,28 +44,30 @@ namespace Engine {
     }
 
     public virtual void Update(float mouseX, float mouseY) {
-      // handle selection by mouse click
-      if (IsSelectable && Input.MouseLeftClicked() && pointInBounds(mouseX, mouseY)) {
-        Element parent = Parent as Element;
-        if (parent != null) {
-          parent.UnselectAllChildren();
-          parent.CurrentSelectedChildIndex = SelectIndex;
-        }
-      }
-
-      // handle child selection index by arrow keys
-      if (NumSelectableChildren > 0) {
-        if (Input.KeyPressed(EngineDefaults.KeyDown)) {
-          CurrentSelectedChildIndex++;
-          if (CurrentSelectedChildIndex >= NumSelectableChildren) {
-            CurrentSelectedChildIndex = 0;
+      if (MC != null) {
+        // handle selection by mouse click
+        if (IsSelectable && Input.MouseLeftClicked() && pointInBounds(mouseX, mouseY)) {
+          Element parent = Parent as Element;
+          if (parent != null) {
+            parent.UnselectAllChildren();
+            parent.CurrentSelectedChildIndex = SelectIndex;
           }
         }
 
-        if (Input.KeyPressed(EngineDefaults.KeyUp)) {
-          CurrentSelectedChildIndex--;
-          if (CurrentSelectedChildIndex <= -1) {
-            CurrentSelectedChildIndex = NumSelectableChildren - 1;
+        // handle child selection index by arrow keys
+        if (NumSelectableChildren > 0) {
+          if (Input.KeyPressed(MC.KeyDown)) {
+            CurrentSelectedChildIndex++;
+            if (CurrentSelectedChildIndex >= NumSelectableChildren) {
+              CurrentSelectedChildIndex = 0;
+            }
+          }
+
+          if (Input.KeyPressed(MC.KeyUp)) {
+            CurrentSelectedChildIndex--;
+            if (CurrentSelectedChildIndex <= -1) {
+              CurrentSelectedChildIndex = NumSelectableChildren - 1;
+            }
           }
         }
       }
@@ -115,6 +119,10 @@ namespace Engine {
       TopOffset += top;
       el.X = LeftOffset;
       el.Y = TopOffset;
+
+      if (MC != null) {
+        el.MC = MC;
+      }
 
       if (el.IsSelectable) {
         el.SelectIndex = NumSelectableChildren;

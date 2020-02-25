@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SharpFont;
 
-namespace Engine {
+namespace Utils {
   public sealed class FontLib {
     public Library library { get; private set; } = new Library();
     private readonly GraphicsDevice graphicsDevice;

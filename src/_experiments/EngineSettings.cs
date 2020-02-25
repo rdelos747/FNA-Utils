@@ -9,7 +9,7 @@
 // using System;
 // using Microsoft.Xna.Framework;
 
-// namespace Engine {
+// namespace Utils {
 //   public static class SettingTypes {
 //     public const string MENU_OPEN = "MENU_OPEN";
 //     public const string MENU_CLOSE = "MENU_CLOSE";

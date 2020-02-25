@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
-namespace Engine {
+namespace Utils {
 
   public class GameObject : Node {
     // sprite / graphical vars

@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 
-namespace Engine {
+namespace Utils {
 
   public sealed class KeySwitcher : Element {
 
@@ -13,7 +13,7 @@ namespace Engine {
       ShowBounds = true;
       IsSelectable = true;
 
-      Bounds = new Rectangle(0, -(EngineDefaults.ButtonHeight / 2), EngineDefaults.ButtonWidth, EngineDefaults.ButtonHeight);
+      Bounds = new Rectangle(0, -(MenuDefaults.ButtonHeight / 2), MenuDefaults.ButtonWidth, MenuDefaults.ButtonHeight);
       Label.Text = key;
       Label.VerticalAlignment = VerticalAlignment.CENTER;
 

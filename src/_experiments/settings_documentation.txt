@@ -4,7 +4,7 @@ _The `Settings` class is loosely modelled after the concept of reducers in Redux
 
 Below is a simple example of how `Renderer` manages its settings.
 ```c#
-namespace Engine {
+namespace Utils {
   public static class SettingTypes {
     public const string MENU_OPEN = "MENU_OPEN";
     public const string MENU_CLOSE = "MENU_CLOSE";
@@ -45,7 +45,7 @@ namespace Engine {
 
 Now we can define a consumer or subscriber to these settings. This example uses the common `Menu` class, which is explained in more detail later on.
 ```c#
-namespace Engine {
+namespace Utils {
   public sealed class PauseMenu : Menu {
     public PauseMenu(Renderer p) : base(p, 0, 0, 100, 100) { }
 

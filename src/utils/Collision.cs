@@ -1,4 +1,4 @@
-namespace Engine {
+namespace Utils {
   public static class Collision {
     // public bool pointInBounds(GameObject obj, float pX, float pY, float offX = 0, float offY = 0) {
     //   if (obj.bounds == null) {
