@@ -88,8 +88,9 @@ namespace Utils {
     }
 
     public override void Draw(SpriteBatch spriteBatch, float lastX, float lastY) {
-      Vector2 position = new Vector2(lastX + X, lastY + Y);
       if (IsHidden) return;
+
+      Vector2 position = new Vector2(lastX + X, lastY + Y);
 
       for (int i = 0; i < Points.Count; i++) {
         GlyphData glyph = _font.getGlyph(Points[i].Item1);

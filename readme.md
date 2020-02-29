@@ -69,9 +69,11 @@ We mainly develop via VS Code on OS X, so our setup or instructions may not tran
 
 This project was initially bootstrapped with [this template](https://github.com/TheSpydog/fna_vscode_template), which gave us the initial .vscode functions. We don't author any of it, but we may fork it soon?
 
+Some aspects of `FNA-Utils`, such as the `TextureLoader` class, `Resolution` class, and the initial template of the `Input` class, were also not authored by us, but were provided as parts of the Michael Hicks Toolbox, which we discovered through [this youtube series](https://www.youtube.com/watch?v=WQOebBVIB0I). It was instrumental in helping us understand how to begin developing games with FNA.
+
 ## Also Notes
 
-We are very new to FNA, monogame, and C# in general.
+We are also very new to C# in general. All feedback is welcome :)
 
 # API Reference
 
@@ -88,6 +90,8 @@ We are very new to FNA, monogame, and C# in general.
 [TextureLoader](#textureloader)
 
 [TextObjects](#textobjects)
+
+[FontLibrary](#fontlibrary)
 
 [Fonts](#fonts)
 
@@ -227,7 +231,8 @@ The y coordinate of a Node within its parent.
 The bounding box around a Node's X and Y. Bounds.X and Bounds.Y represent the distance that the Bounds top left corner is placed from X and Y.
 
 ```c#
-//For example, if a Node of size 64 * 64 wants its X & Y coordinates to be placed in the center of its bounds, we can achieve that like so:
+// For example, if a Node of size 64 * 64 wants its X & Y coordinates to
+// be placed in the center of its bounds, we can achieve that like so:
 
 Bounds.Rect = new Rectangle(-32, -32, 64, 64);
 ```
@@ -641,9 +646,158 @@ todo
 
 # TextureLoader
 
+`public static class TextureLoader`
+
+Static helper that assists with loading `Texture2D` instances from the `content` directory.
+
+###### static property
+
+`public static ContentManager Content`
+
+`TextureLoader` also holds the static `ContentManager`, which deals with caching our textures after initial load. We must attach it during the initialization of our `Game`:
+
+```c#
+public class GameController : Game {
+  public GameController() {
+    Content.RootDirectory = "Content";
+    TextureLoader.Content = Content;
+  }
+}
+```
+
+###### method
+
+`public static Texture2D Load(string filePath)`
+
+Returns a `Texture2D` from the supplied image file. The Texture2D's alpha is premultiplied atomatically by `TextureLoader.Load`.
+
+`Load` is primarily used to pass textures directly to `GameObject` texture initializers:
+
+```c#
+public class Enemy : GameObject {
+  public Enemy {
+    SetImage(TextureLoader.Load("path/to/sheet"));
+  }
+}
+```
+
 # TextObjects
 
+`Public TextObject : Node`
+
+## Creating a TextObject
+
+###### constructor
+
+`public TextObject(Font font = null, int x = 0, int y = 0, string text = null)`
+
+## Setting a font
+
+###### property
+
+`public Font Font`
+
+When setting the `Font`, the base (Node) class's `Bounds.Rect` is initialized to `Rectangle(0, 0, 10, _font.lineHeight)`. If `Text` is already set, `SetText()` will be called automatically as well.
+
+## Setting text
+
+###### property
+
+`public Color Color = Color.White`
+
+The color of the text.
+
+###### method
+
+`public void SetText(string t)`
+
+Calling `SetText` automatically updated `Bounds.Rect` based on the new text to render, and uses these bounds to also update the `TextOrigin`, based on whatever type of `VerticalAlignment` is currently being used.
+
+###### property
+
+`public string Text`
+
+Changing the `Text` property directly will trigger `SetText`, so either approach is valid.
+
+## Text Origin
+
+###### property
+
+`protected Vector2 TextOrigin = new Vector2()`
+
+Offset from the TextObject's position to draw the gyphs. For example, if a TextObject's bounds are 100 \* 64, we can vertically center the text within the bounds by:
+
+```c#
+TextOrigin = new Vector2(0, 32);
+
+// or, more generally
+TextOrigin = new Vector2(0, Bounds.Rect.Height / 2);
+```
+
+Setting the `VerticalAlignment` does this for us automatically.
+
+## Vertical Alignment
+
+###### property
+
+`public VerticalAlignment VerticalAlignment`
+
+Uses the `VerticalAlignment` enum:
+
+```c#
+public enum VerticalAlignment {
+  TOP,
+  CENTER
+}
+```
+
+## Setting the BaseFont
+
+###### static property
+
+`public static Font BaseFont`
+
+TextObjects, when created with `font = null`, will attempt to use the static `BaseFont`, meaning it should be set before any TextObjects are created.
+
+```c#
+public class GameController : Game {
+
+  public static FontLib MyFontLib;
+
+  public GameController() {
+    MyFontLib = new FontLib("font/path.ttf", GraphicsDevice);
+  }
+
+  override protected void LoadContent() {
+    TextObject.BaseFont = MyFontLib.CreateFont(Constants.FontSizeReg);
+    base.LoadContent();
+  }
+}
+```
+
+# FontLibrary
+
+`public sealed class FontLib`
+
+###### Constructor
+
+`public FontLib(string fontPath, GraphicsDevice graphics)`
+
+Used to create fonts for a specific font file. Unlike textures, `.ttf` files do not need to be in the `content` directory.
+
+```c#
+FontLib FontLibrary = new FontLib("path/to/my/font.ttf", GraphicsDevice);
+Font FontReg = FontLibrary.CreateFont(20);
+Font FontLarge = FontLibrary.CreateFont(50);
+```
+
 # Fonts
+
+`public class Font`
+
+TLDR: To draw text with a `TextObject`, you must supply a `Font`, which is made from a `FontLib` and a specific point size.
+
+`Fonts` are used as a cache for textures created from a `FontLib` at a particular point size. The first time we need a character, the `Font` will generate a texture for it, and use metrics from the `FontLib` to specify how it should be placed when drawing to the screen.
 
 # BoundingBox
 
@@ -691,9 +845,226 @@ Node.BoundingBox.Texture.SetData(new Color[] { Color.White });
 [KeySwitcher Elements](#keyswitcher-elements)
 [List Elements](#List-elements)
 
-# Menu Controller
+The `Element` class and its related utilities attempt to handle UI operations commonly associated with in-game menus. This includes simple tasks such as hover effects when moving the mouse over a menu, to more complex interactions like scroll views that dynamically show and hide content.
+
+Example pause menu:
+
+```c#
+public sealed class PauseMenu : Element {
+  private Game GC;
+
+  public PauseMenu(Game gc, FontLib fontLib) {
+    // Use the default menu controller
+    MC = new MenuController();
+
+    // Attach our Game. XNA's Game class contains many
+    // settings that we might want to change from within
+    // a pause menu, so it is helpful to keep a reference.
+    GC = gc;
+
+    // Set up some fonts
+    FontReg = fontLib.CreateFont(Constants.FontSizeReg);
+    FontLarge = fontLib.CreateFont(Constants.FontSizeLarge);
+
+    // Set our bounds, and draw them to give the
+    // element a background. These come from the
+    // Node base class.
+    Bounds.Rect = new Rectangle(0, 0, Parent.Bounds.Rect.Width, Parent.Bounds.Rect.Height);
+    Bounds.IsHidden = false;
+    Bounds.Color = Constants.PauseMenuBackground;
+    Bounds.Alpha = Constants.PauseMenuAlpha;
+
+    // Position our menu
+    X = Constants.MenuLeft;
+    Y = Constants.MenuTop;
+
+    // Set up this elements label. In this case it will
+    // serve as the title of our menu
+    Label.Font = FontLarge;
+    Label.Text = "Menu";
+
+    // Add some buttons.
+    Button backButton = new Button();
+    backButton.OnClick = () => { CloseMenu() };
+    backButton.Label.Text = "Return To Game";
+    AddChildAsElement(backButton, 0, 20);
+
+    Button closeButton = new Button();
+    closeButton.OnClick = () => { ExitGame() };
+    closeButton.Label.Text = "Exit Game";
+    AddChildAsElement(closeButton, 0, 50);
+
+    // Initialization is done, lets let the Game class know
+    // that the menu is open.
+    OnOpenMenu();
+  }
+
+  // Define some funtions that we can call to manipulate
+  // Game settings, such as if the mouse is visible, or if
+  // the game is running.
+  public void OnOpenMenu() {
+    GC.IsMouseVisible = true;
+  }
+
+  public void CloseMenu() {
+    GC.IsMouseVisible = false;
+    GC.GameState = GameState.RUNNING;
+    RemoveFromParent();
+  }
+
+  public void ExitGame() {
+    GC.GameState = GameState.QUIT;
+  }
+}
+
+```
 
 # The Element Class
+
+`public class Element : GameObject`
+
+Basic building blocks of menu. Elements are similar to Nodes in that they are the base class that define much of the functionality for subclasses like Buttons and Lists.
+
+###### constructor
+
+`public Element(Font font = null)`
+
+## Setting element text
+
+###### Property
+
+`public TextObject Label`
+
+All elements contain one `TextObject` for rendering basic text.
+
+## Element display properties
+
+###### property
+
+`public Color BackgroundColor = MenuDefaults.ButtonBackgroundColor`
+
+###### property
+
+`public float BackgroundAlpha = MenuDefaults.ButtonBackgroundAlpha`
+
+###### property
+
+`public Color SelectedColor = MenuDefaults.ButtonSelectedColor`
+
+###### property
+
+`public float SelectedAlpha = MenuDefaults.ButtonSelectedAlpha`
+
+###### property
+
+`public Color TextColor = MenuDefaults.ButtonTextColor`
+
+###### property
+
+`public Color TextSelectedColor = MenuDefaults.ButtonTextSelectedColor`
+
+## Adding child elements
+
+###### property
+
+`public int TopOffset = 0`
+
+The distance from the Element's `Y` to place the next added child Element's `Y`. When calling `AddChildAsElement(Element el, int left, int top)`, the parameter `top` will increment `TopOffset` _before_ placing the child element.
+
+###### property
+
+`public int LeftOffset = 0`
+
+The distance from the Element's `X` to place the next added child Element's `X`. When calling `AddChildAsElement(Element el, int left, int top)`, the parameter `left` will increment `LeftOffset` _before_ placing the child element.
+
+_Note: `TopOffset` and `LeftOffset` can be changed any time. This is useful for creating columns, where we would, for example, call `AddChildAsElement` on a column of elements, then reset `TopOffset` back to 0 and increment `LeftOffset` into the next column, and repeat the process again._
+
+###### method
+
+`public void AddChildAsElement(Element el, int left, int top)`
+
+Adds Element `el` to parent's list of Nodes (since Elements are just Nodes at the end of the day), and also manages setting values like `el.SelectIndex` and `NumSelectableChildren`. Also passes down `MC` (the parent's MenuController) if it is not `null`.
+
+The arguments `left` and `top` specify Element `el`s distance from the previously added Element.
+
+```c#
+public PauseMenuControls() {
+  List list = new List(1);
+  AddChildAsElement(list, 0, 0);
+
+  list.AddChildAsElement(cancelButton, 0, 0);
+
+  foreach (string key in Input.InputMap.Keys) {
+    KeySwitcher k = new KeySwitcher(key);
+
+    list.AddChildAsElement(k, 0, BTN_MARGIN);
+  }
+}
+```
+
+## Selecting Elements
+
+###### property
+
+`public bool Selected = false`
+
+Used by subclasses to determine if Element has been selected or not.
+
+###### property
+
+`public bool IsSelectable = false`
+
+Determines whether or not the Element can be selected. This should be set _before_ adding via `AddChildAsElement`.
+
+###### property
+
+`public int CurrentSelectedChildIndex { get; protected set; } = 0`
+
+The index of the current select child within a parent element.
+
+###### method
+
+`public virtual void SetSelected()`
+
+Determines behavior of an Element when it becomes selected. In base the `Element` class, this does nothing.
+
+###### method
+
+`public virtual void SetUnselected()`
+
+Determines behavior of an Element when it becomes unselected. In base the `Element` class, this does nothing.
+
+_Note: Methods such as `Element.Update()` call `SetSelected()` and `SetUnselected()` automatically on child Elements if they are eligable. In most situations, we do not need to invoke these ourselves._
+
+## Updating child elements
+
+###### method
+
+`public virtual void Update(float mouseX, float mouseY)`
+
+Similar to `Node.Draw()`, `Element.Update()` loops over all child Elements and recursively calls their Update methods. The base `Element.Update()` is also in charge of reading key presses and the mouse position for determining things like the `CurrentSelectedChildIndex`, as well as selecting/ unselecting child Elements. For this reason, any override of the base `Update()` should include a call to `Base.Update()`.
+
+# Menu Controller
+
+`public sealed class MenuController`
+
+Defines an Element's key press behavior when used in a menu-like context. It defines the following default properties:
+
+```c#
+public sealed class MenuController {
+
+  public string KeySelect = "primary";
+  public string KeyBack = "secondary";
+  public string KeyUp = "up";
+  public string KeyDown = "down";
+  public string KeyLeft = "left";
+  public string KeyRight = "right";
+
+  public MenuController() { }
+}
+```
+
+Recall that the static `Input` class is capable of taking string identifiers to check for key presses, rather than actual XNA Key inputs. The `MenuController` class allows us to define a set of keys unique to that menu, in the case where these inputs differ from the ones we use to move through the actual game.
 
 # Button Elements
 

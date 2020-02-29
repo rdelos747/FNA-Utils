@@ -32,7 +32,7 @@ namespace Utils {
 
     public TextObject Label;
 
-    public MenuController MC;
+    public MenuController MC = new MenuController();
 
     public Element(Font font = null) {
       Bounds.Alpha = 1f;
