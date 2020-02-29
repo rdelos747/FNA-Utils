@@ -41,16 +41,16 @@ namespace Utils {
     // Bounds stuff
     public static Texture2D BoundsTexture;
 
-    private Rectangle _bounds = new Rectangle();
-    public Rectangle Bounds {
-      get {
-        return _bounds;
-      }
-      set {
-        _bounds = value;
-        //_origin = new Vector2(-(_bounds.X * 2), -(_bounds.Y * 2));
-      }
-    }
+    public Rectangle Bounds = new Rectangle();
+    // public Rectangle Bounds {
+    //   get {
+    //     return _bounds;
+    //   }
+    //   set {
+    //     _bounds = value;
+    //     //_origin = new Vector2(-(_bounds.X * 2), -(_bounds.Y * 2));
+    //   }
+    // }
     public bool ShowBounds = false;
     public Color BoundsColor = Color.Blue;
     public float BoundsAlpha = 0.5f;
@@ -90,10 +90,10 @@ namespace Utils {
       float relativeX = lastX + X;
       float relativeY = lastY + Y;
 
-      if (!_bounds.IsEmpty && ShowBounds) {
+      if (!Bounds.IsEmpty && ShowBounds) {
         spriteBatch.Draw(
           BoundsTexture,
-          new Rectangle((int)(relativeX + _bounds.X), (int)(relativeY + _bounds.Y), _bounds.Width, _bounds.Height),
+          new Rectangle((int)(relativeX + Bounds.X), (int)(relativeY + Bounds.Y), Bounds.Width, Bounds.Height),
         BoundsColor * BoundsAlpha
         );
       }
