@@ -111,11 +111,21 @@ A basic drawable component, handling simple data such as X & Y position and boun
 
 ###### constructor
 
-```
-public Node()
-```
+`public Node()`
 
 ## Position and Bounds
+
+###### property
+
+`public float X`
+
+The x coordinate of a Node within its parent.
+
+###### property
+
+`public float Y`
+
+The y coordinate of a Node within its parent.
 
 ## Adding Children
 
