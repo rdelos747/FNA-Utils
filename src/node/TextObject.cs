@@ -21,7 +21,7 @@ namespace Utils {
       }
       set {
         _font = value;
-        Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
+        Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
 
         if (_text != null) {
           SetText(_text);
@@ -43,7 +43,6 @@ namespace Utils {
 
     protected Vector2 TextOrigin = new Vector2();
     private VerticalAlignment _verticalAlignment;
-    //public VerticalAlignment VerticalAlignment = VerticalAlignment.TOP;
     public VerticalAlignment VerticalAlignment {
       get {
         return _verticalAlignment;
@@ -51,7 +50,7 @@ namespace Utils {
       set {
         _verticalAlignment = value;
 
-        Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
+        Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
 
         if (_text != null) {
           SetText(_text);
@@ -69,7 +68,7 @@ namespace Utils {
         _font = BaseFont;
       }
 
-      Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
+      Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
 
       Points = new List<(char, Vector2)>();
 
@@ -160,10 +159,10 @@ namespace Utils {
         maxHeight = Math.Max(maxHeight, py + glyph.height);
       }
 
-      Bounds = new Rectangle(0, 0, maxWidth, maxHeight);
+      Bounds.Rect = new Rectangle(0, 0, maxWidth, maxHeight);
 
       if (_verticalAlignment == VerticalAlignment.CENTER) {
-        TextOrigin = new Vector2(0, Bounds.Height / 2);
+        TextOrigin = new Vector2(0, Bounds.Rect.Height / 2);
       }
       else if (_verticalAlignment == VerticalAlignment.TOP) {
         TextOrigin = new Vector2(0, 0);

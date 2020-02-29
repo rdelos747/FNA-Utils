@@ -28,9 +28,10 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<Compile Include="src/GameObject.cs" />
-		<Compile Include="src/Node.cs" />
-		<Compile Include="src/TextObject.cs" />
+		<Compile Include="src/node/GameObject.cs" />
+		<Compile Include="src/node/Node.cs" />
+		<Compile Include="src/node/Node.BoundingBox.cs" />
+		<Compile Include="src/node/TextObject.cs" />
 
 		<Compile Include="src/common/menu/Button.cs" />
 		<Compile Include="src/common/menu/Element.cs" />

@@ -35,7 +35,7 @@ namespace Utils {
     public MenuController MC;
 
     public Element(Font font = null) {
-      BoundsAlpha = 1f;
+      Bounds.Alpha = 1f;
 
       Label = new TextObject(font);
       Label.VerticalAlignment = VerticalAlignment.CENTER;

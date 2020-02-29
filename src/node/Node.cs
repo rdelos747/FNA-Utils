@@ -5,18 +5,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
 namespace Utils {
-
-  // public static class SystemRect {
-  //   public static Texture2D Texture;
-
-
-  // }
-
   /*
   Basic unit that the renderer stores and loops over for drawing
   */
 
-  public class Node : IDisposable {
+  public partial class Node : IDisposable {
 
     private bool Disposed = false;
 
@@ -38,24 +31,8 @@ namespace Utils {
     public float X;
     public float Y;
 
-    // Bounds stuff
-    public static Texture2D BoundsTexture;
-
-    public Rectangle Bounds = new Rectangle();
-    // public Rectangle Bounds {
-    //   get {
-    //     return _bounds;
-    //   }
-    //   set {
-    //     _bounds = value;
-    //     //_origin = new Vector2(-(_bounds.X * 2), -(_bounds.Y * 2));
-    //   }
-    // }
-    public bool ShowBounds = false;
-    public Color BoundsColor = Color.Blue;
-    public float BoundsAlpha = 0.5f;
+    // Drawing stuff
     public bool IsHidden = false;
-
     public bool ShowCenter = false;
 
     public Node() { }
@@ -67,50 +44,54 @@ namespace Utils {
       }
     }
 
-    public void RemoveFromParent(bool isMe = true) {
+    public void RemoveFromParent() {
       if (Parent != null) {
-        foreach (Node n in _nodes) {
-          n.RemoveFromParent(false);
-        }
-        // then, handle ourselves
-        _nodes.Clear();
+        Parent._nodes.Remove(this);
 
-        if (isMe) {
-          Parent._nodes.Remove(this);
-        }
-
-        Parent = null;
-        Dispose();
+        RemoveAll();
       }
     }
 
-    public virtual void Draw(SpriteBatch spriteBatch, float lastX, float lastY) {
+    /*
+    RemoveAll() is separate from RemoveFromParent(), because we cannot manipulate a collection,
+    such as _nodes, while we are iterating over it. The only Node that needs to sever itself
+    from its parent is the calling Node, so we manually remove it with RemoveFromParent(), 
+    then use RemoveAll() to do the actual loop to clear and dispose the calling Node and 
+    its kiddos.
+    */
+
+    private void RemoveAll() {
+      foreach (Node n in _nodes) {
+        n.RemoveAll();
+      }
+
+      _nodes.Clear();
+      Parent = null;
+      Dispose();
+    }
+
+    public virtual void Draw(SpriteBatch spriteBatch, float lastX = 0, float lastY = 0) {
       if (IsHidden) return;
 
-      float relativeX = lastX + X;
-      float relativeY = lastY + Y;
+      float worldX = lastX + X;
+      float worldY = lastY + Y;
 
-      if (!Bounds.IsEmpty && ShowBounds) {
-        spriteBatch.Draw(
-          BoundsTexture,
-          new Rectangle((int)(relativeX + Bounds.X), (int)(relativeY + Bounds.Y), Bounds.Width, Bounds.Height),
-        BoundsColor * BoundsAlpha
-        );
-      }
+      Bounds.Draw(spriteBatch, worldX, worldY);
 
       // for position debugging
       if (ShowCenter) {
         spriteBatch.Draw(
-          BoundsTexture,
-          new Rectangle((int)(relativeX), (int)(relativeY), 2, 2),
+          BoundingBox.Texture,
+          new Rectangle((int)(worldX), (int)(worldY), 2, 2),
           Color.Red
         );
       }
 
       for (int i = 0; i < _nodes.Count; i++) {
         Node n = _nodes[i];
-        n.Draw(spriteBatch, relativeX, relativeY);
+        n.Draw(spriteBatch, worldX, worldY);
       }
+
     }
 
     public void Dispose() {
