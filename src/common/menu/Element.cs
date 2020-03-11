@@ -32,10 +32,10 @@ namespace Utils {
 
     public TextObject Label;
 
-    public MenuController MC;
+    public MenuController MC = new MenuController();
 
     public Element(Font font = null) {
-      BoundsAlpha = 1f;
+      Bounds.Alpha = 1f;
 
       Label = new TextObject(font);
       Label.VerticalAlignment = VerticalAlignment.CENTER;

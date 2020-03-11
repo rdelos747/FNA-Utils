@@ -44,7 +44,6 @@ namespace Utils {
     protected int collisionLayer = 0;
 
     // other vars
-    //public float layerDepth = 0.5f;
     public int layerDepth = 0;
     public Color drawColor = Color.White;
 
@@ -61,13 +60,8 @@ namespace Utils {
       }
     }
 
-    // public override void load(ContentManager content) {
-    //   initializeSpriteDimensions();
-    // }
-
     public override void Draw(SpriteBatch spriteBatch, float lastX, float lastY) {
       Vector2 position = new Vector2(lastX + X, lastY + Y);
-      //Vector2 center = new Vector2(Bounds.X, Bounds.Y);
       if (IsHidden) return;
 
       if (image != null) {
@@ -111,8 +105,8 @@ namespace Utils {
       spriteHeight = imageHeight / spriteSheetRows;
       spriteClip = new Rectangle(0, 0, spriteWidth, spriteHeight);
 
-      if (Bounds.IsEmpty) {
-        Bounds = new Rectangle(0, 0, spriteWidth, spriteHeight);
+      if (Bounds.Rect.IsEmpty) {
+        Bounds.Rect = new Rectangle(0, 0, spriteWidth, spriteHeight);
       }
     }
 
@@ -124,31 +118,31 @@ namespace Utils {
     }
 
     public bool pointInBounds(float pX, float pY, float offX = 0, float offY = 0) {
-      if (Bounds.IsEmpty) {
+      if (Bounds.Rect.IsEmpty) {
         return false;
       }
 
-      float cornerX = (X - Bounds.X) + offX;
-      float cornerY = (Y - Bounds.Y) + offY;
+      float cornerX = (X - Bounds.Rect.X) + offX;
+      float cornerY = (Y - Bounds.Rect.Y) + offY;
 
-      return pX >= cornerX && pX <= cornerX + Bounds.Width && pY >= cornerY && pY <= cornerY + Bounds.Height;
+      return pX >= cornerX && pX <= cornerX + Bounds.Rect.Width && pY >= cornerY && pY <= cornerY + Bounds.Rect.Height;
     }
 
     public bool objectInBounds(GameObject obj, float offX = 0, float offY = 0, int cl = 0) {
-      if (Bounds.IsEmpty || obj == null || obj.Bounds == null || IsHidden == true || obj.collisionLayer != cl) {
+      if (Bounds.Rect.IsEmpty || obj == null || obj.Bounds == null || IsHidden == true || obj.collisionLayer != cl) {
         return false;
       }
 
       Rectangle r1 = new Rectangle(
-        (int)((X + Bounds.X) + offX),
-        (int)((Y + Bounds.Y) + offY),
-        Bounds.Width,
-        Bounds.Height);
+        (int)((X + Bounds.Rect.X) + offX),
+        (int)((Y + Bounds.Rect.Y) + offY),
+        Bounds.Rect.Width,
+        Bounds.Rect.Height);
       Rectangle r2 = new Rectangle(
-        (int)((obj.X + obj.Bounds.X)),
-        (int)((obj.Y + obj.Bounds.Y)),
-        obj.Bounds.Width,
-        obj.Bounds.Height);
+        (int)((obj.X + obj.Bounds.Rect.X)),
+        (int)((obj.Y + obj.Bounds.Rect.Y)),
+        obj.Bounds.Rect.Width,
+        obj.Bounds.Rect.Height);
 
       return r1.Intersects(r2);
     }

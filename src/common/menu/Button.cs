@@ -11,25 +11,25 @@ namespace Utils {
     public Action OnClick;
 
     public Button(Font font = null) : base(font) {
-      ShowBounds = true;
+      Bounds.IsHidden = false;
       IsSelectable = true;
 
-      Bounds = new Rectangle(0, -(MenuDefaults.ButtonHeight / 2), MenuDefaults.ButtonWidth, MenuDefaults.ButtonHeight);
+      Bounds.Rect = new Rectangle(0, -(MenuDefaults.ButtonHeight / 2), MenuDefaults.ButtonWidth, MenuDefaults.ButtonHeight);
 
       ShowCenter = true;
     }
 
     public override void SetSelected() {
       Selected = true;
-      BoundsColor = SelectedColor;
-      BoundsAlpha = SelectedAlpha;
+      Bounds.Color = SelectedColor;
+      Bounds.Alpha = SelectedAlpha;
       Label.Color = TextSelectedColor;
     }
 
     public override void SetUnselected() {
       Selected = false;
-      BoundsColor = BackgroundColor;
-      BoundsAlpha = BackgroundAlpha;
+      Bounds.Color = BackgroundColor;
+      Bounds.Alpha = BackgroundAlpha;
       Label.Color = TextColor;
     }
 
