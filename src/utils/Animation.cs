@@ -1,8 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
 
-// Ive made a change again
-
 namespace Utils {
 
   public enum AnimationType {
