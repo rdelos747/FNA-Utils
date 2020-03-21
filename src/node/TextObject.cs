@@ -12,6 +12,11 @@ namespace Utils {
     CENTER
   }
 
+  public enum HorizontalAlignment {
+    LEFT,
+    CENTER
+  }
+
   public class TextObject : Node {
 
     private Font _font;
@@ -49,6 +54,21 @@ namespace Utils {
       }
       set {
         _verticalAlignment = value;
+
+        Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
+
+        if (_text != null) {
+          SetText(_text);
+        }
+      }
+    }
+    private HorizontalAlignment _horizontalAlignment;
+    public HorizontalAlignment HorizontalAlignment {
+      get {
+        return _horizontalAlignment;
+      }
+      set {
+        _horizontalAlignment = value;
 
         Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
 
@@ -162,11 +182,12 @@ namespace Utils {
 
       Bounds.Rect = new Rectangle(0, 0, maxWidth, maxHeight);
 
-      if (_verticalAlignment == VerticalAlignment.CENTER) {
-        TextOrigin = new Vector2(0, Bounds.Rect.Height / 2);
+      TextOrigin = Vector2.Zero;
+      if (_horizontalAlignment == HorizontalAlignment.CENTER) {
+        TextOrigin.X = Bounds.Rect.Width / 2;
       }
-      else if (_verticalAlignment == VerticalAlignment.TOP) {
-        TextOrigin = new Vector2(0, 0);
+      if (_verticalAlignment == VerticalAlignment.CENTER) {
+        TextOrigin.Y = Bounds.Rect.Height / 2;
       }
     }
   }
