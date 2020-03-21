@@ -44,7 +44,7 @@ namespace Utils {
     protected int collisionLayer = 0;
 
     // other vars
-    public int layerDepth = 0;
+    public float drawDepth = 0;
     public Color drawColor = Color.White;
 
 
@@ -74,7 +74,7 @@ namespace Utils {
           ImageOrigin,
           spriteScale,
           SpriteEffects.None,
-          layerDepth
+          drawDepth
         );
       }
 
