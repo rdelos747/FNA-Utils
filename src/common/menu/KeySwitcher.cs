@@ -22,7 +22,7 @@ namespace Utils {
       KeyLabel = new TextObject(font);
       KeyLabel.VerticalAlignment = VerticalAlignment.CENTER;
       KeyLabel.Text = Input.KeyAsText(key);
-      KeyLabel.X = 200;
+      KeyLabel.Position.X = 200;
 
       AddChild(KeyLabel);
     }

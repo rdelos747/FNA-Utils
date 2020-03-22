@@ -72,8 +72,8 @@ namespace Utils {
 
       Points = new List<(char, Vector2)>();
 
-      X = x;
-      Y = y;
+      Position.X = x;
+      Position.Y = y;
       if (text != null) {
         SetText(text);
       }
@@ -90,7 +90,7 @@ namespace Utils {
     public override void Draw(SpriteBatch spriteBatch, float lastX, float lastY) {
       if (IsHidden) return;
 
-      Vector2 position = new Vector2(lastX + X, lastY + Y);
+      Vector2 position = new Vector2(lastX + Position.X, lastY + Position.Y);
 
       for (int i = 0; i < Points.Count; i++) {
         GlyphData glyph = _font.getGlyph(Points[i].Item1);

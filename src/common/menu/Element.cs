@@ -74,8 +74,8 @@ namespace Utils {
 
       // update children with current selection index and
       // pass mouse offset 
-      float relativeX = mouseX - X;
-      float relativeY = mouseY - Y;
+      float relativeX = mouseX - Position.X;
+      float relativeY = mouseY - Position.Y;
       for (int i = 0; i < Nodes.Count; i++) {
         Element el = Nodes[i] as Element;
         if (el != null) {
@@ -117,8 +117,8 @@ namespace Utils {
       AddChild(el);
       LeftOffset += left;
       TopOffset += top;
-      el.X = LeftOffset;
-      el.Y = TopOffset;
+      el.Position.X = LeftOffset;
+      el.Position.Y = TopOffset;
 
       if (MC != null) {
         el.MC = MC;
