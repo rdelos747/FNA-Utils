@@ -82,7 +82,11 @@ namespace Utils {
 
     public static Font BaseFont;
 
-    public TextObject(Font font = null, int x = 0, int y = 0, string text = null) {
+    public TextObject(Font font) : this(null, 0, 0, HorizontalAlignment.LEFT, VerticalAlignment.TOP, font) { }
+
+    public TextObject(string text, int x, int y) : this(text, x, y, HorizontalAlignment.LEFT, VerticalAlignment.TOP, null) { }
+
+    public TextObject(string text, int x, int y, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Font font) {
       _font = font;
       if (_font == null) {
         _font = BaseFont;
@@ -94,6 +98,8 @@ namespace Utils {
 
       X = x;
       Y = y;
+      _horizontalAlignment = horizontalAlignment;
+      _verticalAlignment = verticalAlignment;
       if (text != null) {
         SetText(text);
       }
