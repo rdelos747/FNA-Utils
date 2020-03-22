@@ -40,8 +40,10 @@ namespace MyGame {
   public class Player : GameObject {
     public int speed = 0;
 
+    private SpriteSheet MySheet = new SpriteSheet("path/to/sheet", 16, 16);
+
     public Player() {
-      setSpriteSheet(TextureLoader.Load("path/to/sheet"), 16, 16);
+      setSpriteSheet(MySheet);
       Bounds = new Rectangle(-16, -16, 32, 48);
       ImageOrigin = new Vector2(32, 32);
     }
@@ -88,6 +90,8 @@ We are also very new to C# in general. All feedback is welcome :)
 [GameObjects](#gameobjects)
 
 [TextureLoader](#textureloader)
+
+[SpriteSheet](#spritesheet)
 
 [TextObjects](#textobjects)
 
@@ -476,7 +480,7 @@ public class Player: GameObject {
 
 ## Setting GameObject's sprite sheet
 
-`protected void setSpriteSheet(Texture2D newImage, int cols, int rows)`
+`protected void setSpriteSheet(SpriteSheet sheet)`
 
 Sets the GameObject's image as a sprite sheet, cut into a grid specified by cols and rows (in the example below, 4 x 4). Choosing this allows for the use of `Animation` and `CurrentFrame` to pick the sprite to display, as well as `SpriteClip`.
 
@@ -485,8 +489,10 @@ using Engine
 
 public class Player: GameObject {
 
+  SpriteSheet Sheet = new SpriteSheet("mysheet.png", 4, 4)
+
   public Player() {
-    setSpriteSheet(TextureLoader.Load("mysheet.png"), 4, 4);
+    setSpriteSheet(Sheet);
   }
 }
 ```
@@ -518,7 +524,7 @@ public class MyClass : GameObject {
   Animation runAnimation = new Animation(true, AnimationType.STEP);
 
   public MyClass() {
-    SetSpriteSheet(TextureLoader.Load("mysheet.png"), 4, 4);
+    SetSpriteSheet(MySheet);
 
      /*
       The sheet added can be thought of as a box cut into equal smaller boxes, labeled as follows:
@@ -560,7 +566,7 @@ public class MyClass : GameObject {
   int veryLowHealthFrame = 12;
 
   public MyClass() {
-    setSpriteSheet(TextureLoader.Load("mysheet.png"), 4, 4);
+    setSpriteSheet(MySheet);
     CurrentFrame = healthyFrame;
   }
 
@@ -677,6 +683,51 @@ Returns a `Texture2D` from the supplied image file. The Texture2D's alpha is pre
 public class Enemy : GameObject {
   public Enemy {
     SetImage(TextureLoader.Load("path/to/sheet"));
+  }
+}
+```
+
+# SpriteSheet
+
+`public class SpriteSheet`
+
+Defines a sprite sheet to be used with GameObjects.
+
+###### constructor
+
+`public SpriteSheet(string path, int cols, int rows)`
+
+###### readonly property
+
+`public Texture2D SheetTexture`
+
+###### readonly property
+
+`public int Cols`
+
+###### readonly property
+
+`public int Rows`
+
+## Example Usage
+
+SpriteSheets are helpful when you have multiple classes that use the same sheet. We only need to define the sheet once, and can pass it to every object that needs it via `GameObject.SetSpriteSheet()`.
+
+```c#
+public SpriteSheet Sheet1 = new SpriteSheet("sheet.png", 8, 8);
+
+public class MyThing : GameObject {
+  public MyThing () {
+    setSpriteSheet(Sheet1);
+    frame = 2;
+  }
+}
+
+public class MyOtherThing : GameObject {
+  public MyOtherThing () {
+    setSpriteSheet(Sheet1);
+    frame = 7;
+    // while both objects use the same sheet, they can each display different areas
   }
 }
 ```
