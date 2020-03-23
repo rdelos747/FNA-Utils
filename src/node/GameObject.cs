@@ -113,7 +113,7 @@ namespace Utils {
     protected void animate(GameTime gameTime) {
       // if the animation is set, update currentFrame and spriteClip to be in sync
       if (animation != null) {
-        currentFrame = (int)animation.update(gameTime);
+        currentFrame = (int)animation.Update(gameTime);
       }
     }
 

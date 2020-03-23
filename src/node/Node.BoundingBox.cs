@@ -29,12 +29,6 @@ namespace Utils {
 
       public void Draw(SpriteBatch spriteBatch, float x, float y) {
         if (!Rect.IsEmpty && !IsHidden) {
-          // spriteBatch.Draw(
-          //   Texture,
-          //   new Rectangle((int)(x + Rect.X), (int)(y + Rect.Y), Rect.Width, Rect.Height),
-          // Color * Alpha
-          // );
-
           spriteBatch.Draw(
             Texture,
             new Rectangle((int)(x + Rect.X), (int)(y + Rect.Y), Rect.Width, Rect.Height),
