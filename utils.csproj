@@ -42,12 +42,10 @@
 		
 		<Compile Include="src/utils/Animation.cs" />
 		<Compile Include="src/utils/Font.cs" />
-		<Compile Include="src/utils/Hex.cs" />
+		<Compile Include="src/utils/HexColors.cs" />
 		<Compile Include="src/utils/Input.cs" />
-		<Compile Include="src/utils/KeyFrames.cs" />
 		<Compile Include="src/utils/Rand.cs" />
 		<Compile Include="src/utils/Resolution.cs" />
-		<Compile Include="src/utils/SpriteSheet.cs" />
 		<Compile Include="src/utils/TextureLoader.cs" />
 	</ItemGroup>
 </Project>

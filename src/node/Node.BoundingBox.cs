@@ -23,7 +23,6 @@ namespace Utils {
       public bool IsHidden = true;
       public Color Color = Color.Blue;
       public float Alpha = 0.5f;
-      public float DrawDepth = 0.0f;
 
       public BoundingBox() { }
 
@@ -32,12 +31,7 @@ namespace Utils {
           spriteBatch.Draw(
             Texture,
             new Rectangle((int)(x + Rect.X), (int)(y + Rect.Y), Rect.Width, Rect.Height),
-            null,
-            Color * Alpha,
-            0.0f,
-            new Vector2(0, 0),
-            SpriteEffects.None,
-            DrawDepth
+          Color * Alpha
           );
         }
       }
