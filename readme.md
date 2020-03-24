@@ -40,8 +40,10 @@ namespace MyGame {
   public class Player : GameObject {
     public int speed = 0;
 
+    private SpriteSheet MySheet = new SpriteSheet("path/to/sheet", 16, 16);
+
     public Player() {
-      setSpriteSheet(TextureLoader.Load("path/to/sheet"), 16, 16);
+      setSpriteSheet(MySheet);
       Bounds = new Rectangle(-16, -16, 32, 48);
       ImageOrigin = new Vector2(32, 32);
     }
@@ -89,6 +91,8 @@ We are also very new to C# in general. All feedback is welcome :)
 
 [TextureLoader](#textureloader)
 
+[SpriteSheet](#spritesheet)
+
 [TextObjects](#textobjects)
 
 [FontLibrary](#fontlibrary)
@@ -97,7 +101,11 @@ We are also very new to C# in general. All feedback is welcome :)
 
 [BoundingBox](#boundingbox)
 
-[Animations](#animations)
+[KeyFrames](#keyframes)
+
+[CurveType](#curvetype)
+
+[Animation](#animation)
 
 [Random](#rand)
 
@@ -476,7 +484,7 @@ public class Player: GameObject {
 
 ## Setting GameObject's sprite sheet
 
-`protected void setSpriteSheet(Texture2D newImage, int cols, int rows)`
+`protected void setSpriteSheet(SpriteSheet sheet)`
 
 Sets the GameObject's image as a sprite sheet, cut into a grid specified by cols and rows (in the example below, 4 x 4). Choosing this allows for the use of `Animation` and `CurrentFrame` to pick the sprite to display, as well as `SpriteClip`.
 
@@ -485,8 +493,10 @@ using Engine
 
 public class Player: GameObject {
 
+  SpriteSheet Sheet = new SpriteSheet("mysheet.png", 4, 4)
+
   public Player() {
-    setSpriteSheet(TextureLoader.Load("mysheet.png"), 4, 4);
+    setSpriteSheet(Sheet);
   }
 }
 ```
@@ -518,7 +528,7 @@ public class MyClass : GameObject {
   Animation runAnimation = new Animation(true, AnimationType.STEP);
 
   public MyClass() {
-    SetSpriteSheet(TextureLoader.Load("mysheet.png"), 4, 4);
+    SetSpriteSheet(MySheet);
 
      /*
       The sheet added can be thought of as a box cut into equal smaller boxes, labeled as follows:
@@ -560,7 +570,7 @@ public class MyClass : GameObject {
   int veryLowHealthFrame = 12;
 
   public MyClass() {
-    setSpriteSheet(TextureLoader.Load("mysheet.png"), 4, 4);
+    setSpriteSheet(MySheet);
     CurrentFrame = healthyFrame;
   }
 
@@ -677,6 +687,51 @@ Returns a `Texture2D` from the supplied image file. The Texture2D's alpha is pre
 public class Enemy : GameObject {
   public Enemy {
     SetImage(TextureLoader.Load("path/to/sheet"));
+  }
+}
+```
+
+# SpriteSheet
+
+`public class SpriteSheet`
+
+Defines a sprite sheet to be used with GameObjects.
+
+###### constructor
+
+`public SpriteSheet(string path, int cols, int rows)`
+
+###### readonly property
+
+`public Texture2D SheetTexture`
+
+###### readonly property
+
+`public int Cols`
+
+###### readonly property
+
+`public int Rows`
+
+## Example Usage
+
+SpriteSheets are helpful when you have multiple classes that use the same sheet. We only need to define the sheet once, and can pass it to every object that needs it via `GameObject.SetSpriteSheet()`.
+
+```c#
+public SpriteSheet Sheet1 = new SpriteSheet("sheet.png", 8, 8);
+
+public class MyThing : GameObject {
+  public MyThing () {
+    setSpriteSheet(Sheet1);
+    frame = 2;
+  }
+}
+
+public class MyOtherThing : GameObject {
+  public MyOtherThing () {
+    setSpriteSheet(Sheet1);
+    frame = 7;
+    // while both objects use the same sheet, they can each display different areas
   }
 }
 ```
@@ -834,15 +889,170 @@ Node.BoundingBox.Texture.SetData(new Color[] { Color.White });
 
 `public float Alpha = 0.5f`
 
-# Animations
+# KeyFrames
+
+`public sealed class KeyFrames`
+
+Creates a curve for a given set of values that can be evaluated at specific key frames.
+
+_In many games, multiple objects might use the same keyframes for their animations. It is more efficient to store a single list of frames in memory, and let each object have its own index into the frames for animating._
+
+See the [Animation](#animation) class for usage examples.
+
+## Creating KeyFrames and adding values
+
+###### constructor
+
+`public KeyFrames(CurveType ct)`
+
+See the [CurveType](#curvetype) enum.
+
+###### constructor
+
+`public KeyFrames(CurveType ct, (int time, int value)[] frames)`
+
+###### method
+
+`public void AddKeyframe(int time, float value)`
+
+###### method
+
+`public Animation Create(bool loop = true)`
+
+Returns a new `Animation` object set to use this Keyframe's curve.
+
+## Evaluating Keyframes
+
+While it is possible to manually animate something by reading a KeyFrame's curve at specific points, it is recommented to use the [Animation](#animation) class for this, as the `Animation.Evaluate` family of methods already handle reading the following methods and properties of the `KeyFrames` class.
+
+###### method
+
+`public float Evaluate(int time, int index)`
+
+###### readonly property
+
+`public int NumPoints = 0`
+
+###### readonly property
+
+`public int MaxTime = 0`
+
+## Using the curve
+
+###### property
+
+`public CurveType CurveType`
+
+###### readonly property
+
+`public Curve Curve = new Curve();`
+
+###### method
+
+`public void SmoothTangents()`
+
+For KeyFrames that use `CurveType.Curve`, it is recommended to call `SmoothTangents()` after adding all points to the curve before evaluating.
+
+# CurveType
+
+Defines possible curve types for use with the `KeyFrames` class. `CurveType.STEP` should be used when creating key frames for sprite animations.
+
+```c#
+public enum CurveType {
+  CURVE,
+  STEP
+}
+```
+
+# Animation
+
+`public class Animation`
+
+Animates a value across a given KeyFrame's curve.
+
+## Creating Animations
+
+####### constructor
+
+`public Animation(KeyFrames kf, bool loop = true)`
+
+To create an `Animation`, we must first create a `KeyFrames` and add points to it.
+
+The following example is for use in animating a GameObject.
+
+```c#
+// Constants.cs
+public static class Constants {
+  public static readonly KeyFrames MyFrames = new KeyFrames(CurveType.STEP,
+    new (int time, int value)[]{
+      (0, 0),
+      (1000, 1),
+      (1200, 2),
+      (1400, 3),
+      (1600, 4),
+      (1800, 5),
+      (2000, 6)
+    }
+  );
+}
+
+// MyObject.cs
+public class MyObject : GameObject {
+  public MyObject() {
+    animation = Constants.MyFrames.Create();
+    //or
+    animation = new Animation(Constants.MyFrames);
+  }
+}
+```
+
+To actually animate the frames, `MyObject.Animate()` must be called during the game's update loop.
+
+## Updating Animations
+
+###### method
+
+`public bool IsFinished()`
+
+###### method
+
+`public float Update(GameTime gameTime)`
+
+Animations can also be used to animate values other than sprite frames. Then following example animates the scroll position of a level.
+
+```c#
+// MyObject.cs
+public class MyLevel : Node {
+  private KeyFrames ScrollFrames = new KeyFrames(CurveType.CURVE);
+  private Animation scrollAnimation;
+
+  public MyLevel() {
+    ScrollFrames.AddKeyframe(0, 0);
+    ScrollFrames.AddKeyframe(500, (float)(Constants.Screen.GameHeight * 0.25));
+    ScrollFrames.AddKeyframe(800, (float)(Constants.Screen.GameHeight * 0.75));
+    ScrollFrames.AddKeyframe(1000, (float)(Constants.Screen.GameHeight * 0.95));
+    ScrollFrames.AddKeyframe(1200, Constants.Screen.GameHeight);
+    ScrollFrames.smoothTangents();
+    scrollAnimation = new Animation(ScrollFrames, false);
+  }
+
+  public void Update(GameTime gameTime) {
+    float delta = scrollAnimation.Update(gameTime, ref scroll);
+    // do something with delta
+  }
+}
+```
 
 # Rand
 
 # Menu Helpers
 
 [The Element Class](#the-element-class)
+
 [Button Elements](#button-elements)
+
 [KeySwitcher Elements](#keyswitcher-elements)
+
 [List Elements](#List-elements)
 
 The `Element` class and its related utilities attempt to handle UI operations commonly associated with in-game menus. This includes simple tasks such as hover effects when moving the mouse over a menu, to more complex interactions like scroll views that dynamically show and hide content.

@@ -14,8 +14,10 @@ namespace Utils {
     public static Texture2D Load(string filePath) {
       Texture2D image = Content.Load<Texture2D>(filePath);
 
-      if (usingPipeline == false)
-        PremultiplyTexture(image);
+      // if (usingPipeline == false)
+      //   PremultiplyTexture(image);
+
+      // The above lines were messing up transparency 
 
       return image;
     }

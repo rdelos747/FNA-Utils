@@ -88,11 +88,11 @@ namespace Utils {
       initializeSpriteDimensions();
     }
 
-    protected void setSpriteSheet(Texture2D newImage, int cols, int rows) {
+    protected void setSpriteSheet(SpriteSheet sheet) {
       if (image != null) return; // if image already set, bounce
-      image = newImage;
-      spriteSheetCols = cols;
-      spriteSheetRows = rows;
+      image = sheet.SheetTexture;
+      spriteSheetCols = sheet.Cols;
+      spriteSheetRows = sheet.Rows;
       initializeSpriteDimensions();
     }
 
@@ -113,7 +113,7 @@ namespace Utils {
     protected void animate(GameTime gameTime) {
       // if the animation is set, update currentFrame and spriteClip to be in sync
       if (animation != null) {
-        currentFrame = (int)animation.update(gameTime);
+        currentFrame = (int)animation.Update(gameTime);
       }
     }
 
