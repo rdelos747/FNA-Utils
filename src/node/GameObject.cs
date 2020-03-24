@@ -61,7 +61,7 @@ namespace Utils {
     }
 
     public override void Draw(SpriteBatch spriteBatch, float lastX, float lastY) {
-      Vector2 position = new Vector2(lastX + X, lastY + Y);
+      Vector2 position = new Vector2(lastX + Position.X, lastY + Position.Y);
       if (IsHidden) return;
 
       if (image != null) {
@@ -122,8 +122,8 @@ namespace Utils {
         return false;
       }
 
-      float cornerX = (X - Bounds.Rect.X) + offX;
-      float cornerY = (Y - Bounds.Rect.Y) + offY;
+      float cornerX = (Position.X - Bounds.Rect.X) + offX;
+      float cornerY = (Position.Y - Bounds.Rect.Y) + offY;
 
       return pX >= cornerX && pX <= cornerX + Bounds.Rect.Width && pY >= cornerY && pY <= cornerY + Bounds.Rect.Height;
     }
@@ -134,13 +134,13 @@ namespace Utils {
       }
 
       Rectangle r1 = new Rectangle(
-        (int)((X + Bounds.Rect.X) + offX),
-        (int)((Y + Bounds.Rect.Y) + offY),
+        (int)((Position.X + Bounds.Rect.X) + offX),
+        (int)((Position.Y + Bounds.Rect.Y) + offY),
         Bounds.Rect.Width,
         Bounds.Rect.Height);
       Rectangle r2 = new Rectangle(
-        (int)((obj.X + obj.Bounds.Rect.X)),
-        (int)((obj.Y + obj.Bounds.Rect.Y)),
+        (int)((obj.Position.X + obj.Bounds.Rect.X)),
+        (int)((obj.Position.Y + obj.Bounds.Rect.Y)),
         obj.Bounds.Rect.Width,
         obj.Bounds.Rect.Height);
 

@@ -28,8 +28,7 @@ namespace Utils {
 
 
     // Position stuff
-    public float X;
-    public float Y;
+    public Vector2 Position = new Vector2(0, 0);
 
     // Drawing stuff
     public bool IsHidden = false;
@@ -73,8 +72,8 @@ namespace Utils {
     public virtual void Draw(SpriteBatch spriteBatch, float lastX = 0, float lastY = 0) {
       if (IsHidden) return;
 
-      float worldX = lastX + X;
-      float worldY = lastY + Y;
+      float worldX = lastX + Position.X;
+      float worldY = lastY + Position.Y;
 
       Bounds.Draw(spriteBatch, worldX, worldY);
 
