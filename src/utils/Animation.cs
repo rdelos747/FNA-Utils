@@ -53,9 +53,7 @@ namespace Utils {
       if (Loop) {
         return false;
       }
-      return Index >= Frames.NumPoints;
+      return Index >= Frames.NumPoints - 1;
     }
-
-
   }
 }
