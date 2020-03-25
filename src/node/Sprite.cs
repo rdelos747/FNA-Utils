@@ -16,9 +16,9 @@ namespace Utils {
 
     protected int ImageWidth { get; private set; }
     protected int ImageHeight { get; private set; }
-    protected Vector2 ImageOrigin = new Vector2();
-    public int Width { get; private set; }
-    public int Height { get; private set; }
+    public Vector2 ImageOrigin = new Vector2();
+    public int Width;
+    public int Height;
 
     protected Rectangle ImageClip;
     public float Rotation = 0f;
@@ -81,28 +81,17 @@ namespace Utils {
         );
       }
       else {
-        Vector2 offset = Position - ImageOrigin;
-
-        // spriteBatch.Draw(
-        //   SystemRect,
-        //   new Rectangle((int)(offset.X), (int)(offset.Y), Width, Height),
-        //   null,
-        //   Color * Alpha,
-        //   Rotation,
-        //   new Vector2(0, 0),
-        //   SpriteEffects.None,
-        //   DrawDepth
-        // );
+        Vector2 offset = position - ImageOrigin;
 
         spriteBatch.Draw(
-         SystemRect,
-         new Rectangle((int)(offset.X), (int)(offset.Y), Width, Height),
-         null,
-         Color * Alpha,
-         Rotation,
-         ImageOrigin,
-         SpriteEffects.None,
-         DrawDepth
+          SystemRect,
+          new Rectangle((int)(offset.X), (int)(offset.Y), Width, Height),
+          null,
+          Color * Alpha,
+          Rotation,
+          new Vector2(0, 0),
+          SpriteEffects.None,
+          DrawDepth
        );
       }
 

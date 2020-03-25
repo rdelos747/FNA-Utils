@@ -15,8 +15,13 @@ namespace Utils {
 
     public Rectangle Bounds = new Rectangle();
     public CollisionType CollisionType = CollisionType.Box;
+    public int CollisionLayer = -1;
     // public Radius Rad = new Radius
     // public Line Line = new Line
+
+    public bool Collides(Node other) {
+      return Collides(other, new Vector2(0, 0));
+    }
 
     public bool Collides(Node other, float x, float y) {
       return Collides(other, new Vector2(x, y));
@@ -62,48 +67,5 @@ namespace Utils {
 
       return p.X >= cornerX && p.X <= cornerX + Bounds.Width && p.Y >= cornerY && p.Y <= cornerY + Bounds.Height;
     }
-  }
-
-
-
-
-
-  public sealed class BoundingBox {
-    /*
-    Static texture used to draw all bounds.
-    Should be initialized in Game constructor in
-    user space.
-    */
-    //public static Texture2D Texture;
-
-
-    // public bool IsHidden = true;
-    // public Color Color = Color.Blue;
-    // public float Alpha = 0.5f;
-    // public float DrawDepth = 0.0f;
-
-
-    public Rectangle Rect = new Rectangle();
-    // public Radius Rad = new Radius
-    // public Line Line = new Line
-
-    public BoundingBox() { }
-
-
-
-    // public void Draw(SpriteBatch spriteBatch, float x, float y) {
-    //   if (!Rect.IsEmpty && !IsHidden) {
-    //     spriteBatch.Draw(
-    //       Texture,
-    //       new Rectangle((int)(x + Rect.X), (int)(y + Rect.Y), Rect.Width, Rect.Height),
-    //       null,
-    //       Color * Alpha,
-    //       0.0f,
-    //       new Vector2(0, 0),
-    //       SpriteEffects.None,
-    //       DrawDepth
-    //     );
-    //   }
-    // }
   }
 }

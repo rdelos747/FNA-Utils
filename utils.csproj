@@ -31,7 +31,7 @@
 		<Compile Include="src/node/Label.cs" />
 		<Compile Include="src/node/Node.cs" />
 		<Compile Include="src/node/Node.Collision.cs" />
-		<Compile Include="src/node/Spitet.cs" />
+		<Compile Include="src/node/Sprite.cs" />
 
 		<Compile Include="src/common/menu/Button.cs" />
 		<Compile Include="src/common/menu/Element.cs" />

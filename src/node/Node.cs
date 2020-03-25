@@ -68,15 +68,19 @@ namespace Utils {
       float worldX = lastX + Position.X;
       float worldY = lastY + Position.Y;
 
-      //Bounds.Draw(spriteBatch, worldX, worldY);
-
       // for position debugging
       if (ShowCenter) {
+
         spriteBatch.Draw(
           Sprite.SystemRect,
           new Rectangle((int)(worldX), (int)(worldY), 2, 2),
-          Color.Red
-        );
+          null,
+          Color.Red,
+          0.0f,
+          new Vector2(0, 0),
+          SpriteEffects.None,
+          0.0f
+      );
       }
 
       for (int i = 0; i < _nodes.Count; i++) {
