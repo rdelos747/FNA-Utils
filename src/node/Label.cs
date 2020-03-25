@@ -17,7 +17,9 @@ namespace Utils {
     CENTER
   }
 
-  public class TextObject : Node {
+  public class Label : Node {
+
+    public static Font BaseFont;
 
     private Font _font;
     public Font Font {
@@ -26,7 +28,7 @@ namespace Utils {
       }
       set {
         _font = value;
-        Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
+        Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
 
         if (_text != null) {
           SetText(_text);
@@ -55,7 +57,7 @@ namespace Utils {
       set {
         _verticalAlignment = value;
 
-        Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
+        Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
 
         if (_text != null) {
           SetText(_text);
@@ -70,7 +72,7 @@ namespace Utils {
       set {
         _horizontalAlignment = value;
 
-        Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
+        Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
 
         if (_text != null) {
           SetText(_text);
@@ -79,20 +81,21 @@ namespace Utils {
     }
 
     public Color Color = Color.White;
+    public bool IsHidden = false;
 
-    public static Font BaseFont;
 
-    public TextObject(Font font) : this(null, 0, 0, HorizontalAlignment.LEFT, VerticalAlignment.TOP, font) { }
 
-    public TextObject(string text, int x, int y) : this(text, x, y, HorizontalAlignment.LEFT, VerticalAlignment.TOP, null) { }
+    public Label(Font font) : this(null, 0, 0, HorizontalAlignment.LEFT, VerticalAlignment.TOP, font) { }
 
-    public TextObject(string text, int x, int y, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Font font) {
+    public Label(string text, int x, int y) : this(text, x, y, HorizontalAlignment.LEFT, VerticalAlignment.TOP, null) { }
+
+    public Label(string text, int x, int y, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Font font) {
       _font = font;
       if (_font == null) {
         _font = BaseFont;
       }
 
-      Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
+      Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
 
       Points = new List<(char, Vector2)>();
 
@@ -186,14 +189,14 @@ namespace Utils {
         maxHeight = Math.Max(maxHeight, py + glyph.height);
       }
 
-      Bounds.Rect = new Rectangle(0, 0, maxWidth, maxHeight);
+      Bounds = new Rectangle(0, 0, maxWidth, maxHeight);
 
       TextOrigin = Vector2.Zero;
       if (_horizontalAlignment == HorizontalAlignment.CENTER) {
-        TextOrigin.X = Bounds.Rect.Width / 2;
+        TextOrigin.X = Bounds.Width / 2;
       }
       if (_verticalAlignment == VerticalAlignment.CENTER) {
-        TextOrigin.Y = Bounds.Rect.Height / 2;
+        TextOrigin.Y = Bounds.Height / 2;
       }
     }
   }

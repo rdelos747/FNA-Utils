@@ -28,10 +28,10 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<Compile Include="src/node/GameObject.cs" />
+		<Compile Include="src/node/Label.cs" />
 		<Compile Include="src/node/Node.cs" />
-		<Compile Include="src/node/Node.BoundingBox.cs" />
-		<Compile Include="src/node/TextObject.cs" />
+		<Compile Include="src/node/Node.Collision.cs" />
+		<Compile Include="src/node/Spitet.cs" />
 
 		<Compile Include="src/common/menu/Button.cs" />
 		<Compile Include="src/common/menu/Element.cs" />
@@ -41,6 +41,7 @@
 		<Compile Include="src/common/menu/MenuDefaults.cs" />
 		
 		<Compile Include="src/utils/Animation.cs" />
+		<Compile Include="src/utils/Collision.cs" />
 		<Compile Include="src/utils/Font.cs" />
 		<Compile Include="src/utils/Hex.cs" />
 		<Compile Include="src/utils/Input.cs" />

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Utils {
 
-  public class Element : GameObject {
+  public class Element : Sprite {
     /*
       An element can be selected. When an element gets added to a parent element,
       if it IsSelectable, the added element gets assigned an index and the 
@@ -30,14 +30,14 @@ namespace Utils {
     public Color TextColor = MenuDefaults.ButtonTextColor;
     public Color TextSelectedColor = MenuDefaults.ButtonTextSelectedColor;
 
-    public TextObject Label;
+    public Label Label;
 
     public MenuController MC = new MenuController();
 
     public Element(Font font = null) {
-      Bounds.Alpha = 1f;
+      Alpha = 1f;
 
-      Label = new TextObject(font);
+      Label = new Label(font);
       Label.VerticalAlignment = VerticalAlignment.CENTER;
 
       AddChild(Label);
@@ -46,7 +46,7 @@ namespace Utils {
     public virtual void Update(float mouseX, float mouseY) {
       if (MC != null) {
         // handle selection by mouse click
-        if (IsSelectable && Input.MouseLeftClicked() && pointInBounds(mouseX, mouseY)) {
+        if (IsSelectable && Input.MouseLeftClicked() && PointInBounds(new Vector2(mouseX, mouseY))) {
           Element parent = Parent as Element;
           if (parent != null) {
             parent.UnselectAllChildren();
@@ -86,7 +86,7 @@ namespace Utils {
             if (CurrentSelectedChildIndex == el.SelectIndex) {
               el.SetSelected();
             }
-            if (el.pointInBounds(relativeX, relativeY)) {
+            if (el.PointInBounds(new Vector2(relativeX, relativeY))) {
               el.SetSelected();
             }
           }
