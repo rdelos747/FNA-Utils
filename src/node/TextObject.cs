@@ -12,6 +12,11 @@ namespace Utils {
     CENTER
   }
 
+  public enum HorizontalAlignment {
+    LEFT,
+    CENTER
+  }
+
   public class TextObject : Node {
 
     private Font _font;
@@ -57,12 +62,31 @@ namespace Utils {
         }
       }
     }
+    private HorizontalAlignment _horizontalAlignment;
+    public HorizontalAlignment HorizontalAlignment {
+      get {
+        return _horizontalAlignment;
+      }
+      set {
+        _horizontalAlignment = value;
+
+        Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
+
+        if (_text != null) {
+          SetText(_text);
+        }
+      }
+    }
 
     public Color Color = Color.White;
 
     public static Font BaseFont;
 
-    public TextObject(Font font = null, int x = 0, int y = 0, string text = null) {
+    public TextObject(Font font) : this(null, 0, 0, HorizontalAlignment.LEFT, VerticalAlignment.TOP, font) { }
+
+    public TextObject(string text, int x, int y) : this(text, x, y, HorizontalAlignment.LEFT, VerticalAlignment.TOP, null) { }
+
+    public TextObject(string text, int x, int y, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Font font) {
       _font = font;
       if (_font == null) {
         _font = BaseFont;
@@ -74,6 +98,8 @@ namespace Utils {
 
       X = x;
       Y = y;
+      _horizontalAlignment = horizontalAlignment;
+      _verticalAlignment = verticalAlignment;
       if (text != null) {
         SetText(text);
       }
@@ -162,11 +188,12 @@ namespace Utils {
 
       Bounds.Rect = new Rectangle(0, 0, maxWidth, maxHeight);
 
-      if (_verticalAlignment == VerticalAlignment.CENTER) {
-        TextOrigin = new Vector2(0, Bounds.Rect.Height / 2);
+      TextOrigin = Vector2.Zero;
+      if (_horizontalAlignment == HorizontalAlignment.CENTER) {
+        TextOrigin.X = Bounds.Rect.Width / 2;
       }
-      else if (_verticalAlignment == VerticalAlignment.TOP) {
-        TextOrigin = new Vector2(0, 0);
+      if (_verticalAlignment == VerticalAlignment.CENTER) {
+        TextOrigin.Y = Bounds.Rect.Height / 2;
       }
     }
   }
