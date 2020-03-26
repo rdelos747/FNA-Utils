@@ -82,11 +82,11 @@ namespace Utils {
 
     public Color Color = Color.White;
 
-    public Label(Font font) : this(null, 0, 0, HorizontalAlignment.LEFT, VerticalAlignment.TOP, font) { }
+    public Label(Font font = null) : this(null, 0, 0, HorizontalAlignment.LEFT, VerticalAlignment.TOP, font) { }
 
     public Label(string text, int x, int y) : this(text, x, y, HorizontalAlignment.LEFT, VerticalAlignment.TOP, null) { }
 
-    public Label(string text, int x, int y, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Font font) {
+    public Label(string text, int x, int y, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Font font = null) {
       _font = font;
       if (_font == null) {
         _font = BaseFont;
