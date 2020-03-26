@@ -81,9 +81,6 @@ namespace Utils {
     }
 
     public Color Color = Color.White;
-    public bool IsHidden = false;
-
-
 
     public Label(Font font) : this(null, 0, 0, HorizontalAlignment.LEFT, VerticalAlignment.TOP, font) { }
 

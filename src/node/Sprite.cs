@@ -24,8 +24,6 @@ namespace Utils {
     public float Rotation = 0f;
     public float Scale = 1f;
 
-    public bool IsHidden = false;
-
     // sprite sheet animation
     protected Animation animation;
     private int _currentFrame = -1;

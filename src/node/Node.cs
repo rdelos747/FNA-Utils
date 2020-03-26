@@ -28,6 +28,7 @@ namespace Utils {
     public Vector2 Position = new Vector2(0, 0);
 
     public bool ShowCenter = false;
+    public bool IsHidden = false;
 
     public Node() { }
 
@@ -65,6 +66,8 @@ namespace Utils {
     }
 
     public virtual void Draw(SpriteBatch spriteBatch, float lastX = 0, float lastY = 0) {
+      if (IsHidden) return;
+
       float worldX = lastX + Position.X;
       float worldY = lastY + Position.Y;
 
