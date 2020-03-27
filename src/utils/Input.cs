@@ -25,6 +25,14 @@ namespace Utils {
       MouseY = MouseState.Y;
     }
 
+    public static Keys GetRecentKey() {
+      Keys[] k = KeyboardState.GetPressedKeys();
+      if (k.Length == 0 || LastKeyboardState.IsKeyDown(k[0])) {
+        return 0;
+      }
+      return k[0];
+    }
+
     public static bool IsKeyDown(Keys input) {
       return KeyboardState.IsKeyDown(input);
     }
@@ -77,8 +85,17 @@ namespace Utils {
         return false;
     }
 
-    public static void SetInputMapKey(string key, Keys val) {
-      InputMap[key] = val;
+    public static void SetInputMapKey(string changeKey, Keys val) {
+      string temp = null;
+      foreach (string iterKey in InputMap.Keys) {
+        if (InputMap[iterKey] == val) {
+          temp = iterKey;
+        }
+      }
+      if (temp != null) {
+        InputMap[temp] = InputMap[changeKey];
+      }
+      InputMap[changeKey] = val;
     }
 
     public static void SetInputMap(Dictionary<string, Keys> newMap) {

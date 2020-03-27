@@ -49,7 +49,7 @@ namespace Utils {
       }
     }
 
-    protected Vector2 TextOrigin = new Vector2();
+    public Vector2 TextOrigin = new Vector2();
     private VerticalAlignment _verticalAlignment;
     public VerticalAlignment VerticalAlignment {
       get {
@@ -82,6 +82,7 @@ namespace Utils {
     }
 
     public Color Color = Color.White;
+    public float DrawDepth = 0;
 
     public Label(Font font = null) : this(null, 0, 0, HorizontalAlignment.Left, VerticalAlignment.Top, font) { }
 
@@ -121,16 +122,33 @@ namespace Utils {
 
       for (int i = 0; i < Points.Count; i++) {
         GlyphData glyph = _font.getGlyph(Points[i].Item1);
+        // spriteBatch.Draw(
+        //   glyph.texture,
+        //   new Vector2(
+        //     (Points[i].Item2.X + position.X) - TextOrigin.X,
+        //     (Points[i].Item2.Y + position.Y) - TextOrigin.Y
+        //   ),
+        //   new Rectangle(0, 0, glyph.width, glyph.height),
+        //   Color
+        // );
         spriteBatch.Draw(
+          // glyph.texture,
+          //   new Vector2(
+          //   (Points[i].Item2.X + position.X) - TextOrigin.X,
+          //   (Points[i].Item2.Y + position.Y) - TextOrigin.Y
+          // ),
           glyph.texture,
-          new Vector2(
-            (Points[i].Item2.X + position.X) - TextOrigin.X,
-            (Points[i].Item2.Y + position.Y) - TextOrigin.Y
-          // (Points[i].Item2.X + position.X) - Bounds.X,
-          // (Points[i].Item2.Y + position.Y) - Bounds.Y
+            new Vector2(
+            (Points[i].Item2.X + position.X),
+            (Points[i].Item2.Y + position.Y)
           ),
-          new Rectangle(0, 0, glyph.width, glyph.height),
-          Color
+          null,
+          Color,
+          0.0f,
+          TextOrigin,
+          1,
+          SpriteEffects.None,
+          DrawDepth
         );
       }
 
