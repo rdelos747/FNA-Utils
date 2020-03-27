@@ -8,13 +8,14 @@ using SharpFont;
 namespace Utils {
 
   public enum VerticalAlignment {
-    TOP,
-    CENTER
+    Top,
+    Center
   }
 
   public enum HorizontalAlignment {
-    LEFT,
-    CENTER
+    Left,
+    Center,
+    Right
   }
 
   public class Label : Node {
@@ -82,9 +83,9 @@ namespace Utils {
 
     public Color Color = Color.White;
 
-    public Label(Font font = null) : this(null, 0, 0, HorizontalAlignment.LEFT, VerticalAlignment.TOP, font) { }
+    public Label(Font font = null) : this(null, 0, 0, HorizontalAlignment.Left, VerticalAlignment.Top, font) { }
 
-    public Label(string text, int x, int y) : this(text, x, y, HorizontalAlignment.LEFT, VerticalAlignment.TOP, null) { }
+    public Label(string text, int x, int y) : this(text, x, y, HorizontalAlignment.Left, VerticalAlignment.Top, null) { }
 
     public Label(string text, int x, int y, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Font font = null) {
       _font = font;
@@ -189,10 +190,14 @@ namespace Utils {
       Bounds = new Rectangle(0, 0, maxWidth, maxHeight);
 
       TextOrigin = Vector2.Zero;
-      if (_horizontalAlignment == HorizontalAlignment.CENTER) {
+      if (_horizontalAlignment == HorizontalAlignment.Center) {
         TextOrigin.X = Bounds.Width / 2;
       }
-      if (_verticalAlignment == VerticalAlignment.CENTER) {
+      else if (_horizontalAlignment == HorizontalAlignment.Right) {
+        TextOrigin.X = Bounds.Width;
+      }
+
+      if (_verticalAlignment == VerticalAlignment.Center) {
         TextOrigin.Y = Bounds.Height / 2;
       }
     }
