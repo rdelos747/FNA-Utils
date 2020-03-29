@@ -37,7 +37,9 @@
 		<Compile Include="src/utils/Collision.cs" />
 		<Compile Include="src/utils/Font.cs" />
 		<Compile Include="src/utils/Hex.cs" />
-		<Compile Include="src/utils/Input.cs" />
+		<Compile Include="src/utils/Input/Input.cs" />
+		<Compile Include="src/utils/Input/Input.DecodeAction.cs" />
+		<Compile Include="src/utils/Input/Input.PortControl.cs" />
 		<Compile Include="src/utils/KeyFrames.cs" />
 		<Compile Include="src/utils/Rand.cs" />
 		<Compile Include="src/utils/Resolution.cs" />

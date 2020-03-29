@@ -1,117 +1,72 @@
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Utils {
-  public static class Input {
-    private static KeyboardState KeyboardState = Keyboard.GetState();
-    private static KeyboardState LastKeyboardState;
 
-    private static MouseState MouseState;
-    private static MouseState LastMouseState;
+  public static partial class Input {
 
-    public static Dictionary<string, Keys> InputMap { get; private set; } = new Dictionary<string, Keys>();
-
-    public static float MouseX;
-    public static float MouseY;
-
-    public static void update() {
-      LastKeyboardState = KeyboardState;
-      KeyboardState = Keyboard.GetState();
-
-      LastMouseState = MouseState;
-      MouseState = Mouse.GetState();
-
-      MouseX = MouseState.X;
-      MouseY = MouseState.Y;
-    }
-
-    public static Keys GetRecentKey() {
-      Keys[] k = KeyboardState.GetPressedKeys();
-      if (k.Length == 0 || LastKeyboardState.IsKeyDown(k[0])) {
-        return 0;
+    public static string DecodeActionInput(string action, PlayerIndex pi) {
+      if (!PortControls[pi].HasAction(action)) {
+        return "no action found";
       }
-      return k[0];
-    }
 
-    public static bool IsKeyDown(Keys input) {
-      return KeyboardState.IsKeyDown(input);
-    }
-    public static bool IsKeyDown(string mapKey) {
-      return HasKey(mapKey) && IsKeyDown(InputMap[mapKey]);
-    }
-
-    public static bool IsKeyUp(Keys input) {
-      return KeyboardState.IsKeyUp(input);
-    }
-    public static bool IsKeyUp(string mapKey) {
-      return HasKey(mapKey) && IsKeyUp(InputMap[mapKey]);
-    }
-
-    public static bool KeyPressed(Keys input) {
-      if (KeyboardState.IsKeyDown(input) == true && LastKeyboardState.IsKeyDown(input) == false)
-        return true;
-      else
-        return false;
-    }
-    public static bool KeyPressed(string mapKey) {
-      return HasKey(mapKey) && KeyPressed(InputMap[mapKey]);
-    }
-
-    public static bool MouseLeftDown() {
-      if (MouseState.LeftButton == ButtonState.Pressed)
-        return true;
-      else
-        return false;
-    }
-
-    public static bool MouseRightDown() {
-      if (MouseState.RightButton == ButtonState.Pressed)
-        return true;
-      else
-        return false;
-    }
-
-    public static bool MouseLeftClicked() {
-      if (MouseState.LeftButton == ButtonState.Pressed && LastMouseState.LeftButton == ButtonState.Released)
-        return true;
-      else
-        return false;
-    }
-
-    public static bool MouseRightClicked() {
-      if (MouseState.RightButton == ButtonState.Pressed && LastMouseState.RightButton == ButtonState.Released)
-        return true;
-      else
-        return false;
-    }
-
-    public static void SetInputMapKey(string changeKey, Keys val) {
-      string temp = null;
-      foreach (string iterKey in InputMap.Keys) {
-        if (InputMap[iterKey] == val) {
-          temp = iterKey;
+      if (PortControls[pi].InputType == InputType.GamePad) {
+        switch (PortControls[pi].GamePadMap[action]) {
+          case (Buttons.DPadUp):
+            return "Up";
+          case (Buttons.DPadDown):
+            return "Down";
+          case (Buttons.DPadLeft):
+            return "Left";
+          case (Buttons.DPadRight):
+            return "Right";
+          case (Buttons.Start):
+            return "Start";
+          case (Buttons.Back):
+            return "Select";
+          case (Buttons.LeftStick):
+            return "Left Stick";
+          case (Buttons.RightStick):
+            return "Right Stick";
+          case (Buttons.LeftShoulder):
+            return "Left Shoulder";
+          case (Buttons.RightShoulder):
+            return "Right Shoulder";
+          case (Buttons.BigButton):
+            return "Home";
+          case (Buttons.A):
+            return "A";
+          case (Buttons.B):
+            return "B";
+          case (Buttons.X):
+            return "X";
+          case (Buttons.Y):
+            return "Y";
+          case (Buttons.RightTrigger):
+            return "Right Trigger";
+          case (Buttons.LeftTrigger):
+            return "Left Trigger";
+          case (Buttons.RightThumbstickUp):
+            return "Right Stick Up";
+          case (Buttons.RightThumbstickDown):
+            return "Right Stick Down";
+          case (Buttons.RightThumbstickRight):
+            return "Right Stick Right";
+          case (Buttons.RightThumbstickLeft):
+            return "Right Stick Left";
+          case (Buttons.LeftThumbstickUp):
+            return "Left Stick Up";
+          case (Buttons.LeftThumbstickDown):
+            return "Left Stick Down";
+          case (Buttons.LeftThumbstickRight):
+            return "Left Stick Right";
+          case (Buttons.LeftThumbstickLeft):
+            return "Left Stick Left";
         }
       }
-      if (temp != null) {
-        InputMap[temp] = InputMap[changeKey];
-      }
-      InputMap[changeKey] = val;
-    }
 
-    public static void SetInputMap(Dictionary<string, Keys> newMap) {
-      InputMap = newMap;
-    }
-
-    public static bool HasKey(string key) {
-      return InputMap.ContainsKey(key);
-    }
-
-    public static string KeyAsText(string key) {
-      if (!HasKey(key)) {
-        return "no key found";
-      }
-
-      switch (InputMap[key]) {
+      switch (PortControls[pi].KeyboardMap[action]) {
         case (Keys.None):
           return "None";
         case (Keys.Back):
@@ -436,42 +391,5 @@ namespace Utils {
           return "no key found";
       }
     }
-
-    // public static Keys getKey(string key) {
-    //   //return inputMap.ContainsKey(key);
-    //   return hasKey
-    // }
-
-    // /// <summary>
-    // /// Gets mouse coordinates adjusted for virtual resolution and camera position.
-    // /// </summary>
-    // public static Vector2 MousePositionCamera() {
-    //   Vector2 mousePosition = Vector2.Zero;
-    //   mousePosition.X = mouseState.X;
-    //   mousePosition.Y = mouseState.Y;
-
-    //   return ScreenToWorld(mousePosition);
-    // }
-
-    // /// <summary>
-    // /// Gets the last mouse coordinates adjusted for virtual resolution and camera position.
-    // /// </summary>
-    // public static Vector2 LastMousePositionCamera() {
-    //   Vector2 mousePosition = Vector2.Zero;
-    //   mousePosition.X = lastMouseState.X;
-    //   mousePosition.Y = lastMouseState.Y;
-
-    //   return ScreenToWorld(mousePosition);
-    // }
-
-    // /// <summary>
-    // /// Takes screen coordinates (2D position like where the mouse is on screen) then converts it to world position (where we clicked at in the world). 
-    // /// </summary>
-    // private static Vector2 ScreenToWorld(Vector2 input) {
-    //   input.X -= Resolution.VirtualViewportX;
-    //   input.Y -= Resolution.VirtualViewportY;
-
-    //   return Vector2.Transform(input, Matrix.Invert(Camera.GetTransformMatrix()));
-    // }
   }
 }
