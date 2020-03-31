@@ -83,7 +83,7 @@ namespace Utils {
           new Vector2(0, 0),
           SpriteEffects.None,
           0.0f
-      );
+        );
       }
 
       for (int i = 0; i < _nodes.Count; i++) {
