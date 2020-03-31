@@ -15,7 +15,6 @@ namespace Utils {
 
     public Rectangle Bounds = new Rectangle();
     public CollisionType CollisionType = CollisionType.Box;
-    public int CollisionLayer = -1;
     // public Radius Rad = new Radius
     // public Line Line = new Line
 
