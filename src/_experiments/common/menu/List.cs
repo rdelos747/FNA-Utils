@@ -34,14 +34,15 @@ namespace Utils {
         CurrentTopRow++;
         Console.WriteLine("went up, " + CurrentSelectedChildIndex);
 
-        for (int i = 0; i < Nodes.Count; i++) {
-          if (i >= CurrentTopRow && i < CurrentTopRow + MaxRows) {
-            Nodes[i].IsHidden = false;
-          }
-          else {
-            Nodes[i].IsHidden = true;
-          }
-        }
+        // TODO: dont use Nodes. use custom array of children
+        // for (int i = 0; i < Nodes.Count; i++) {
+        //   if (i >= CurrentTopRow && i < CurrentTopRow + MaxRows) {
+        //     Nodes[i].IsHidden = false;
+        //   }
+        //   else {
+        //     Nodes[i].IsHidden = true;
+        //   }
+        // }
       }
       //else if ()
     }

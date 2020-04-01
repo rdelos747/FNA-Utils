@@ -8,16 +8,19 @@ using SharpFont;
 namespace Utils {
 
   public enum VerticalAlignment {
-    TOP,
-    CENTER
+    Top,
+    Center
   }
 
   public enum HorizontalAlignment {
-    LEFT,
-    CENTER
+    Left,
+    Center,
+    Right
   }
 
-  public class TextObject : Node {
+  public class Label : Node {
+
+    public static Font BaseFont;
 
     private Font _font;
     public Font Font {
@@ -26,7 +29,7 @@ namespace Utils {
       }
       set {
         _font = value;
-        Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
+        Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
 
         if (_text != null) {
           SetText(_text);
@@ -46,7 +49,7 @@ namespace Utils {
       }
     }
 
-    protected Vector2 TextOrigin = new Vector2();
+    public Vector2 TextOrigin = new Vector2();
     private VerticalAlignment _verticalAlignment;
     public VerticalAlignment VerticalAlignment {
       get {
@@ -55,7 +58,7 @@ namespace Utils {
       set {
         _verticalAlignment = value;
 
-        Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
+        Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
 
         if (_text != null) {
           SetText(_text);
@@ -70,7 +73,7 @@ namespace Utils {
       set {
         _horizontalAlignment = value;
 
-        Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
+        Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
 
         if (_text != null) {
           SetText(_text);
@@ -79,20 +82,19 @@ namespace Utils {
     }
 
     public Color Color = Color.White;
+    public float DrawDepth = 0;
 
-    public static Font BaseFont;
+    public Label(Font font = null) : this(null, 0, 0, HorizontalAlignment.Left, VerticalAlignment.Top, font) { }
 
-    public TextObject(Font font) : this(null, 0, 0, HorizontalAlignment.LEFT, VerticalAlignment.TOP, font) { }
+    public Label(string text, int x, int y) : this(text, x, y, HorizontalAlignment.Left, VerticalAlignment.Top, null) { }
 
-    public TextObject(string text, int x, int y) : this(text, x, y, HorizontalAlignment.LEFT, VerticalAlignment.TOP, null) { }
-
-    public TextObject(string text, int x, int y, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Font font) {
+    public Label(string text, int x, int y, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Font font = null) {
       _font = font;
       if (_font == null) {
         _font = BaseFont;
       }
 
-      Bounds.Rect = new Rectangle(0, 0, 10, _font.lineHeight);
+      Bounds = new Rectangle(0, 0, 10, _font.lineHeight);
 
       Points = new List<(char, Vector2)>();
 
@@ -120,16 +122,33 @@ namespace Utils {
 
       for (int i = 0; i < Points.Count; i++) {
         GlyphData glyph = _font.getGlyph(Points[i].Item1);
+        // spriteBatch.Draw(
+        //   glyph.texture,
+        //   new Vector2(
+        //     (Points[i].Item2.X + position.X) - TextOrigin.X,
+        //     (Points[i].Item2.Y + position.Y) - TextOrigin.Y
+        //   ),
+        //   new Rectangle(0, 0, glyph.width, glyph.height),
+        //   Color
+        // );
         spriteBatch.Draw(
+          // glyph.texture,
+          //   new Vector2(
+          //   (Points[i].Item2.X + position.X) - TextOrigin.X,
+          //   (Points[i].Item2.Y + position.Y) - TextOrigin.Y
+          // ),
           glyph.texture,
-          new Vector2(
-            (Points[i].Item2.X + position.X) - TextOrigin.X,
-            (Points[i].Item2.Y + position.Y) - TextOrigin.Y
-          // (Points[i].Item2.X + position.X) - Bounds.X,
-          // (Points[i].Item2.Y + position.Y) - Bounds.Y
+            new Vector2(
+            (Points[i].Item2.X + position.X),
+            (Points[i].Item2.Y + position.Y)
           ),
-          new Rectangle(0, 0, glyph.width, glyph.height),
-          Color
+          null,
+          Color,
+          0.0f,
+          TextOrigin,
+          1,
+          SpriteEffects.None,
+          DrawDepth
         );
       }
 
@@ -186,14 +205,18 @@ namespace Utils {
         maxHeight = Math.Max(maxHeight, py + glyph.height);
       }
 
-      Bounds.Rect = new Rectangle(0, 0, maxWidth, maxHeight);
+      Bounds = new Rectangle(0, 0, maxWidth, maxHeight);
 
       TextOrigin = Vector2.Zero;
-      if (_horizontalAlignment == HorizontalAlignment.CENTER) {
-        TextOrigin.X = Bounds.Rect.Width / 2;
+      if (_horizontalAlignment == HorizontalAlignment.Center) {
+        TextOrigin.X = Bounds.Width / 2;
       }
-      if (_verticalAlignment == VerticalAlignment.CENTER) {
-        TextOrigin.Y = Bounds.Rect.Height / 2;
+      else if (_horizontalAlignment == HorizontalAlignment.Right) {
+        TextOrigin.X = Bounds.Width;
+      }
+
+      if (_verticalAlignment == VerticalAlignment.Center) {
+        TextOrigin.Y = Bounds.Height / 2;
       }
     }
   }

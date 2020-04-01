@@ -328,54 +328,131 @@ public class MyGame : Game {
 
 `public static class Input`
 
+The `Input` helper provides an api to help polling for keyboard, mouse, and gamepad events. To further assist with functionality such as changing controls or input methods controls mid-game, the `Input` class focusses on the abstract concept of actions, which the user defines in their game code. Each action is mapped to a real key or button event.
+
 ###### Initialization
 
 ```c#
-// In Game constructor
-Input.SetInputMap(/* pass your input map here*/);
-```
-
-The static `Input` helper contains functions for grabbing the current key/ mouse press. For example, you can check if a specific XNA `Key` is down.
-
-```C#
-using Microsoft.Xna.Framework.Input;
-using Engine;
-
-Input.isKeyDown(Keys.Up);
-```
-
-`Input` also contains an `InputMap` dictionary that associates strings to `Key` values. With the InputMap set, you can check for key events by passing in a string. This makes it easy to change the actual `Key` mid-game, as the string we use to check never changes.
-
-```C#
-Dictionary<string, Keys> myMap = new Dictionary<string, Keys>() {
-  {"primary", Keys.X},
-  {"secondary", Keys.Z},
-  {"up", Keys.Up},
-  {"down", Keys.Down},
-  {"left", Keys.Left},
-  {"right", Keys.Right}
+// Create a mapping for the inputs you want to support:
+public static readonly Dictionary<string, Keys> KeyboardMap = new Dictionary<string, Keys>() {
+  {"Primary", Keys.X},
+  {"Secondary", Keys.Z},
+  {"Up", Keys.Up},
+  {"Down", Keys.Down},
+  {"Left", Keys.Left},
+  {"Right", Keys.Right},
+  {"Pause", Keys.Enter}
 };
 
-Input.setInputMap(myMap);
+public static readonly Dictionary<string, Buttons> ButtonMap = new Dictionary<string, Buttons>() {
+  {"Primary", Buttons.A},
+  {"Secondary", Buttons.B},
+  {"Up", Buttons.DPadUp},
+  {"Down", Buttons.DPadDown},
+  {"Left", Buttons.DPadLeft},
+  {"Right", Buttons.DPadRight},
+  {"Pause", Buttons.Start}
+};
 
-Input.hasKey("primary")
-// returns true
 
-Input.hasKey("banana")
-// returns false
+// Then in the Game constructor, pass your mapping to the player ports you want to support. You must first call init().
 
-Input.isKeyUp("tomato")
-// does not throw an error if the key does not exist, just returns false
+Input.Init();
 
-Input.isKeyUp("primary");
-// will return true if Keys.X is Up
+Input.SetActionMap(ButtonMap, PlayerIndex.One);
+Input.SetActionMap(KeyboardMap, PlayerIndex.One);
 
-Input.setInputMapKey("primary", Keys.Enter);
-// change the key that "primary" points to
+// Now, player one supports both the keyboard and gamepad. It is a good idea however to pick just one. Below, we first check if there is an availible game pad on this port. If there is, connect to it, otherwise use the keyboard.
 
-Input.isKeyUp("primary");
-// will return true if Keys.Enter is up
+if (Input.IsGamePadConnected(Constants.Ports.P1)) {
+  Input.SetPortInput(Input.InputType.GamePad, Constants.Ports.P1);
+  Console.WriteLine("player 1 game pad success");
+}
+else {
+  Input.SetPortInput(Input.InputType.Keyboard, Constants.Ports.P1);
+  Console.WriteLine("player 1 game pad failed");
+}
+
+// Becuase we set player one to have a mapping for *both* keyboard and gamepad, they can change back and forth durng gameplay with ease.
+
+// Finall, we must call update() in the games update loop
+Input.Update();
 ```
+
+## Checking for gamepads
+
+###### static method
+
+`public static bool IsGamePadConnected(PlayerIndex pi)`
+
+## Checking for any event last frame
+
+###### static method
+
+`public static Keys GetRecentKey(PlayerIndex pi)`
+
+###### static method
+
+`public static Buttons GetRecentButton(PlayerIndex pi)`
+
+_Note: `GetRecentKey` and `GetRecentButton` are the only polling functions that operate around actual key/ button values._
+
+## Port input types
+
+###### Enum
+
+```c#
+public enum InputType {
+  Keyboard,
+  GamePad
+}
+```
+
+###### static method
+
+`public static InputType GetPortInput(PlayerIndex pi)`
+
+###### static method
+
+`public static void SetPortInput(InputType inputType, PlayerIndex pi)`
+
+## Input Actions
+
+###### static method
+
+`public static void SetPortInput(InputType inputType, PlayerIndex pi) {`
+
+###### static method
+
+`public static void SetActionMap(Dictionary<string, Keys> keyboardMap, PlayerIndex pi)`
+
+###### static method
+
+`public static void SetActionMap(Dictionary<string, Buttons> gamePadMap, PlayerIndex pi)`
+
+###### static method
+
+`public static void SetAction(string action, Keys val, PlayerIndex pi)`
+
+###### static method
+
+`public static void SetAction(string action, Buttons val, PlayerIndex pi)`
+
+###### static method
+
+`public static bool IsActionDown(string action, PlayerIndex pi)`
+
+###### static method
+
+`public static bool IsActionUp(string action, PlayerIndex pi)`
+
+###### static method
+
+`public static bool ActionPressed(string action, PlayerIndex pi)`
+
+###### static method
+
+`public static List<string> GetActiveActions(PlayerIndex pi)`
 
 # Resolution
 

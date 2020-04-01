@@ -13,7 +13,6 @@ namespace Utils {
 
     private bool Disposed = false;
 
-    // child node stuff
     private List<Node> _nodes = new List<Node>();
     public List<Node> Nodes {
       get {
@@ -26,13 +25,10 @@ namespace Utils {
 
     public Node Parent { get; private set; }
 
-
-    // Position stuff
     public Vector2 Position = new Vector2(0, 0);
 
-    // Drawing stuff
-    public bool IsHidden = false;
     public bool ShowCenter = false;
+    public bool IsHidden = false;
 
     public Node() { }
 
@@ -75,14 +71,18 @@ namespace Utils {
       float worldX = lastX + Position.X;
       float worldY = lastY + Position.Y;
 
-      Bounds.Draw(spriteBatch, worldX, worldY);
-
       // for position debugging
       if (ShowCenter) {
+
         spriteBatch.Draw(
-          BoundingBox.Texture,
+          Sprite.SystemRect,
           new Rectangle((int)(worldX), (int)(worldY), 2, 2),
-          Color.Red
+          null,
+          Color.Red,
+          0.0f,
+          new Vector2(0, 0),
+          SpriteEffects.None,
+          0.0f
         );
       }
 
@@ -90,7 +90,6 @@ namespace Utils {
         Node n = _nodes[i];
         n.Draw(spriteBatch, worldX, worldY);
       }
-
     }
 
     public void Dispose() {
