@@ -25,9 +25,9 @@ namespace Utils {
     public float Scale = 1f;
 
     // sprite sheet animation
-    protected Animation animation;
+    public Animation Animation;
     private int _currentFrame = -1;
-    protected int currentFrame {
+    public int CurrentFrame {
       get => _currentFrame;
       set {
         _currentFrame = value;
@@ -97,21 +97,21 @@ namespace Utils {
     }
 
     // image initializers
-    protected void setImage(Texture2D newImage) {
+    public void SetImage(Texture2D newImage) {
       if (Image != null) return; // if image already set, bounce
       Image = newImage;
-      initializeSpriteDimensions();
+      InitializeSpriteDimensions();
     }
 
-    protected void setSpriteSheet(SpriteSheet sheet) {
+    public void SetSpriteSheet(SpriteSheet sheet) {
       if (Image != null) return; // if image already set, bounce
       Image = sheet.SheetTexture;
       SheetCols = sheet.Cols;
       SheetRows = sheet.Rows;
-      initializeSpriteDimensions();
+      InitializeSpriteDimensions();
     }
 
-    private void initializeSpriteDimensions() {
+    private void InitializeSpriteDimensions() {
       if (Image == null) return;
 
       ImageWidth = Image.Width;
@@ -125,10 +125,10 @@ namespace Utils {
       }
     }
 
-    protected void animate(GameTime gameTime) {
+    public void Animate(GameTime gameTime) {
       // if the animation is set, update currentFrame and spriteClip to be in sync
-      if (animation != null) {
-        currentFrame = (int)animation.Update(gameTime);
+      if (Animation != null) {
+        CurrentFrame = (int)Animation.Update(gameTime);
       }
     }
   }
