@@ -6,6 +6,13 @@ namespace Utils {
 
   public static partial class Input {
 
+    public static class Ports {
+      public const PlayerIndex P1 = PlayerIndex.One;
+      public const PlayerIndex P2 = PlayerIndex.Two;
+      public const PlayerIndex P3 = PlayerIndex.Three;
+      public const PlayerIndex P4 = PlayerIndex.Four;
+    }
+
     private class PortControl {
       /*
       Properties
