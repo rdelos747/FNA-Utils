@@ -8,9 +8,10 @@ namespace Utils {
     private int ElapsedTime = 0;
     private KeyFrames Frames;
 
-    public Animation(KeyFrames kf, bool loop = true) {
+    public Animation(KeyFrames kf, bool loop = true, int startOffset = 0) {
       Loop = loop;
       Frames = kf;
+      ElapsedTime = startOffset;
     }
 
     public void reset() {

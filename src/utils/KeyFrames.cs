@@ -31,8 +31,8 @@ namespace Utils {
       MaxTime = time;
     }
 
-    public Animation Create(bool loop = true) {
-      return new Animation(this, loop);
+    public Animation Create(bool loop = true, int startOffset = 0) {
+      return new Animation(this, loop, startOffset);
     }
 
     public float Evaluate(int time) {
