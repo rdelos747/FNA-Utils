@@ -5,17 +5,28 @@ namespace Utils {
 
   public class Animation {
     public bool Loop = true;
-    private int ElapsedTime = 0;
+    private float ElapsedTime = 0;
     private KeyFrames Frames;
+    public int Index { get; private set; }
 
     public Animation(KeyFrames kf, bool loop = true, int startOffset = 0) {
       Loop = loop;
       Frames = kf;
       ElapsedTime = startOffset;
+
+      if (startOffset > 0 && Frames.Curve.Keys.Count > 0) {
+        int index = 0;
+
+        while (Frames.Curve.Keys[index].Position < startOffset) {
+          index++;
+        }
+        Index = index;
+      }
     }
 
     public void reset() {
       ElapsedTime = 0;
+      Index = 0;
     }
 
     public float Update(GameTime gameTime, ref float value) {
@@ -24,23 +35,39 @@ namespace Utils {
       }
 
       float lastValue = value;
-      UpdateTime(gameTime);
-      value = Frames.Evaluate(ElapsedTime);
+      value = Evaluate(gameTime);
 
       return value - lastValue; // return delta 
     }
 
     public float Update(GameTime gameTime) {
-      UpdateTime(gameTime);
-      float value = Frames.Evaluate(ElapsedTime);
-      return value;
+      return Evaluate(gameTime);
     }
 
-    private void UpdateTime(GameTime gameTime) {
+    private float Evaluate(GameTime gameTime) {
       ElapsedTime += gameTime.ElapsedGameTime.Milliseconds;
-      if (Loop && ElapsedTime >= Frames.MaxTime) {
-        ElapsedTime = 0;
+      if (Index < Frames.Curve.Keys.Count - 1 && ElapsedTime >= Frames.Curve.Keys[Index + 1].Position) {
+        Index++;
       }
+      if (Loop && ElapsedTime > Frames.MaxTime) {
+        ElapsedTime = 0;
+        Index = 0;
+      }
+
+      float value = 0;
+
+      if (Frames.CurveType == CurveType.STEP && Index < Frames.Curve.Keys.Count) {
+        value = Frames.Curve.Keys[Index].Value;
+      }
+      else {
+        value = Frames.Curve.Evaluate(ElapsedTime);
+      }
+
+      if (float.IsNaN(value)) {
+        value = 0;
+      }
+
+      return value;
     }
 
     public bool IsFinished() {

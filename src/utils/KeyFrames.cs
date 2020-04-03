@@ -35,24 +35,6 @@ namespace Utils {
       return new Animation(this, loop, startOffset);
     }
 
-    public float Evaluate(int time) {
-      if (time > MaxTime) {
-        return Curve.Evaluate(MaxTime);
-      }
-
-      float value = Curve.Evaluate(time);
-
-      if (CurveType == CurveType.STEP && Curve.Keys.Count > 0) {
-        int index = (int)((time / MaxTime) * (Curve.Keys.Count - 1));
-        value = Curve.Keys[index].Value;
-      }
-      if (float.IsNaN(value)) {
-        value = 0;
-      }
-
-      return value;
-    }
-
     public void smoothTangents() {
       CurveKey prev;
       CurveKey current;
