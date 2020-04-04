@@ -7,16 +7,18 @@ using Microsoft.Xna.Framework.Content;
 namespace Utils {
 
   public enum CollisionType {
-    Box,
-    Circle
+    Rectangle,
+    Circle,
+    Line
   }
 
   public partial class Node : IDisposable {
 
-    public Rectangle Bounds = new Rectangle();
-    public CollisionType CollisionType = CollisionType.Box;
-    // public Radius Rad = new Radius
-    // public Line Line = new Line
+    public CollisionType CollisionType = CollisionType.Rectangle;
+    public Vector2 BoundsOffset;
+    public Vector2 Size;
+    public float Radius;
+    public Vector2 End;
 
     public bool Collides(Node other) {
       return Collides(other, new Vector2(0, 0));
@@ -28,43 +30,57 @@ namespace Utils {
 
     public bool Collides(Node other, Vector2 offset) {
       if (other == null) {
-        // should we do this, or should we throw an error??
-        return false;
+        throw new Exception("Nodes passed to Node.Collides() must not be null.");
       }
 
-      if (CollisionType == CollisionType.Box && other.CollisionType == CollisionType.Box) {
-
-        Rectangle r1 = new Rectangle(
-          (int)((Position.X + Bounds.X) + offset.X),
-          (int)((Position.Y + Bounds.Y) + offset.Y),
-          Bounds.Width,
-          Bounds.Height);
-
-        Rectangle r2 = new Rectangle(
-          (int)((other.Position.X + other.Bounds.X)),
-          (int)((other.Position.Y + other.Bounds.Y)),
-          other.Bounds.Width,
-          other.Bounds.Height);
-
-        return Collision.Box(r1, r2);
-      }
-      else if (CollisionType == CollisionType.Circle && other.CollisionType == CollisionType.Circle) {
-        // return Collision.Circle(Position, Radius, other.Position, other.Radius)
-        return false;
+      // TODO: Lines - how do Position/End interact with BoundsOffset and offset, and how do we draw lines
+      switch (CollisionType) {
+        case CollisionType.Rectangle:
+          switch (other.CollisionType) {
+            case CollisionType.Rectangle:
+              return Collision.RectangleRectangle(Position + BoundsOffset + offset, Size, other.Position + other.BoundsOffset, other.Size);
+            case CollisionType.Circle:
+              return Collision.RectangleCircle(Position + BoundsOffset + offset, Size, other.Position + other.BoundsOffset + new Vector2(other.Radius), other.Radius);
+            case CollisionType.Line:
+              return Collision.RectangleLine(Position + BoundsOffset + offset, Size, other.Position, other.End);
+          }
+          return false;
+        case CollisionType.Circle:
+          switch (other.CollisionType) {
+            case CollisionType.Rectangle:
+              return Collision.RectangleCircle(other.Position + other.BoundsOffset, other.Size, Position + BoundsOffset + new Vector2(Radius) + offset, Radius);
+            case CollisionType.Circle:
+              return Collision.CircleCircle(Position + BoundsOffset + new Vector2(Radius) + offset, Radius, other.Position + other.BoundsOffset + new Vector2(other.Radius), other.Radius);
+            case CollisionType.Line:
+              return Collision.CircleLine(Position + BoundsOffset + new Vector2(Radius) + offset, Radius, other.Position, other.End);
+          }
+          return false;
+        case CollisionType.Line:
+          switch (other.CollisionType) {
+            case CollisionType.Rectangle:
+              return Collision.RectangleLine(other.Position + other.BoundsOffset, other.Size, Position, End);
+            case CollisionType.Circle:
+              return Collision.CircleLine(other.Position + other.BoundsOffset + new Vector2(other.Radius), other.Radius, Position, End);
+            case CollisionType.Line:
+              return Collision.LineLine(Position, End, other.Position, other.End);
+          }
+          return false;
       }
 
       return false;
     }
 
     public bool PointInBounds(Vector2 p) {
-      if (Bounds.IsEmpty) {
-        return false;
+      switch (CollisionType) {
+        case CollisionType.Rectangle:
+          return Collision.RectanglePoint(Position + BoundsOffset, Size, p);
+        case CollisionType.Circle:
+          return Collision.CirclePoint(Position + BoundsOffset + new Vector2(Radius), Radius, p);
+        case CollisionType.Line:
+          return Collision.LinePoint(Position, End, p);
       }
 
-      float cornerX = Position.X - Bounds.X;
-      float cornerY = Position.Y - Bounds.Y;
-
-      return p.X >= cornerX && p.X <= cornerX + Bounds.Width && p.Y >= cornerY && p.Y <= cornerY + Bounds.Height;
+      return false;
     }
   }
 }

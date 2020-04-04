@@ -35,6 +35,7 @@
 		
 		<Compile Include="src/utils/Animation.cs" />
 		<Compile Include="src/utils/Collision.cs" />
+		<Compile Include="src/utils/VectorMath.cs" />
 		<Compile Include="src/utils/Font.cs" />
 		<Compile Include="src/utils/Hex.cs" />
 		<Compile Include="src/utils/Input/Input.cs" />

@@ -120,9 +120,10 @@ namespace Utils {
       Height = ImageHeight / SheetRows;
       ImageClip = new Rectangle(0, 0, Width, Height);
 
-      if (Bounds.IsEmpty) {
-        Bounds = new Rectangle(0, 0, Width, Height);
-      }
+      // There's no longer a way to check if bounds are empty - maybe add CollisionType.None as a default for Nodes
+      // if (Bounds.IsEmpty) {
+      //   Bounds = new Rectangle(0, 0, Width, Height);
+      // }
     }
 
     public void Animate(GameTime gameTime) {
