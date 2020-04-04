@@ -4,15 +4,24 @@ using Microsoft.Xna.Framework;
 namespace Utils {
 
   public class Animation {
-    public int Index { get; private set; }
     public bool Loop = true;
-    private int ElapsedTime = 0;
+    private float ElapsedTime = 0;
     private KeyFrames Frames;
+    public int Index { get; private set; }
 
-    public Animation(KeyFrames kf, bool loop = true) {
+    public Animation(KeyFrames kf, bool loop = true, int startOffset = 0) {
       Loop = loop;
       Frames = kf;
-      Index = 0;
+      ElapsedTime = startOffset;
+
+      if (startOffset > 0 && Frames.Curve.Keys.Count > 0) {
+        int index = 0;
+
+        while (Frames.Curve.Keys[index].Position < startOffset) {
+          index++;
+        }
+        Index = index;
+      }
     }
 
     public void reset() {
@@ -26,34 +35,46 @@ namespace Utils {
       }
 
       float lastValue = value;
-      value = Frames.Evaluate(ElapsedTime, Index);
+      value = Evaluate(gameTime);
 
-      UpdateTime(gameTime);
       return value - lastValue; // return delta 
     }
 
     public float Update(GameTime gameTime) {
-      float value = Frames.Evaluate(ElapsedTime, Index);
-      UpdateTime(gameTime);
-      return value;
+      return Evaluate(gameTime);
     }
 
-    private void UpdateTime(GameTime gameTime) {
+    private float Evaluate(GameTime gameTime) {
       ElapsedTime += gameTime.ElapsedGameTime.Milliseconds;
-      if (Index < Frames.NumPoints - 1 && ElapsedTime >= Frames.Curve.Keys[Index + 1].Position) {
+      if (Index < Frames.Curve.Keys.Count - 1 && ElapsedTime >= Frames.Curve.Keys[Index + 1].Position) {
         Index++;
       }
       if (Loop && ElapsedTime > Frames.MaxTime) {
         ElapsedTime = 0;
         Index = 0;
       }
+
+      float value = 0;
+
+      if (Frames.CurveType == CurveType.STEP && Index < Frames.Curve.Keys.Count) {
+        value = Frames.Curve.Keys[Index].Value;
+      }
+      else {
+        value = Frames.Curve.Evaluate(ElapsedTime);
+      }
+
+      if (float.IsNaN(value)) {
+        value = 0;
+      }
+
+      return value;
     }
 
     public bool IsFinished() {
       if (Loop) {
         return false;
       }
-      return Index >= Frames.NumPoints - 1;
+      return ElapsedTime > Frames.MaxTime;
     }
   }
 }

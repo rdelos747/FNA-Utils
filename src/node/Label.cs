@@ -37,7 +37,7 @@ namespace Utils {
       }
     }
 
-    private List<(char, Vector2)> Points;
+    protected List<(char, Vector2)> Points;
 
     private string _text;
     public string Text {

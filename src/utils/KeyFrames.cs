@@ -10,8 +10,7 @@ namespace Utils {
   }
 
   public sealed class KeyFrames {
-    public int NumPoints { get; private set; } = 0;
-    public int MaxTime { get; private set; } = 0;
+    public float MaxTime { get; private set; } = 0;
     public CurveType CurveType;
     public Curve Curve { get; private set; } = new Curve();
 
@@ -30,24 +29,10 @@ namespace Utils {
     public void AddKeyframe(int time, float value) {
       Curve.Keys.Add(new CurveKey(time, value));
       MaxTime = time;
-      NumPoints++;
     }
 
-    public Animation Create(bool loop = true) {
-      return new Animation(this, loop);
-    }
-
-    public float Evaluate(int time, int index) {
-      float value = Curve.Evaluate(time);
-
-      if (CurveType == CurveType.STEP) {
-        value = Curve.Keys[index].Value;
-      }
-      if (float.IsNaN(value)) {
-        value = 0;
-      }
-
-      return value;
+    public Animation Create(bool loop = true, int startOffset = 0) {
+      return new Animation(this, loop, startOffset);
     }
 
     public void smoothTangents() {
