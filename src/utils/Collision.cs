@@ -12,18 +12,18 @@ namespace Utils {
   */
   public static class Collision {
 
-    public static bool RectangleRectangle(Vector2 r1TopLeftPosition, Vector2 r1Size, Vector2 r2TopLeftPosition, Vector2 r2Size) {
-      return r1TopLeftPosition.X + r1Size.X > r2TopLeftPosition.X && r1TopLeftPosition.X < r2TopLeftPosition.X + r2Size.X && r1TopLeftPosition.Y + r1Size.Y > r2TopLeftPosition.Y && r1TopLeftPosition.Y < r2TopLeftPosition.Y + r2Size.Y;
+    public static bool RectangleRectangle(Vector2 r1TopLeftPosition, Size r1Size, Vector2 r2TopLeftPosition, Size r2Size) {
+      return r1TopLeftPosition.X + r1Size.Width > r2TopLeftPosition.X && r1TopLeftPosition.X < r2TopLeftPosition.X + r2Size.Width && r1TopLeftPosition.Y + r1Size.Height > r2TopLeftPosition.Y && r1TopLeftPosition.Y < r2TopLeftPosition.Y + r2Size.Height;
     }
 
-    public static bool RectangleCircle(Vector2 rTopLeftPosition, Vector2 rSize, Vector2 cCenterPosition, float cRadius) {
+    public static bool RectangleCircle(Vector2 rTopLeftPosition, Size rSize, Vector2 cCenterPosition, float cRadius) {
       return new Vector2(
-        cCenterPosition.X - Math.Max(rTopLeftPosition.X, Math.Min(cCenterPosition.X, rTopLeftPosition.X + rSize.X)),
-        cCenterPosition.Y - Math.Max(rTopLeftPosition.Y, Math.Min(cCenterPosition.Y, rTopLeftPosition.Y + rSize.Y))
+        cCenterPosition.X - Math.Max(rTopLeftPosition.X, Math.Min(cCenterPosition.X, rTopLeftPosition.X + rSize.Width)),
+        cCenterPosition.Y - Math.Max(rTopLeftPosition.Y, Math.Min(cCenterPosition.Y, rTopLeftPosition.Y + rSize.Height))
       ).Length() < cRadius;
     }
 
-    public static bool RectangleLine(Vector2 rTopLeftPosition, Vector2 rSize, Vector2 lStartPosition, Vector2 lEndPosition) {
+    public static bool RectangleLine(Vector2 rTopLeftPosition, Size rSize, Vector2 lStartPosition, Vector2 lEndPosition) {
       throw new Exception("rectangle-line collision not implemented.");
     }
 
@@ -39,8 +39,8 @@ namespace Utils {
       throw new Exception("line-line collision not implemented.");
     }
 
-    public static bool RectanglePoint(Vector2 rTopLeftPosition, Vector2 rSize, Vector2 point) {
-      return rTopLeftPosition.X < point.X && rTopLeftPosition.X + rSize.X > point.X && rTopLeftPosition.Y < point.Y && rTopLeftPosition.Y + rSize.Y > point.Y;
+    public static bool RectanglePoint(Vector2 rTopLeftPosition, Size rSize, Vector2 point) {
+      return rTopLeftPosition.X < point.X && rTopLeftPosition.X + rSize.Width > point.X && rTopLeftPosition.Y < point.Y && rTopLeftPosition.Y + rSize.Height > point.Y;
     }
 
     public static bool CirclePoint(Vector2 cCenterPosition, float cRadius, Vector2 point) {

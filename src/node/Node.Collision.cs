@@ -16,7 +16,7 @@ namespace Utils {
 
     public CollisionType CollisionType = CollisionType.Rectangle;
     public Vector2 BoundsOffset;
-    public Vector2 Size;
+    public Size Size;
     public float Radius;
     public Vector2 End;
 
@@ -35,6 +35,7 @@ namespace Utils {
 
       // TODO: Lines - how do Position/End interact with BoundsOffset and offset, and how do we draw lines
       switch (CollisionType) {
+
         case CollisionType.Rectangle:
           switch (other.CollisionType) {
             case CollisionType.Rectangle:
@@ -45,6 +46,7 @@ namespace Utils {
               return Collision.RectangleLine(Position + BoundsOffset + offset, Size, other.Position, other.End);
           }
           return false;
+
         case CollisionType.Circle:
           switch (other.CollisionType) {
             case CollisionType.Rectangle:
@@ -55,6 +57,7 @@ namespace Utils {
               return Collision.CircleLine(Position + BoundsOffset + new Vector2(Radius) + offset, Radius, other.Position, other.End);
           }
           return false;
+
         case CollisionType.Line:
           switch (other.CollisionType) {
             case CollisionType.Rectangle:

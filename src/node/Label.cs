@@ -29,7 +29,7 @@ namespace Utils {
       }
       set {
         _font = value;
-        Size = new Vector2(10, _font.lineHeight);
+        Size = new Size(10, _font.lineHeight);
 
         if (_text != null) {
           SetText(_text);
@@ -58,7 +58,7 @@ namespace Utils {
       set {
         _verticalAlignment = value;
 
-        Size = new Vector2(10, _font.lineHeight);
+        Size = new Size(10, _font.lineHeight);
 
         if (_text != null) {
           SetText(_text);
@@ -73,7 +73,7 @@ namespace Utils {
       set {
         _horizontalAlignment = value;
 
-        Size = new Vector2(10, _font.lineHeight);
+        Size = new Size(10, _font.lineHeight);
 
         if (_text != null) {
           SetText(_text);
@@ -94,7 +94,7 @@ namespace Utils {
         _font = BaseFont;
       }
 
-      Size = new Vector2(10, _font.lineHeight);
+      Size = new Size(10, _font.lineHeight);
 
       Points = new List<(char, Vector2)>();
 
@@ -205,18 +205,18 @@ namespace Utils {
         maxHeight = Math.Max(maxHeight, py + glyph.height);
       }
 
-      Size = new Vector2(maxWidth, maxHeight);
+      Size = new Size(maxWidth, maxHeight);
 
       TextOrigin = Vector2.Zero;
       if (_horizontalAlignment == HorizontalAlignment.Center) {
-        TextOrigin.X = Size.X / 2;
+        TextOrigin.X = Size.Width / 2;
       }
       else if (_horizontalAlignment == HorizontalAlignment.Right) {
-        TextOrigin.X = Size.X;
+        TextOrigin.X = Size.Width;
       }
 
       if (_verticalAlignment == VerticalAlignment.Center) {
-        TextOrigin.Y = Size.Y / 2;
+        TextOrigin.Y = Size.Height / 2;
       }
     }
   }
