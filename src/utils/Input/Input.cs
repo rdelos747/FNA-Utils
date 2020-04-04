@@ -94,11 +94,11 @@ namespace Utils {
     }
 
     public static void SetActionMap(Dictionary<string, Keys> keyboardMap, PlayerIndex pi) {
-      PortControls[pi].KeyboardMap = keyboardMap;
+      PortControls[pi].SetKeyboardMap(keyboardMap);
     }
 
     public static void SetActionMap(Dictionary<string, Buttons> gamePadMap, PlayerIndex pi) {
-      PortControls[pi].GamePadMap = gamePadMap;
+      PortControls[pi].SetGamePadMap(gamePadMap);
     }
 
     public static void SetAction(string action, Keys val, PlayerIndex pi) {

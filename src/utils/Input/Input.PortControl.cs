@@ -26,6 +26,23 @@ namespace Utils {
       }
 
       /*
+      Setting maps
+      */
+      public void SetKeyboardMap(Dictionary<string, Keys> dict) {
+        KeyboardMap = new Dictionary<string, Keys>();
+        foreach (string action in dict.Keys) {
+          KeyboardMap.Add(action, dict[action]);
+        }
+      }
+
+      public void SetGamePadMap(Dictionary<string, Buttons> dict) {
+        GamePadMap = new Dictionary<string, Buttons>();
+        foreach (string action in dict.Keys) {
+          GamePadMap.Add(action, dict[action]);
+        }
+      }
+
+      /*
       Setting actions
       */
       public void SetKeyboardAction(string changeKey, Keys val) {
