@@ -2,14 +2,18 @@ using System;
 
 namespace Utils {
   public static class Rand {
-    private static Random random = new Random();
+    private static Random Random = new Random();
 
     public static int RandInt(int n) {
-      return random.Next(n);
+      return Random.Next(n);
     }
 
     public static int RandRange(int n, int m) {
-      return random.Next(n, m + 1);
+      return Random.Next(n, m + 1);
+    }
+
+    public static float RandRange(float n, float m) {
+      return (float)Random.NextDouble() * (m - n) + n;
     }
 
     public static bool Chance(int n) {
