@@ -20,6 +20,10 @@ namespace Utils {
       return v + new Vector2(s.Width, s.Height);
     }
 
+    public static Vector2 operator /(Size s, Vector2 v) {
+      return new Vector2(s.Width, s.Height) / v;
+    }
+
     override public string ToString() {
       return "{Width:" + Width + " Height:" + Height + "}";
     }
