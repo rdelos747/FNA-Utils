@@ -24,6 +24,14 @@ namespace Utils {
       return new Size(s.Width / scalar, s.Height / scalar);
     }
 
+    public static implicit operator Vector2(Size s) {
+      return new Vector2(s.Width, s.Height);
+    }
+
+    public static implicit operator Size(Vector2 v) {
+      return new Size(v.X, v.Y);
+    }
+
     override public string ToString() {
       return "{Width:" + Width + " Height:" + Height + "}";
     }
