@@ -19,5 +19,9 @@ namespace Utils {
     public static Vector2 operator +(Size s, Vector2 v) {
       return v + new Vector2(s.Width, s.Height);
     }
+
+    override public string ToString() {
+      return "{Width:" + Width + " Height:" + Height + "}";
+    }
   }
 }
