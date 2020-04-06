@@ -20,8 +20,8 @@ namespace Utils {
       return v + new Vector2(s.Width, s.Height);
     }
 
-    public static Vector2 operator /(Size s, Vector2 v) {
-      return new Vector2(s.Width, s.Height) / v;
+    public static Size operator /(Size s, float scalar) {
+      return new Size(s.Width / scalar, s.Height / scalar);
     }
 
     override public string ToString() {
