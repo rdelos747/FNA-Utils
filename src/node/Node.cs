@@ -76,7 +76,7 @@ namespace Utils {
 
         spriteBatch.Draw(
           Sprite.SystemRect,
-          new Rectangle((int)(worldX), (int)(worldY), 2, 2),
+          new Rectangle((int)(worldX), (int)(worldY), 1, 1),
           null,
           Color.Red,
           0.0f,
