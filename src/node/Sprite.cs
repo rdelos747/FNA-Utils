@@ -120,8 +120,8 @@ namespace Utils {
       Height = ImageHeight / SheetRows;
       ImageClip = new Rectangle(0, 0, Width, Height);
 
-      if (Bounds.IsEmpty) {
-        Bounds = new Rectangle(0, 0, Width, Height);
+      if (Size == null) {
+        Size = new Size(Width, Height);
       }
     }
 
