@@ -41,7 +41,7 @@ namespace Utils {
             case CollisionType.Rectangle:
               return Collision.RectangleRectangle(Position + BoundsOffset + offset, Size, other.Position + other.BoundsOffset, other.Size);
             case CollisionType.Circle:
-              return Collision.RectangleCircle(Position + BoundsOffset + offset, Size, other.Position + other.BoundsOffset + new Vector2(other.Radius), other.Radius);
+              return Collision.RectangleCircle(Position + BoundsOffset + offset, Size, other.Position, other.Radius);
             case CollisionType.Line:
               return Collision.RectangleLine(Position + BoundsOffset + offset, Size, other.Position, other.End);
           }
@@ -50,11 +50,11 @@ namespace Utils {
         case CollisionType.Circle:
           switch (other.CollisionType) {
             case CollisionType.Rectangle:
-              return Collision.RectangleCircle(other.Position + other.BoundsOffset, other.Size, Position + BoundsOffset + new Vector2(Radius) + offset, Radius);
+              return Collision.RectangleCircle(other.Position + other.BoundsOffset, other.Size, Position + offset, Radius);
             case CollisionType.Circle:
-              return Collision.CircleCircle(Position + BoundsOffset + new Vector2(Radius) + offset, Radius, other.Position + other.BoundsOffset + new Vector2(other.Radius), other.Radius);
+              return Collision.CircleCircle(Position + offset, Radius, other.Position, other.Radius);
             case CollisionType.Line:
-              return Collision.CircleLine(Position + BoundsOffset + new Vector2(Radius) + offset, Radius, other.Position, other.End);
+              return Collision.CircleLine(Position + offset, Radius, other.Position, other.End);
           }
           return false;
 
@@ -63,7 +63,7 @@ namespace Utils {
             case CollisionType.Rectangle:
               return Collision.RectangleLine(other.Position + other.BoundsOffset, other.Size, Position, End);
             case CollisionType.Circle:
-              return Collision.CircleLine(other.Position + other.BoundsOffset + new Vector2(other.Radius), other.Radius, Position, End);
+              return Collision.CircleLine(other.Position, other.Radius, Position, End);
             case CollisionType.Line:
               return Collision.LineLine(Position, End, other.Position, other.End);
           }
@@ -78,7 +78,7 @@ namespace Utils {
         case CollisionType.Rectangle:
           return Collision.RectanglePoint(Position + BoundsOffset, Size, p);
         case CollisionType.Circle:
-          return Collision.CirclePoint(Position + BoundsOffset + new Vector2(Radius), Radius, p);
+          return Collision.CirclePoint(Position, Radius, p);
         case CollisionType.Line:
           return Collision.LinePoint(Position, End, p);
       }

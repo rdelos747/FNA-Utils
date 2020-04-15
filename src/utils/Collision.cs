@@ -36,7 +36,11 @@ namespace Utils {
     }
 
     public static bool LineLine(Vector2 l1StartPosition, Vector2 l1EndPosition, Vector2 l2StartPosition, Vector2 l2EndPosition) {
-      throw new Exception("line-line collision not implemented.");
+      Vector2 s1 = l1EndPosition - l1StartPosition;
+      Vector2 s2 = l2EndPosition - l2StartPosition;
+      float s = (-s1.Y * (l1StartPosition.X - l2StartPosition.X) + s1.X * (l1StartPosition.Y - l2StartPosition.Y)) / (-s2.X * s1.Y + s1.X * s2.Y);
+      float t = (s2.X * (l1StartPosition.Y - l2StartPosition.Y) - s2.Y * (l1StartPosition.X - l2StartPosition.X)) / (-s2.X * s1.Y + s1.X * s2.Y);
+      return s >= 0 && s <= 1 && t >= 0 && t <= 1;
     }
 
     public static bool RectanglePoint(Vector2 rTopLeftPosition, Size rSize, Vector2 point) {
