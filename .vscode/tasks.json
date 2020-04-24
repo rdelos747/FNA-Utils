@@ -4,30 +4,64 @@
     {
       "label": "Restore Project",
       "type": "shell",
-      "command": "msbuild /t:restore",
+      "osx": {
+        "command": "msbuild /t:restore",
+      },
+      "windows": {
+        "command": "MSBuild.exe //t:restore",
+      },
       "group": "build",
       "problemMatcher": "$msCompile"
     },
     {
       "label": "Clean Project",
       "type": "shell",
-      "command": "msbuild /t:clean /p:configuration=Debug ; msbuild /t:clean /p:configuration=Release",
+      "osx": {
+        "command": "msbuild /t:clean /p:configuration=Debug ; msbuild /t:clean /p:configuration=Release",
+      },
+      "windows": {
+        "command": "MsBuild.exe //t:clean //p:configuration=Debug ; MSBuild.exe //t:clean //p:configuration=Release",
+      },
       "group": "build",
       "problemMatcher": "$msCompile"
     },
     {
       "label": "Build (Debug)",
       "type": "shell",
-      "command": "msbuild",
-      "args": ["/p:configuration=Debug", "/t:build"],
+      "osx": {
+        "command": "msbuild",
+        "args": [
+          "/p:configuration=Debug",
+          "/t:build"
+        ]
+      },
+      "windows": {
+        "command": "MSBuild.exe",
+        "args": [
+          "//p:configuration=Debug",
+          "//t:build"
+        ],
+      },
       "group": "build",
       "problemMatcher": "$msCompile"
     },
     {
       "label": "Build (Release)",
       "type": "shell",
-      "command": "msbuild",
-      "args": ["/p:configuration=Release", "/t:build"],
+      "osx": {
+        "command": "msbuild",
+        "args": [
+          "/p:configuration=Release",
+          "/t:build"
+        ]
+      },
+      "windows": {
+        "command": "MSBuild.exe",
+        "args": [
+          "//p:configuration=Release",
+          "//t:build"
+        ],
+      },
       "group": "build",
       "problemMatcher": "$msCompile"
     },
@@ -43,7 +77,10 @@
       },
       "windows": {
         "command": "cmd",
-        "args": ["/k", "${workspaceFolder}/bin/Debug/test_game.exe"]
+        "args": [
+          "/k",
+          "${workspaceFolder}/bin/Debug/test_game.exe"
+        ]
       },
       "dependsOn": "Build (Debug)",
       "problemMatcher": "$msCompile"
@@ -57,7 +94,10 @@
       },
       "windows": {
         "command": "cmd",
-        "args": ["/k", "${workspaceFolder}/bin/Release/test_game.exe"]
+        "args": [
+          "/k",
+          "${workspaceFolder}/bin/Release/test_game.exe"
+        ]
       },
       "dependsOn": "Build (Release)",
       "problemMatcher": "$msCompile"

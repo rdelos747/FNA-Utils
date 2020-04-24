@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net46</TargetFramework>
-		<Platforms>x64</Platforms>
+		<!-- change the platform target if necessary for your system -->
+		<PlatformTarget>x64</PlatformTarget>
 	</PropertyGroup>
 	<PropertyGroup>
 		<EnableDefaultItems>false</EnableDefaultItems>
@@ -17,9 +18,10 @@
   </ItemGroup>
 
 	<!-- Reference SharpFont project -->
+	<!-- change the path directory if necessary for your system -->
 	<ItemGroup>
 		<Reference Include="SharpFont">
-			<HintPath>../_fnalibs/osx/SharpFont.dll</HintPath>
+			<HintPath>../_fnalibs/x64/SharpFont.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
