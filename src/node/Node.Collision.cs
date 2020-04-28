@@ -16,7 +16,7 @@ namespace Utils {
 
     public CollisionType CollisionType = CollisionType.Rectangle;
     public Vector2 BoundsOffset;
-    public Size Size;
+    public Size Size = new Size(0, 0);
     public float Radius;
     public Vector2 End;
 

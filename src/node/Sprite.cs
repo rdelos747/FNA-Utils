@@ -116,7 +116,7 @@ namespace Utils {
       SpriteHeight = ImageHeight / SheetRows;
       ImageClip = new Rectangle(0, 0, SpriteWidth, SpriteHeight);
 
-      if (Size == null) {
+      if (Size == null || (Size.Width == 0 && Size.Height == 0)) {
         Size = new Size(SpriteWidth, SpriteHeight);
       }
     }
