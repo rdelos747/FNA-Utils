@@ -43,7 +43,7 @@ namespace MyGame {
     private SpriteSheet MySheet = new SpriteSheet("path/to/sheet", 16, 16);
 
     public Player() {
-      setSpriteSheet(MySheet);
+      SetSpriteSheet(MySheet);
       Bounds = new Rectangle(-16, -16, 32, 48);
       ImageOrigin = new Vector2(32, 32);
     }
@@ -87,17 +87,19 @@ We are also very new to C# in general. All feedback is welcome :)
 
 [Resolution](#resolution)
 
-[GameObjects](#gameobjects)
+[Sprite](#sprite)
 
 [TextureLoader](#textureloader)
 
 [SpriteSheet](#spritesheet)
 
-[TextObjects](#textobjects)
+[Labels](#labels)
 
-[FontLibrary](#fontlibrary)
+[Atlas](#atlas)
 
 [Fonts](#fonts)
+
+[FontLibrary](#fontlibrary)
 
 [BoundingBox](#boundingbox)
 
@@ -108,16 +110,6 @@ We are also very new to C# in general. All feedback is welcome :)
 [Animation](#animation)
 
 [Random](#rand)
-
-[Menu Helpers](#menu-helpers)
-
-[The Element Class](#the-element-class)
-
-[Button Elements](#button-elements)
-
-[KeySwitcher Elements](#keyswitcher-elements)
-
-[List Elements](#List-elements)
 
 # Setup
 
@@ -192,7 +184,7 @@ public partial class GameController : Game {
 }
 ```
 
-And finally, `void Main()` kicks off the whole process:
+And finally, `void Main()` kicks off the whole process. If you use a template or some sort of code generator, you probably already have something similar.
 
 ```c#
 // program.cs
@@ -208,7 +200,7 @@ public static void Main(string[] args) {
 
 `public class Node : IDisposable`
 
-A basic drawable component, handling simple data such as X & Y position and boundaries. Nodes can be used as containers for other Nodes, and serve as the base class for other drawable components such as [GameObjects](#gameobjects) and [TextObjects](#textobjects).
+A basic drawable component, handling simple data such as X & Y position and boundaries. Nodes can be used as containers for other Nodes, and serve as the base class for other drawable components such as [Sprites](#sprites) and [Labels](#labels).
 
 ## Creating a Node
 
@@ -220,32 +212,51 @@ A basic drawable component, handling simple data such as X & Y position and boun
 
 ###### property
 
-`public float X`
-
-The x coordinate of a Node within its parent.
-
-###### property
-
-`public float Y`
-
-The y coordinate of a Node within its parent.
+`public Vector2 Position`
 
 ## Bounds
 
 ###### property
 
-`public BoundingBox Bounds = new BoundingBox()`
+`public Size Size`
 
-The bounding box around a Node's X and Y. Bounds.X and Bounds.Y represent the distance that the Bounds top left corner is placed from X and Y.
+###### property
 
-```c#
-// For example, if a Node of size 64 * 64 wants its X & Y coordinates to
-// be placed in the center of its bounds, we can achieve that like so:
+`public Vector2 BoundsOffset`
 
-Bounds.Rect = new Rectangle(-32, -32, 64, 64);
-```
+## Collision
 
-The `BoundingBox` class is a nested class within `Node`, and is essentially a wrapper around XNA's `Rectangle` class, along with a few other helpful properties related to drawing the rectangle. See [BoundingBox](#boundingbox).
+###### property
+
+`public CollisionType CollisionType = CollisionType.Rectangle`
+
+###### property
+
+`public float Radius`
+
+Used with `CollisionType.Circle`.
+
+###### property
+
+`public Vector2 End`
+
+Used with `CollisionType.Line`
+
+###### Method
+
+`public bool Collides(Node other)`
+
+###### Method
+
+`public bool Collides(Node other, float x, float y)`
+
+###### Method
+
+`public bool Collides(Node other, Vector2 offset)`
+
+###### Method
+
+`public bool PointInBounds(Vector2 p)`
 
 ## Adding Children
 
@@ -267,7 +278,7 @@ List if Node's children, can only be directly manipulated from within the Node c
 
 `public void RemoveFromParent()`
 
-Removes the calling Node from its parent, severing itself and its children from the engine.
+Removes the calling Node from its parent, severing itself and its children from its parent `Node`.
 
 ## Drawing a Node
 
@@ -309,7 +320,7 @@ public class MyGame : Game {
   override protected void Draw(GameTime gameTime) {
 
     Resolution.BeginDraw();
-    SpriteBatch.Begin( /*  your game settings */ );
+    SpriteBatch.Begin( /*  your settings */ );
 
     /*
     Any children added to Root, as well as their real-world coordinates,
@@ -502,29 +513,29 @@ public partial class GameController : Game {
 }
 ```
 
-# GameObjects
+# Sprite
 
-`Public GameObject : Node`
+`Public Sprite : Node`
 
-Node subclass that handles drawing images to the screen. The image provided to a `GameObject` can function as the whole sprite, or as a sprite sheet. Collision detection is also available.
+Node subclass that handles drawing images to the screen. The image provided to a `Sprite` can function as the whole sprite, or as a sprite sheet. Collisoin detection is handled by the base `Node` class;
 
-As noted above, we use `Node.addChild(obj)` to add a `GameObject` to an existing `Node` as a child.
+As noted above, we use `Node.addChild(obj)` to add a `Sprite` to an existing `Node` as a child.
 
-## Creating a GameObject
+## Creating a Sprite
 
 ###### constructor
 
-`public GameObject()`
+`public Sprite()`
 
-## General purpose GameObject properties
-
-###### property
-
-`public float SpriteRotation = 0f`
+## General purpose Sprite properties
 
 ###### property
 
-`public float SpriteScale = 1f`
+`public float Rotation = 0f`
+
+###### property
+
+`public float Scale = 1f`
 
 ###### property
 
@@ -532,26 +543,26 @@ As noted above, we use `Node.addChild(obj)` to add a `GameObject` to an existing
 
 ###### property
 
-`protected int CollisionLayer = 0`
+`public float DrawDepth = 0.0f`
 
 ###### property
 
-`public int LayerDepth = 0`
+`public Color Color = Color.White`
 
 ###### property
 
-`public Color DrawColor = Color.White`
+`public float Alpha = 1.0f`
 
-## Setting a GameObject's image
+## Setting a Sprite's image
 
-`protected void setImage(Texture2D newImage)`
+`protected void SetImage(Texture2D newImage)`
 
-Sets the `GameObject's` image as a single sprite. Drawing the `GameObject` will display the entire image, unless a `spriteClip` is specified. Changing the values of `GameObject.Animation` or `GameObject.CurrentFrame` will have no effect.
+Sets the `Sprite's` image as a single sprite. Drawing the `Sprite` will display the entire image, unless a `ImageClip` is specified. Changing the values of or within `Sprite.Animation` or `Sprite.CurrentFrame` will have no effect.
 
 ```c#
-using Engine
+using Utils
 
-public class Player: GameObject {
+public class Player: Sprite {
 
   public Player() {
      setImage(TextureLoader.Load("myimage.png"))
@@ -559,16 +570,16 @@ public class Player: GameObject {
 }
 ```
 
-## Setting GameObject's sprite sheet
+## Setting Sprites's sprite sheet
 
-`protected void setSpriteSheet(SpriteSheet sheet)`
+`protected void SetSpriteSheet(SpriteSheet sheet)`
 
-Sets the GameObject's image as a sprite sheet, cut into a grid specified by cols and rows (in the example below, 4 x 4). Choosing this allows for the use of `Animation` and `CurrentFrame` to pick the sprite to display, as well as `SpriteClip`.
+Sets the Sprite's image as a sprite sheet, cut into a grid specified by cols and rows (in the example below, 4 x 4). Choosing this allows for the use of `Animation` and `CurrentFrame` to pick the sprite to display, as well as `SpriteClip`.
 
 ```c#
-using Engine
+using Utils
 
-public class Player: GameObject {
+public class Player: Sprite {
 
   SpriteSheet Sheet = new SpriteSheet("mysheet.png", 4, 4)
 
@@ -578,13 +589,13 @@ public class Player: GameObject {
 }
 ```
 
-If a GameObject's image is supplied as a sprite sheet, there are a few ways to specify which frame or section of the sheet to show. The following are specified in order of precidence (if one is set, the ones below are automatically updated to match).
+If a Sprite's image is supplied as a sprite sheet, there are a few ways to specify which frame or section of the sheet to show. The following are specified in order of precidence (if one is set, the ones below are automatically updated to match).
 
 1. `protected Animation animation`
-2. `protected int currentFrame`
-3. `protected Rectangle spriteClip`
+2. `protected int CurrentFrame`
+3. `protected Rectangle ImageClip`
 
-## Using a GameObject's Animation
+## Using a Sprite's Animation
 
 ###### property
 
@@ -594,87 +605,56 @@ If a GameObject's image is supplied as a sprite sheet, there are a few ways to s
 
 `protected void Animate(GameTime gameTime)`
 
-Updates the GameObject's current Animation. `GameObject.CurrentFrame` will be updated to this value, and `GameObject.SpriteClip` will represent the bounds of the sprite on the sheet. User setting either `GameObject.CurrentFrame` or `GameObject.SpriteClip` in this case will have no effect, as these values are recomputed every time `Animate()` is called.
+Updates the Sprite's current Animation. `Sprite.CurrentFrame` will be updated to this value, and `Sprite.ImageClip` will represent the bounds of the sprite on the sheet. User setting either `Sprite.CurrentFrame` or `Sprite.ImageClip` in this case will have no effect, as these values are recomputed every time `Animate()` is called.
 
-`Animation` is used so that the user can define custom lengths for each frame, rathen than being forced into a constant frame time. Internally, every frame the engine will call the supplied `Animation.Update(GameTime gameTime)` method, and casts the return value to an int to be used as the `currentFrame`. The `Animation.AnimationType` should be set to `AnimationType.STEP` for the easiest results.
+`Animation` is used so that the user can define custom lengths for each frame, rathen than being forced into a constant frame time. The `Animation.AnimationType` should be set to `AnimationType.STEP` for the easiest results.
 
-Below is an example of setting a custom looping frame animation that animates through a sprite sheet's frames 5 through 10.
+See [Animation](#animation) for specific usage;
+
+## Using a Sprite's `CurrentFrame`
+
+###### property
+
+`protected int CurrentFrame = -1`
+
+For situations where we don't necessarily want to _animate_ changes between different sprite sheet frames, but still want control over which frame to display, we use `Sprite.CurrentFrame`.
 
 ```c#
-public class MyClass : GameObject {
-  Animation runAnimation = new Animation(true, AnimationType.STEP);
+public class MyClass : Sprite {
+  int Hp = 100;
+  int HealthyFrame = 10;
+  int LowHealthFrame = 11;
+  int VeryLowHealthFrame = 12;
 
   public MyClass() {
     SetSpriteSheet(MySheet);
-
-     /*
-      The sheet added can be thought of as a box cut into equal smaller boxes, labeled as follows:
-       0,  1,  2,  3,
-       4,  5,  6,  7,
-       8,  9, 10, 11,
-      12, 13, 14, 15
-    */
-
-    runAnimation.addKeyframe(0, 5);
-    runAnimation.addKeyframe(100, 6);
-    runAnimation.addKeyframe(300, 7);
-    runAnimation.addKeyframe(800, 8);
-    runAnimation.addKeyframe(1500, 9);
-    runAnimation.addKeyframe(1580, 10);
-
-    Animation = runAnimation;
+    CurrentFrame = HealthyFrame;
   }
 
-  public void CustomUpdate(GameTime gameTime) {
-    Animate(gameTime);
-  }
-}
-```
+  public void TakeDamage() {
+    Hp--;
 
-## Using a GameObject's `CurrentFrame`
-
-###### property
-
-`protected int currentFrame = -1`
-
-For situations where we don't necessarily want to _animate_ changes between different sprite sheet frames, but still want control over which frame to display, we use `GameObject.SpriteClip`.
-
-```c#
-public class MyClass : GameObject {
-  int hp = 100;
-  int healthyFrame = 10;
-  int lowHealthFrame = 11;
-  int veryLowHealthFrame = 12;
-
-  public MyClass() {
-    setSpriteSheet(MySheet);
-    CurrentFrame = healthyFrame;
-  }
-
-  public void takeDamage() {
-    hp--;
-
-    if (hp < 50) {
-      CurrentFrame = lowHealthFrame;
+    if (Hp < 50) {
+      CurrentFrame = LowHealthFrame;
     }
-    else if (hp < 20) {
-      CurretFrame = veryLowHealthFrame;
+    else if (Hp < 20) {
+      CurretFrame = VeryLowHealthFrame;
     }
   }
 }
 ```
 
-## Using a `GameObject`'s `spriteClip`
+## Using a Sprite's `ImageClip`
 
 ###### property
 
-`protected Rectangle SpriteClip`
+`protected Rectangle ImageClip`
 
-It is certainly possible to use a spritesheet that contains cells of different sizes. For this, we use `SpriteClip` to specify a rectangle on the sheet to display.
+It is certainly possible to use a spritesheet that contains cells of different sizes. For this, we use `ImageClip` to specify a rectangle on the sheet to display.
 
 ## Sprite Dimensions:
 
-_`ImageWidth` and `ImageHeight` specify the dimensions of the image provided to the `GameObject`. If the image is supplied as a spritesheet (see `GameObject.SetSpriteSheet()`), `SpriteWidth` and `SpriteHeight` will be the dimensions of a single cell on the sheet. Otherwise, sprite dimensions will be the same as image dimensions._
+_`ImageWidth` and `ImageHeight` specify the dimensions of the image provided to the `Sprite`. If the image is supplied as a spritesheet (see `Sprite.SetSpriteSheet()`), `SpriteWidth` and `SpriteHeight` will be the dimensions of a single cell on the sheet. Otherwise, sprite dimensions will be the same as image dimensions._
 
 ###### property
 
@@ -696,18 +676,18 @@ _`ImageWidth` and `ImageHeight` specify the dimensions of the image provided to 
 
 `protected Vector2 ImageOrigin`
 
-- The offset within a GameObject's image to place `X` and `Y`.
+- The offset within a Sprite's image to place `X` and `Y`.
 
-- For example, if a `GameObject` is using an image as its sprite that is 64 \* 64 pixles, we can place `X` and `Y` in the center of the sprite by doing the following:
+- For example, if a `Sprite` is using an image as its sprite that is 64 * 64 pixles, we can place `X` and `Y` in the center of the sprite by doing the following:
 
 ```c#
 ImageOrigin = new Vector2(32, 32);
 ```
 
-_Note: The position of `ImageOrigin` is different than the position of a Node's `Bounds.Rect`. `ImageOrigin` can be thought of as the offset from the image's top left corner where we want to place `X` and `Y`. `Bounds.Rect.X` and `Bounds.Rect.Y` are then the Bounds's offset away from `X` and `Y`. See below for a slightly complicated example:_
+_Note: The position of `ImageOrigin` is different than the position of a Node's `BoundsOffset`. `ImageOrigin` can be thought of as the offset from the image's top left corner where we want to place `X` and `Y`. `BoundsOffset.X` and `BoundsOffset.Y` are then the Bounds's offset away from `X` and `Y`. See below for a slightly complicated example:_
 
 ```c#
-public class Player : GameObject {
+public class Player : Sprite {
 
   public Player() {
     /*
@@ -722,14 +702,11 @@ public class Player : GameObject {
     the image. If we want our bounds to be exact, we must set set the
     bounds separately:
     */
-    Bounds.Rect = new Rectangle(-16, -16, 32, 48);
+    Size = new Size(32, 48)
+    BoundsOffset = new Vector2(-16, -16);
   }
 }
 ```
-
-## Game Object Collision
-
-todo
 
 # TextureLoader
 
@@ -790,6 +767,18 @@ Defines a sprite sheet to be used with GameObjects.
 
 `public int Rows`
 
+###### readonly property
+
+`public int Width`
+
+The width of a cell in the sheet.
+
+###### readonly property
+
+`public int Height`
+
+The height of a cell in the sheet.
+
 ## Example Usage
 
 SpriteSheets are helpful when you have multiple classes that use the same sheet. We only need to define the sheet once, and can pass it to every object that needs it via `GameObject.SetSpriteSheet()`.
@@ -813,15 +802,19 @@ public class MyOtherThing : GameObject {
 }
 ```
 
-# TextObjects
+# Labels
 
-`Public TextObject : Node`
+`Public Label : Node`
 
-## Creating a TextObject
+## Creating a Label
 
-###### constructor
+###### constructors
 
-`public TextObject(Font font = null, int x = 0, int y = 0, string text = null)`
+`public Label(Font font = null)`
+
+`public Label(string text, int x, int y)`
+
+`public Label(string text, int x, int y, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Font font = null)`
 
 ## Setting a font
 
@@ -829,7 +822,7 @@ public class MyOtherThing : GameObject {
 
 `public Font Font`
 
-When setting the `Font`, the base (Node) class's `Bounds.Rect` is initialized to `Rectangle(0, 0, 10, _font.lineHeight)`. If `Text` is already set, `SetText()` will be called automatically as well.
+When setting the `Font`, the base (Node) class's `Size` is initialized to `Size(0, Font.lineHeight)`. If `Text` is already set, `SetText()` will be called automatically as well.
 
 ## Setting text
 
@@ -843,7 +836,7 @@ The color of the text.
 
 `public void SetText(string t)`
 
-Calling `SetText` automatically updated `Bounds.Rect` based on the new text to render, and uses these bounds to also update the `TextOrigin`, based on whatever type of `VerticalAlignment` is currently being used.
+Calling `SetText` automatically updates `Size` based on the new text to render, and uses these bounds to also update the `TextOrigin`, based on whatever type of `VerticalAlignment` and `HorizontalAlignment` is currently being used.
 
 ###### property
 
@@ -857,16 +850,16 @@ Changing the `Text` property directly will trigger `SetText`, so either approach
 
 `protected Vector2 TextOrigin = new Vector2()`
 
-Offset from the TextObject's position to draw the gyphs. For example, if a TextObject's bounds are 100 \* 64, we can vertically center the text within the bounds by:
+Offset from the Label's position to draw the gyphs. For example, if a Labels's bounds are 100 * 64, we can vertically center the text within the bounds by:
 
 ```c#
 TextOrigin = new Vector2(0, 32);
 
 // or, more generally
-TextOrigin = new Vector2(0, Bounds.Rect.Height / 2);
+TextOrigin = new Vector2(0, Size.Height / 2);
 ```
 
-Setting the `VerticalAlignment` does this for us automatically.
+Setting the `VerticalAlignment` and `HorizontalAlignment` does this for us automatically.
 
 ## Vertical Alignment
 
@@ -878,8 +871,23 @@ Uses the `VerticalAlignment` enum:
 
 ```c#
 public enum VerticalAlignment {
-  TOP,
-  CENTER
+  Top,
+  Center
+}
+```
+## Horizontal Alignment
+
+###### property
+
+`public HorizontalAlignment HorizontalAlignment`
+
+Uses the `HorizontalAlignment` enum:
+
+```c#
+public enum HorizontalAlignment {
+  Left,
+  Center,
+  Right
 }
 ```
 
@@ -889,82 +897,59 @@ public enum VerticalAlignment {
 
 `public static Font BaseFont`
 
-TextObjects, when created with `font = null`, will attempt to use the static `BaseFont`, meaning it should be set before any TextObjects are created.
+Labels, when created with `font = null`, will attempt to use the static `BaseFont`, meaning it should be set before any Labels are created.
+
+Using TTF fonts:
 
 ```c#
 public class GameController : Game {
 
-  public static FontLib MyFontLib;
+  public static TTFFontLib MyFontLib;
 
-  public GameController() {
-    MyFontLib = new FontLib("font/path.ttf", GraphicsDevice);
-  }
+  public GameController() {}
 
   override protected void LoadContent() {
-    TextObject.BaseFont = MyFontLib.CreateFont(Constants.FontSizeReg);
+    MyFontLib = new FontLib("font/path.ttf", GraphicsDevice);
+
+    TTFFont myFont = MyFontLib.CreateFont(Constants.FontSizeReg);
+    TextObject.BaseFont = myFont;
     base.LoadContent();
   }
 }
 ```
 
-# FontLibrary
-
-`public sealed class FontLib`
-
-###### Constructor
-
-`public FontLib(string fontPath, GraphicsDevice graphics)`
-
-Used to create fonts for a specific font file. Unlike textures, `.ttf` files do not need to be in the `content` directory.
+Using font Atlas:
 
 ```c#
-FontLib FontLibrary = new FontLib("path/to/my/font.ttf", GraphicsDevice);
-Font FontReg = FontLibrary.CreateFont(20);
-Font FontLarge = FontLibrary.CreateFont(50);
+public class GameController : Game {
+
+  public static Atlas FontAtlas;
+  public static SpriteSheet FontSheet = new SpriteSheet("path/to/sheet", 16, 14);
+
+  public GameController() {}
+
+  override protected void LoadContent() {
+    FontAtlas = new Atlas(FontSheet);
+
+    TextObject.BaseFont = FontAtlas;
+    base.LoadContent();
+  }
+}
 ```
 
 # Fonts
 
-`public class Font`
+`public abstract class Font`
 
-TLDR: To draw text with a `TextObject`, you must supply a `Font`, which is made from a `FontLib` and a specific point size.
+`public sealed class Atlas : Font`
 
-`Fonts` are used as a cache for textures created from a `FontLib` at a particular point size. The first time we need a character, the `Font` will generate a texture for it, and use metrics from the `FontLib` to specify how it should be placed when drawing to the screen.
+`public sealed class TTFFont: Font`
 
-# BoundingBox
+TLDR: To draw text with a `Label`, you must supply a `Font`, which is made from either an `Atlas` (for spritesheet based fonts) or a `TTFFont` and a specific point size.
 
-Nested class within `Node` that provides an easy way to manipulate boundaries around a Node.
+Atlases made from SpriteSheets are preferred for pixel art games, especially those designed around a smaller resolution, as it is easy to predict how the glyphs will scale.
 
-###### constructor
-
-`public BoundingBox()`
-
-###### static property
-
-`public static Texture2D Texture;`
-
-Shared texture for drawing the rectangle. This should be initialized in the `Game.LoadContent` method in your game:
-
-```c#
-Node.BoundingBox.Texture = new Texture2D(GraphicsDevice, 1, 1);
-Node.BoundingBox.Texture.SetData(new Color[] { Color.White });
-```
-
-###### property
-
-`public Rectangle Rect = new Rectangle()`
-
-###### property
-
-`public bool IsHidden = true`
-
-###### property
-
-`public Color Color = Color.Blue`
-
-###### property
-
-`public float Alpha = 0.5f`
+The `TTFFont` class is used as a cache for textures created from a `TTFFontLib` at a particular point size. The first time we need a character, the `TTFFont` will generate a texture for it, and use metrics from the `TTFFontLib` to specify how it should be placed when drawing to the screen.
 
 # KeyFrames
 
@@ -1074,7 +1059,7 @@ public static class Constants {
 }
 
 // MyObject.cs
-public class MyObject : GameObject {
+public class MyObject : Sprite {
   public MyObject() {
     animation = Constants.MyFrames.Create();
     //or
@@ -1122,289 +1107,3 @@ public class MyLevel : Node {
 
 # Rand
 
-# Menu Helpers
-
-[The Element Class](#the-element-class)
-
-[Button Elements](#button-elements)
-
-[KeySwitcher Elements](#keyswitcher-elements)
-
-[List Elements](#List-elements)
-
-The `Element` class and its related utilities attempt to handle UI operations commonly associated with in-game menus. This includes simple tasks such as hover effects when moving the mouse over a menu, to more complex interactions like scroll views that dynamically show and hide content.
-
-Example pause menu:
-
-```c#
-public sealed class PauseMenu : Element {
-  private Game GC;
-
-  public PauseMenu(Game gc, FontLib fontLib) {
-    // Use the default menu controller
-    MC = new MenuController();
-
-    // Attach our Game. XNA's Game class contains many
-    // settings that we might want to change from within
-    // a pause menu, so it is helpful to keep a reference.
-    GC = gc;
-
-    // Set up some fonts
-    FontReg = fontLib.CreateFont(Constants.FontSizeReg);
-    FontLarge = fontLib.CreateFont(Constants.FontSizeLarge);
-
-    // Set our bounds, and draw them to give the
-    // element a background. These come from the
-    // Node base class.
-    Bounds.Rect = new Rectangle(0, 0, Parent.Bounds.Rect.Width, Parent.Bounds.Rect.Height);
-    Bounds.IsHidden = false;
-    Bounds.Color = Constants.PauseMenuBackground;
-    Bounds.Alpha = Constants.PauseMenuAlpha;
-
-    // Position our menu
-    X = Constants.MenuLeft;
-    Y = Constants.MenuTop;
-
-    // Set up this elements label. In this case it will
-    // serve as the title of our menu
-    Label.Font = FontLarge;
-    Label.Text = "Menu";
-
-    // Add some buttons.
-    Button backButton = new Button();
-    backButton.OnClick = () => { CloseMenu() };
-    backButton.Label.Text = "Return To Game";
-    AddChildAsElement(backButton, 0, 20);
-
-    Button closeButton = new Button();
-    closeButton.OnClick = () => { ExitGame() };
-    closeButton.Label.Text = "Exit Game";
-    AddChildAsElement(closeButton, 0, 50);
-
-    // Initialization is done, lets let the Game class know
-    // that the menu is open.
-    OnOpenMenu();
-  }
-
-  // Define some funtions that we can call to manipulate
-  // Game settings, such as if the mouse is visible, or if
-  // the game is running.
-  public void OnOpenMenu() {
-    GC.IsMouseVisible = true;
-  }
-
-  public void CloseMenu() {
-    GC.IsMouseVisible = false;
-    GC.GameState = GameState.RUNNING;
-    RemoveFromParent();
-  }
-
-  public void ExitGame() {
-    GC.GameState = GameState.QUIT;
-  }
-}
-
-```
-
-# The Element Class
-
-`public class Element : GameObject`
-
-Basic building blocks of menu. Elements are similar to Nodes in that they are the base class that define much of the functionality for subclasses like Buttons and Lists.
-
-###### constructor
-
-`public Element(Font font = null)`
-
-## Setting element text
-
-###### Property
-
-`public TextObject Label`
-
-All elements contain one `TextObject` for rendering basic text.
-
-## Element display properties
-
-###### property
-
-`public Color BackgroundColor = MenuDefaults.ButtonBackgroundColor`
-
-###### property
-
-`public float BackgroundAlpha = MenuDefaults.ButtonBackgroundAlpha`
-
-###### property
-
-`public Color SelectedColor = MenuDefaults.ButtonSelectedColor`
-
-###### property
-
-`public float SelectedAlpha = MenuDefaults.ButtonSelectedAlpha`
-
-###### property
-
-`public Color TextColor = MenuDefaults.ButtonTextColor`
-
-###### property
-
-`public Color TextSelectedColor = MenuDefaults.ButtonTextSelectedColor`
-
-## Adding child elements
-
-###### property
-
-`public int TopOffset = 0`
-
-The distance from the Element's `Y` to place the next added child Element's `Y`. When calling `AddChildAsElement(Element el, int left, int top)`, the parameter `top` will increment `TopOffset` _before_ placing the child element.
-
-###### property
-
-`public int LeftOffset = 0`
-
-The distance from the Element's `X` to place the next added child Element's `X`. When calling `AddChildAsElement(Element el, int left, int top)`, the parameter `left` will increment `LeftOffset` _before_ placing the child element.
-
-_Note: `TopOffset` and `LeftOffset` can be changed any time. This is useful for creating columns, where we would, for example, call `AddChildAsElement` on a column of elements, then reset `TopOffset` back to 0 and increment `LeftOffset` into the next column, and repeat the process again._
-
-###### method
-
-`public void AddChildAsElement(Element el, int left, int top)`
-
-Adds Element `el` to parent's list of Nodes (since Elements are just Nodes at the end of the day), and also manages setting values like `el.SelectIndex` and `NumSelectableChildren`. Also passes down `MC` (the parent's MenuController) if it is not `null`.
-
-The arguments `left` and `top` specify Element `el`s distance from the previously added Element.
-
-```c#
-public PauseMenuControls() {
-  List list = new List(1);
-  AddChildAsElement(list, 0, 0);
-
-  list.AddChildAsElement(cancelButton, 0, 0);
-
-  foreach (string key in Input.InputMap.Keys) {
-    KeySwitcher k = new KeySwitcher(key);
-
-    list.AddChildAsElement(k, 0, BTN_MARGIN);
-  }
-}
-```
-
-## Selecting Elements
-
-###### property
-
-`public bool Selected = false`
-
-Used by subclasses to determine if Element has been selected or not.
-
-###### property
-
-`public bool IsSelectable = false`
-
-Determines whether or not the Element can be selected. This should be set _before_ adding via `AddChildAsElement`.
-
-###### property
-
-`public int CurrentSelectedChildIndex { get; protected set; } = 0`
-
-The index of the current select child within a parent element.
-
-###### method
-
-`public virtual void SetSelected()`
-
-Determines behavior of an Element when it becomes selected. In base the `Element` class, this does nothing.
-
-###### method
-
-`public virtual void SetUnselected()`
-
-Determines behavior of an Element when it becomes unselected. In base the `Element` class, this does nothing.
-
-_Note: Methods such as `Element.Update()` call `SetSelected()` and `SetUnselected()` automatically on child Elements if they are eligable. In most situations, we do not need to invoke these ourselves._
-
-## Updating child elements
-
-###### method
-
-`public virtual void Update(float mouseX, float mouseY)`
-
-Similar to `Node.Draw()`, `Element.Update()` loops over all child Elements and recursively calls their Update methods. The base `Element.Update()` is also in charge of reading key presses and the mouse position for determining things like the `CurrentSelectedChildIndex`, as well as selecting/ unselecting child Elements. For this reason, any override of the base `Update()` should include a call to `Base.Update()`.
-
-# Menu Controller
-
-`public sealed class MenuController`
-
-Defines an Element's key press behavior when used in a menu-like context. It defines the following default properties:
-
-```c#
-public sealed class MenuController {
-
-  public string KeySelect = "primary";
-  public string KeyBack = "secondary";
-  public string KeyUp = "up";
-  public string KeyDown = "down";
-  public string KeyLeft = "left";
-  public string KeyRight = "right";
-
-  public MenuController() { }
-}
-```
-
-Recall that the static `Input` class is capable of taking string identifiers to check for key presses, rather than actual XNA Key inputs. The `MenuController` class allows us to define a set of keys unique to that menu, in the case where these inputs differ from the ones we use to move through the actual game.
-
-# Button Elements
-
-# KeySwitcher Elements
-
-# List Elements
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-<!--  <<< Template >>> -->
-
-## Readme API Template
-
-# The `Class` Class
-
-Description
-
-_Other Info_
-
-## Vars
-
-`public int VarOne`
-
-- Description about `VarOne`
-
-`public int VarOne`
-
-`protected int VarThree`
-
-## Methods
-
-`public Class(int something)`
-
-- Notes (if any) about the constructor
-
-`protected virtual OverrideMe()`
-
-## Examples
-
-Here is how to do something
-
-```c#
-class Class {
-  // yes
-}
-```

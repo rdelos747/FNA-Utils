@@ -30,15 +30,17 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<Compile Include="src/node/Label.cs" />
 		<Compile Include="src/node/Node.cs" />
 		<Compile Include="src/node/Node.Collision.cs" />
 		<Compile Include="src/node/Sprite.cs" />
-		
+		<Compile Include="src/node/Label/Atlas.cs" />
+		<Compile Include="src/node/Label/Font.cs" />
+		<Compile Include="src/node/Label/Label.cs" />
+		<Compile Include="src/node/Label/TTFFontLib.cs" />
+
 		<Compile Include="src/utils/Animation.cs" />
 		<Compile Include="src/utils/Camera.cs" />
 		<Compile Include="src/utils/Collision.cs" />
-		<Compile Include="src/utils/Font.cs" />
 		<Compile Include="src/utils/Hex.cs" />
 		<Compile Include="src/utils/Input/Input.cs" />
 		<Compile Include="src/utils/Input/Input.DecodeAction.cs" />

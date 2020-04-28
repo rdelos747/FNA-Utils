@@ -29,7 +29,7 @@ namespace Utils {
       }
       set {
         _font = value;
-        Size = new Size(10, _font.lineHeight);
+        Size = new Size(10, _font.LineHeight);
 
         if (_text != null) {
           SetText(_text);
@@ -37,7 +37,7 @@ namespace Utils {
       }
     }
 
-    protected List<(char, Vector2)> Points;
+    protected List<(char c, Vector2 loc)> Points;
 
     private string _text;
     public string Text {
@@ -58,7 +58,9 @@ namespace Utils {
       set {
         _verticalAlignment = value;
 
-        Size = new Size(10, _font.lineHeight);
+        if (_font != null) {
+          Size = new Size(0, _font.LineHeight);
+        }
 
         if (_text != null) {
           SetText(_text);
@@ -73,7 +75,10 @@ namespace Utils {
       set {
         _horizontalAlignment = value;
 
-        Size = new Size(10, _font.lineHeight);
+
+        if (_font != null) {
+          Size = new Size(0, _font.LineHeight);
+        }
 
         if (_text != null) {
           SetText(_text);
@@ -94,7 +99,7 @@ namespace Utils {
         _font = BaseFont;
       }
 
-      Size = new Size(10, _font.lineHeight);
+      Size = new Size(0, _font.LineHeight);
 
       Points = new List<(char, Vector2)>();
 
@@ -121,28 +126,14 @@ namespace Utils {
       Vector2 position = new Vector2(lastX + Position.X, lastY + Position.Y);
 
       for (int i = 0; i < Points.Count; i++) {
-        GlyphData glyph = _font.getGlyph(Points[i].Item1);
-        // spriteBatch.Draw(
-        //   glyph.texture,
-        //   new Vector2(
-        //     (Points[i].Item2.X + position.X) - TextOrigin.X,
-        //     (Points[i].Item2.Y + position.Y) - TextOrigin.Y
-        //   ),
-        //   new Rectangle(0, 0, glyph.width, glyph.height),
-        //   Color
-        // );
+        Glyph glyph = _font.GetGlyph(Points[i].Item1);
         spriteBatch.Draw(
-          // glyph.texture,
-          //   new Vector2(
-          //   (Points[i].Item2.X + position.X) - TextOrigin.X,
-          //   (Points[i].Item2.Y + position.Y) - TextOrigin.Y
-          // ),
-          glyph.texture,
-            new Vector2(
-            (Points[i].Item2.X + position.X),
-            (Points[i].Item2.Y + position.Y)
+          glyph.Texture,
+          new Vector2(
+            (Points[i].loc.X + position.X),
+            (Points[i].loc.Y + position.Y)
           ),
-          null,
+          glyph.Clip,
           Color,
           0.0f,
           TextOrigin,
@@ -177,46 +168,46 @@ namespace Utils {
         // do special char stuff
         switch (c) {
           case ' ':
-            px += _font.advanceSpace;
+            px += _font.Advance;
             continue;
           case '\t':
-            px += _font.advanceSpace * _font.tabSpaces;
+            px += _font.Advance * _font.Tab;
             continue;
           case '\r':  //  ignore
             continue;
           case '\n':
             px = 0;
-            py += _font.lineHeight;
+            py += _font.LineHeight;
             continue;
         }
 
-        GlyphData glyph = _font.getGlyph(c);
+        Glyph glyph = _font.GetGlyph(c);
         if (glyph == null) {
-          throw new Exception($"Invalid character '{c}'");
+          glyph = _font.GetGlyph('?');
         }
 
-        int gx = px + glyph.bitmapLeft;
-        int gy = py + _font.ascender - glyph.bearingY;
+        int gx = px + glyph.BitmapLeft;
+        int gy = py + _font.Ascender - glyph.BearingY;
 
-        Points.Add((glyph.c, new Vector2(gx, gy)));
-        px += glyph.advanceX;
+        Points.Add((glyph.C, new Vector2(gx, gy)));
+        px += glyph.AdvanceX;
 
         maxWidth = Math.Max(maxWidth, px);
-        maxHeight = Math.Max(maxHeight, py + glyph.height);
+        maxHeight = Math.Max(maxHeight, py + glyph.Height);
       }
 
       Size = new Size(maxWidth, maxHeight);
 
       TextOrigin = Vector2.Zero;
       if (_horizontalAlignment == HorizontalAlignment.Center) {
-        TextOrigin.X = Size.Width / 2;
+        TextOrigin.X = (float)Math.Ceiling(Size.Width / 2);
       }
       else if (_horizontalAlignment == HorizontalAlignment.Right) {
         TextOrigin.X = Size.Width;
       }
 
       if (_verticalAlignment == VerticalAlignment.Center) {
-        TextOrigin.Y = Size.Height / 2;
+        TextOrigin.Y = (int)Size.Height / 2;
       }
     }
   }
