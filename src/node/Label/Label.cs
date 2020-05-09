@@ -123,7 +123,7 @@ namespace Utils {
     public override void Draw(SpriteBatch spriteBatch, float lastX, float lastY) {
       if (IsHidden) return;
 
-      Vector2 position = new Vector2(lastX + Position.X, lastY + Position.Y);
+      Vector2 position = new Vector2(lastX + (int)Position.X, lastY + (int)Position.Y);
 
       for (int i = 0; i < Points.Count; i++) {
         Glyph glyph = _font.GetGlyph(Points[i].Item1);
