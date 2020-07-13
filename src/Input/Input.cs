@@ -158,5 +158,9 @@ namespace Utils {
       else
         return false;
     }
+
+    public static int MouseScrolled() {
+      return MouseState.ScrollWheelValue - LastMouseState.ScrollWheelValue;
+    }
   }
 }

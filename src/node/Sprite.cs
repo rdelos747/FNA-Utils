@@ -10,19 +10,24 @@ namespace Utils {
     public static Texture2D SystemRect;
 
     // sprite / graphical vars
-    private Texture2D Image; // used as a single sprite, or a spritesheet
+    public Texture2D Image; // used as a single sprite, or a spritesheet
+
     private int SheetCols = 1;
     private int SheetRows = 1;
 
     protected int ImageWidth { get; private set; }
     protected int ImageHeight { get; private set; }
     public Vector2 ImageOrigin = new Vector2();
-    public int Width;
-    public int Height;
+    public int SpriteWidth;
+    public int SpriteHeight;
 
     protected Rectangle ImageClip;
     public float Rotation = 0f;
     public float Scale = 1f;
+    public float Direction = 0f;
+    public float DrawDepth = 0;
+    public Color Color = Color.White;
+    public float Alpha = 1;
 
     // sprite sheet animation
     public Animation Animation;
@@ -32,21 +37,12 @@ namespace Utils {
       set {
         _currentFrame = value;
         if (_currentFrame >= 0) {
-          int clipX = (_currentFrame % SheetCols) * Width;
-          int clipY = (_currentFrame / SheetCols) * Height;
-          ImageClip = new Rectangle(clipX, clipY, Width, Height);
+          int clipX = (_currentFrame % SheetCols) * SpriteWidth;
+          int clipY = (_currentFrame / SheetCols) * SpriteHeight;
+          ImageClip = new Rectangle(clipX, clipY, SpriteWidth, SpriteHeight);
         }
       }
     }
-
-    // position vars
-    public float Direction = 0f;
-
-    // other vars
-    public float DrawDepth = 0;
-    public Color Color = Color.White;
-    public float Alpha = 1;
-
 
     public Sprite() { }
 
@@ -83,7 +79,7 @@ namespace Utils {
 
         spriteBatch.Draw(
           SystemRect,
-          new Rectangle((int)(offset.X), (int)(offset.Y), Width, Height),
+          new Rectangle((int)(offset.X), (int)(offset.Y), SpriteWidth, SpriteHeight),
           null,
           Color * Alpha,
           Rotation,
@@ -105,7 +101,7 @@ namespace Utils {
 
     public void SetSpriteSheet(SpriteSheet sheet) {
       if (Image != null) return; // if image already set, bounce
-      Image = sheet.SheetTexture;
+      Image = sheet.Texture;
       SheetCols = sheet.Cols;
       SheetRows = sheet.Rows;
       InitializeSpriteDimensions();
@@ -116,12 +112,12 @@ namespace Utils {
 
       ImageWidth = Image.Width;
       ImageHeight = Image.Height;
-      Width = ImageWidth / SheetCols;
-      Height = ImageHeight / SheetRows;
-      ImageClip = new Rectangle(0, 0, Width, Height);
+      SpriteWidth = ImageWidth / SheetCols;
+      SpriteHeight = ImageHeight / SheetRows;
+      ImageClip = new Rectangle(0, 0, SpriteWidth, SpriteHeight);
 
-      if (Size == null) {
-        Size = new Size(Width, Height);
+      if (Size == null || (Size.Width == 0 && Size.Height == 0)) {
+        Size = new Size(SpriteWidth, SpriteHeight);
       }
     }
 
