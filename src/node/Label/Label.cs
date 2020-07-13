@@ -110,6 +110,9 @@ namespace Utils {
       if (text != null) {
         SetText(text);
       }
+      else {
+        SetText("");
+      }
     }
 
     protected override void Dispose(bool disposing) {
