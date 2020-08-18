@@ -45,12 +45,12 @@ namespace Utils {
 
     public Viewport Viewport;
 
-    // public Camera() {
-    //   Viewport = new Viewport();
-    //   Viewport.Width = Engine.Width;
-    //   Viewport.Height = Engine.Height;
-    //   UpdateMatrices();
-    // }
+    public Camera() {
+      Viewport = new Viewport();
+      Viewport.Width = Engine.Width;
+      Viewport.Height = Engine.Height;
+      UpdateMatrices();
+    }
 
     public Camera(int width, int height) {
       Viewport = new Viewport();

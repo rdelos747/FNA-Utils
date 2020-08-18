@@ -24,7 +24,7 @@ namespace Utils {
       }
     }
 
-    public void reset() {
+    public void Reset() {
       ElapsedTime = 0;
       Index = 0;
     }

@@ -87,7 +87,6 @@ namespace Utils {
     }
 
     public Color Color = Color.White;
-    public float DrawDepth = 0;
 
     public Label(Font font = null) : this(null, 0, 0, HorizontalAlignment.Left, VerticalAlignment.Top, font) { }
 
@@ -142,7 +141,7 @@ namespace Utils {
           TextOrigin,
           1,
           SpriteEffects.None,
-          DrawDepth
+          0
         );
       }
 

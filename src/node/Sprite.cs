@@ -25,7 +25,7 @@ namespace Utils {
     public float Rotation = 0f;
     public float Scale = 1f;
     public float Direction = 0f;
-    public float DrawDepth = 0;
+    //public float DrawDepth = 0;
     public Color Color = Color.White;
     public float Alpha = 1;
 
@@ -71,7 +71,8 @@ namespace Utils {
           ImageOrigin,
           Scale,
           SpriteEffects.None,
-          DrawDepth
+          0
+        //DrawDepth
         );
       }
       else {
@@ -85,7 +86,8 @@ namespace Utils {
           Rotation,
           new Vector2(0, 0),
           SpriteEffects.None,
-          DrawDepth
+          0
+       //DrawDepth
        );
       }
 
