@@ -1,16 +1,87 @@
-<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net46</TargetFramework>
-		<!-- change the platform target if necessary for your system -->
-		<PlatformTarget>x64</PlatformTarget>
-	</PropertyGroup>
-	<PropertyGroup>
-		<EnableDefaultItems>false</EnableDefaultItems>
-		<AssemblyName>Utils</AssemblyName>
-		<RootNamespace>Utils</RootNamespace>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	</PropertyGroup>
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <!-- <ProjectGuid>{35253CE1-C864-4CD3-8249-4D1319748E8F}</ProjectGuid> -->
+    <OutputType>Library</OutputType>
+    <RootNamespace>Utils</RootNamespace>
+    <AssemblyName>Utils</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+    <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+    <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
 
 	<!-- Reference FNA project -->
   <ItemGroup>
@@ -26,10 +97,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
-  	<PackageReference Include="System.ValueTuple" Version="*"/>
+  	<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  	<PackageReference Include="System.ValueTuple" Version="*" />
   </ItemGroup>
 
+	<Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 	<ItemGroup>
+    <Compile Include="src/Collision/_Collider.cs" />
+    <Compile Include="src/Collision/Collision.cs" />
+    <Compile Include="src/Collision/Circlebox.cs" />
+    <Compile Include="src/Collision/Hitbox.cs" />
+
 		<Compile Include="src/Engine/Engine.cs" />
 		<Compile Include="src/Engine/Engine.Screen.cs" />
 
@@ -38,27 +116,28 @@
 		<Compile Include="src/Input/Input.PortControl.cs" />
 
 		<Compile Include="src/Node/Node.cs" />
-		<Compile Include="src/Node/Node.Collision.cs" />
-		<Compile Include="src/Node/Sprite.cs" />
+		<!-- <Compile Include="src/Node/Node.Collision.cs" /> -->
+		<Compile Include="src/Node/Sprite/Sprite.cs" />
+    <Compile Include="src/Node/Sprite/Spritesheet.cs" />
 		<Compile Include="src/Node/Label/Atlas.cs" />
 		<Compile Include="src/Node/Label/Font.cs" />
 		<Compile Include="src/Node/Label/Label.cs" />
 		<Compile Include="src/Node/Label/TTFFontLib.cs" />
 
+    <Compile Include="src/Renderer/Camera.cs" />
 		<Compile Include="src/Renderer/Renderer.cs" />
 
-		<Compile Include="src/utils/Animation.cs" />
-		<Compile Include="src/utils/Camera.cs" />
-		<Compile Include="src/utils/Collision.cs" />
+    <Compile Include="src/utils/Calc.cs" />
+    <Compile Include="src/utils/CurveRunner.cs" />
+		<!-- <Compile Include="src/utils/Collision.cs" /> -->
 		<Compile Include="src/utils/EnumHelper.cs" />
 		<Compile Include="src/utils/Hex.cs" />
-		
 		<Compile Include="src/utils/KeyFrames.cs" />
 		<Compile Include="src/utils/Rand.cs" />
 		<Compile Include="src/utils/Screenshot.cs" />
 		<Compile Include="src/utils/Size.cs" />
-		<Compile Include="src/utils/SpriteSheet.cs" />
-		<Compile Include="src/utils/TextureLoader.cs" />
+		
+		<!-- <Compile Include="src/utils/TextureLoader.cs" /> -->
 		<Compile Include="src/utils/VectorMath.cs" />
 	</ItemGroup>
 

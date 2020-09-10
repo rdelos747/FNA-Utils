@@ -3,13 +3,13 @@ using Microsoft.Xna.Framework;
 
 namespace Utils {
 
-  public class Animation {
+  public class CurveRunner {
     public bool Loop = true;
     private float ElapsedTime = 0;
     private KeyFrames Frames;
     public int Index { get; private set; }
 
-    public Animation(KeyFrames kf, bool loop = true, int startOffset = 0) {
+    public CurveRunner(KeyFrames kf, bool loop = true, int startOffset = 0) {
       Loop = loop;
       Frames = kf;
       ElapsedTime = startOffset;
@@ -29,23 +29,23 @@ namespace Utils {
       Index = 0;
     }
 
-    public float Update(GameTime gameTime, ref float value) {
+    public float Update(ref float value) {
       if (Frames == null) {
         return 0;
       }
 
       float lastValue = value;
-      value = Evaluate(gameTime);
+      value = Evaluate();
 
       return value - lastValue; // return delta 
     }
 
-    public float Update(GameTime gameTime) {
-      return Evaluate(gameTime);
+    public float Update() {
+      return Evaluate();
     }
 
-    private float Evaluate(GameTime gameTime) {
-      ElapsedTime += gameTime.ElapsedGameTime.Milliseconds;
+    private float Evaluate() {
+      ElapsedTime += Engine.DeltaTime;
       if (Index < Frames.Curve.Keys.Count - 1 && ElapsedTime >= Frames.Curve.Keys[Index + 1].Position) {
         Index++;
       }

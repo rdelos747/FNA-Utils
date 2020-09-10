@@ -7,9 +7,9 @@ namespace Utils {
     public float Width;
     public float Height;
 
-    public Size(float Width, float Height) {
-      this.Width = Width;
-      this.Height = Height;
+    public Size(float width, float height) {
+      Width = width;
+      Height = height;
     }
 
     public static Size operator +(Size s1, Size s2) {

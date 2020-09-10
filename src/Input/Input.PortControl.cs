@@ -13,7 +13,7 @@ namespace Utils {
       public const PlayerIndex P4 = PlayerIndex.Four;
     }
 
-    private class PortControl {
+    public class PortControl {
       /*
       Properties
       */
@@ -56,15 +56,15 @@ namespace Utils {
         if (InputType != InputType.Keyboard) {
           return;
         }
-        string temp = null;
-        foreach (string iterKey in KeyboardMap.Keys) {
-          if (KeyboardMap[iterKey] == val) {
-            temp = iterKey;
-          }
-        }
-        if (temp != null) {
-          KeyboardMap[temp] = KeyboardMap[changeKey];
-        }
+        // string temp = null;
+        // foreach (string iterKey in KeyboardMap.Keys) {
+        //   if (KeyboardMap[iterKey] == val) {
+        //     temp = iterKey;
+        //   }
+        // }
+        // if (temp != null) {
+        //   KeyboardMap[temp] = KeyboardMap[changeKey];
+        // }
         KeyboardMap[changeKey] = val;
       }
 
@@ -73,22 +73,22 @@ namespace Utils {
           return;
         }
 
-        string temp = null;
-        foreach (string iterKey in GamePadMap.Keys) {
-          if (GamePadMap[iterKey] == val) {
-            temp = iterKey;
-          }
-        }
-        if (temp != null) {
-          GamePadMap[temp] = GamePadMap[changeKey];
-        }
+        // string temp = null;
+        // foreach (string iterKey in GamePadMap.Keys) {
+        //   if (GamePadMap[iterKey] == val) {
+        //     temp = iterKey;
+        //   }
+        // }
+        // if (temp != null) {
+        //   GamePadMap[temp] = GamePadMap[changeKey];
+        // }
         GamePadMap[changeKey] = val;
       }
 
       /*
       Action down
       */
-      public bool IsActionDown(string action) {
+      public bool ActionDown(string action) {
         if (InputType == InputType.GamePad) {
           return GamePadMap.ContainsKey(action) && GamePadState.IsButtonDown(GamePadMap[action]);
         }
@@ -99,7 +99,7 @@ namespace Utils {
       /*
       Action up
       */
-      public bool IsActionUp(string action) {
+      public bool ActionUp(string action) {
         if (InputType == InputType.GamePad) {
           return GamePadMap.ContainsKey(action) && GamePadState.IsButtonDown(GamePadMap[action]);
         }

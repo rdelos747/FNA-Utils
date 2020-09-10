@@ -5,7 +5,9 @@ using System.Reflection;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+
 
 namespace Utils {
 
@@ -19,11 +21,12 @@ namespace Utils {
     Graphics
     */
     private GraphicsDeviceManager Graphics;
-    private SpriteBatch SpriteBatch;
+    public static SpriteBatch SpriteBatch { get; private set; }
     public static Texture2D SystemRect { get; private set; }
     public static Color ClearColor;
-    public Camera Camera;
+    //public Camera Camera;
     public static Viewport Viewport { get; private set; }
+    private static ContentManager ContentRef;
 
     /*
     Screen size
@@ -74,6 +77,9 @@ namespace Utils {
     public static int FPS;
     private TimeSpan counterElapsed = TimeSpan.Zero;
     private int fpsCounter = 0;
+    public static float DeltaTime { get; private set; }
+    public static float RawDeltaTime { get; private set; }
+    public static float TimeRate = 1f;
 
     /*
     Other
@@ -128,7 +134,8 @@ namespace Utils {
 #endif
 
       Content.RootDirectory = @"Content";
-      TextureLoader.Content = Content;
+      //SpriteSheet.Content = Content;
+      ContentRef = Content;
 
       IsMouseVisible = false;
       IsFixedTimeStep = false;
@@ -151,24 +158,21 @@ namespace Utils {
     }
 #endif
 
-
-
     protected override void LoadContent() {
       Console.WriteLine("Load Content");
       SpriteBatch = new SpriteBatch(GraphicsDevice);
 
-      Sprite.SystemRect = new Texture2D(GraphicsDevice, 1, 1);
-      Sprite.SystemRect.SetData(new Color[] { Color.White });
+      SystemRect = new Texture2D(GraphicsDevice, 1, 1);
+      SystemRect.SetData(new Color[] { Color.White });
 
       Screenshot.Graphics = GraphicsDevice;
-      Screenshot.DirName = Content.RootDirectory + "/screenshots";
+      Screenshot.DirName = "./screenshots";
       Screenshot.Prefix = "sc_";
 
       //test
-      Camera = new Camera(Width, Height);
+      //Camera = new Camera(Width, Height);
 
-      SpriteSheet atlasSheet = new SpriteSheet("aseprite_font.png", 16, 14);
-      Label.BaseFont = new Atlas(atlasSheet);
+      Label.BaseFont = new Atlas("aseprite_font.png", 16, 14);
 
       Renderers = new List<Renderer>();
 
@@ -182,6 +186,9 @@ namespace Utils {
     }
 
     protected override void Update(GameTime gameTime) {
+      RawDeltaTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+      DeltaTime = RawDeltaTime * TimeRate;
+
       Input.Update();
 
 #if !CONSOLE
@@ -196,6 +203,10 @@ namespace Utils {
       }
 #endif
 
+      foreach (Renderer renderer in Renderers) {
+        renderer.Update();
+      }
+
       base.Update(gameTime);
     }
 
@@ -205,7 +216,7 @@ namespace Utils {
       GraphicsDevice.Clear(ClearColor);
 
       foreach (Renderer renderer in Renderers) {
-        renderer.Draw(SpriteBatch);
+        renderer.Draw();
       }
 
       base.Draw(gameTime);
@@ -217,7 +228,7 @@ namespace Utils {
       counterElapsed += gameTime.ElapsedGameTime;
       if (counterElapsed >= TimeSpan.FromSeconds(1)) {
 #if DEBUG
-        Window.Title = Title + " " + fpsCounter.ToString() + " fps - " + (GC.GetTotalMemory(false) / 1048576f).ToString("F") + " MB";
+        Window.Title = Title + " " + fpsCounter.ToString() + " fps - " + (GC.GetTotalMemory(false) / 1048576f).ToString("F") + " MB - DT,rDT: " + DeltaTime + " " + RawDeltaTime;
 #endif
         FPS = fpsCounter;
         fpsCounter = 0;
@@ -231,6 +242,10 @@ namespace Utils {
 
     protected void Add(Renderer r) {
       Renderers.Add(r);
+    }
+
+    public static Texture2D LoadTexture(string path) {
+      return ContentRef.Load<Texture2D>(path);
     }
   }
 }

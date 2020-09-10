@@ -21,7 +21,9 @@ namespace Utils {
     public static KeyboardState KeyboardState;
     public static KeyboardState LastKeyboardState;
 
-    private static Dictionary<PlayerIndex, PortControl> PortControls = new Dictionary<PlayerIndex, PortControl>() {
+    public static Action OnGamePadConnectionChanged = () => { };
+
+    public static Dictionary<PlayerIndex, PortControl> PortControls = new Dictionary<PlayerIndex, PortControl>() {
       {PlayerIndex.One, new PortControl()},
       {PlayerIndex.Two, new PortControl()},
       {PlayerIndex.Three, new PortControl()},
@@ -42,7 +44,12 @@ namespace Utils {
 
       foreach (PlayerIndex playerKey in PortControls.Keys) {
         PortControls[playerKey].LastGamePadState = PortControls[playerKey].GamePadState;
+        bool lastGamepadConnected = PortControls[playerKey].GamePadState.IsConnected;
         PortControls[playerKey].GamePadState = GamePad.GetState(playerKey);
+
+        if (PortControls[playerKey].GamePadState.IsConnected != lastGamepadConnected) {
+          OnGamePadConnectionChanged();
+        }
       }
 
       LastMouseState = MouseState;
@@ -52,12 +59,12 @@ namespace Utils {
       MouseY = MouseState.Y;
     }
 
-    public static bool IsGamePadConnected(PlayerIndex pi) {
+    public static bool IsGamePadConnected(PlayerIndex pi = PlayerIndex.One) {
       PortControl pc = PortControls[pi];
       return pc.GamePadState.IsConnected;
     }
 
-    public static Keys GetRecentKey(PlayerIndex pi) {
+    public static Keys GetRecentKey(PlayerIndex pi = PlayerIndex.One) {
       PortControl PC = PortControls[pi];
       if (PC.InputType != InputType.Keyboard) {
         return 0;
@@ -70,7 +77,7 @@ namespace Utils {
       return k[0];
     }
 
-    public static Buttons GetRecentButton(PlayerIndex pi) {
+    public static Buttons GetRecentButton(PlayerIndex pi = PlayerIndex.One) {
       PortControl pc = PortControls[pi];
       if (pc.InputType != InputType.GamePad) {
         return 0;
@@ -85,43 +92,51 @@ namespace Utils {
       return 0;
     }
 
-    public static InputType GetPortInput(PlayerIndex pi) {
+    public static InputType GetPortInput(PlayerIndex pi = PlayerIndex.One) {
       return PortControls[pi].InputType;
     }
 
-    public static void SetPortInput(InputType inputType, PlayerIndex pi) {
+    public static Keys GetActionKey(string action, PlayerIndex pi = PlayerIndex.One) {
+      return PortControls[pi].KeyboardMap[action];
+    }
+
+    public static Buttons GetActionButton(string action, PlayerIndex pi = PlayerIndex.One) {
+      return PortControls[pi].GamePadMap[action];
+    }
+
+    public static void SetPortInput(InputType inputType, PlayerIndex pi = PlayerIndex.One) {
       PortControls[pi].InputType = inputType;
     }
 
-    public static void SetActionMap(Dictionary<string, Keys> keyboardMap, PlayerIndex pi) {
+    public static void SetActionMap(Dictionary<string, Keys> keyboardMap, PlayerIndex pi = PlayerIndex.One) {
       PortControls[pi].SetKeyboardMap(keyboardMap);
     }
 
-    public static void SetActionMap(Dictionary<string, Buttons> gamePadMap, PlayerIndex pi) {
+    public static void SetActionMap(Dictionary<string, Buttons> gamePadMap, PlayerIndex pi = PlayerIndex.One) {
       PortControls[pi].SetGamePadMap(gamePadMap);
     }
 
-    public static void SetAction(string action, Keys val, PlayerIndex pi) {
+    public static void SetAction(string action, Keys val, PlayerIndex pi = PlayerIndex.One) {
       PortControls[pi].SetKeyboardAction(action, val);
     }
 
-    public static void SetAction(string action, Buttons val, PlayerIndex pi) {
+    public static void SetAction(string action, Buttons val, PlayerIndex pi = PlayerIndex.One) {
       PortControls[pi].SetGamePadAction(action, val);
     }
 
-    public static bool IsActionDown(string action, PlayerIndex pi) {
-      return PortControls[pi].IsActionDown(action);
+    public static bool ActionDown(string action, PlayerIndex pi = PlayerIndex.One) {
+      return PortControls[pi].ActionDown(action);
     }
 
-    public static bool IsActionUp(string action, PlayerIndex pi) {
-      return PortControls[pi].IsActionUp(action);
+    public static bool ActionUp(string action, PlayerIndex pi = PlayerIndex.One) {
+      return PortControls[pi].ActionUp(action);
     }
 
-    public static bool ActionPressed(string action, PlayerIndex pi) {
+    public static bool ActionPressed(string action, PlayerIndex pi = PlayerIndex.One) {
       return PortControls[pi].ActionPressed(action);
     }
 
-    public static List<string> GetActiveActions(PlayerIndex pi) {
+    public static List<string> GetActiveActions(PlayerIndex pi = PlayerIndex.One) {
       PortControl pc = PortControls[pi];
       if (pc.InputType == InputType.GamePad) {
         return new List<string>(pc.GamePadMap.Keys);

@@ -11,12 +11,6 @@ namespace Utils {
     public static GraphicsDevice Graphics;
     public static Keys Key = Keys.None;
 
-    // public ScreenshotManager(GraphicsDevice graphics, string dirName, string prefix) {
-    //   Graphics = graphics;
-    //   DirName = dirName;
-    //   Prefix = prefix + "_";
-    // }
-
     public static void Capture(string info = "") {
       /*
       Load screenshot directory,

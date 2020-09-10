@@ -12,7 +12,7 @@ namespace Utils {
     public int ViewHeight { get; private set; }
     public Matrix ScreenMatrix;
     public Camera Camera;
-    public List<Node> Nodes = new List<Node>();
+    public Node Root = new Node();
 
     public Renderer(GraphicsDevice graphics) : this(Engine.Width, Engine.Height, graphics) { }
 
@@ -23,9 +23,9 @@ namespace Utils {
       UpdateView(graphics);
     }
 
-    public void Draw(SpriteBatch spriteBatch) {
-      spriteBatch.Begin(
-        SpriteSortMode.Deferred,
+    public void Draw() {
+      Engine.SpriteBatch.Begin(
+        SpriteSortMode.BackToFront,
         BlendState.AlphaBlend,
         SamplerState.PointClamp,
         DepthStencilState.None,
@@ -33,10 +33,10 @@ namespace Utils {
         null,
         Camera.Matrix * ScreenMatrix
       );
-      foreach (Node node in Nodes) {
-        node.Draw(spriteBatch);
-      }
-      spriteBatch.End();
+
+      Root.Draw();
+
+      Engine.SpriteBatch.End();
     }
 
     public void UpdateView(GraphicsDevice graphics) {
@@ -62,8 +62,12 @@ namespace Utils {
       ScreenMatrix = Matrix.CreateScale(ViewWidth / (float)Width, ViewWidth / (float)Width, 1);
     }
 
-    public void Add(Node n) {
-      Nodes.Add(n);
+    public void AddToRoot(Node n) {
+      Root.AddChild(n);
+    }
+
+    public void Update() {
+      Root.Update();
     }
   }
 }

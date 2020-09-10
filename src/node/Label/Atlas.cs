@@ -6,9 +6,21 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Utils {
 
   public class Atlas : Font {
+    public Texture2D Texture { get; private set; }
+    private int Rows;
+    private int Cols;
+    private int CellWidth;
+    private int CellHeight;
 
-    public Atlas(SpriteSheet sheet) {
-      GenerateBounds(sheet);
+    public Atlas(string path, int cols, int rows) {
+      // Texture = TextureLoader.Load(path);
+      Texture = Engine.LoadTexture(path);
+      Rows = rows;
+      Cols = cols;
+      CellWidth = (int)(Texture.Width / Cols);
+      CellHeight = (int)(Texture.Height / Rows);
+
+      GenerateBounds();
       Advance = Glyphs[' '].Width;
     }
 
@@ -20,20 +32,20 @@ namespace Utils {
       return glyph;
     }
 
-    public void GenerateBounds(SpriteSheet sheet) {
-      Color[] colors = new Color[sheet.Texture.Width * sheet.Texture.Height];
-      sheet.Texture.GetData(colors);
-      for (int j = 0; j < sheet.Rows; j++) {
-        for (int i = 0; i < sheet.Cols; i++) {
-          char c = (char)(((j * sheet.Cols) + i) + 32);
-          Glyphs.Add(c, CreateGlyphFromSheet(c, i, j, colors, sheet));
+    public void GenerateBounds() {
+      Color[] colors = new Color[Texture.Width * Texture.Height];
+      Texture.GetData(colors);
+      for (int j = 0; j < Rows; j++) {
+        for (int i = 0; i < Cols; i++) {
+          char c = (char)(((j * Cols) + i) + 32);
+          Glyphs.Add(c, CreateGlyphFromSheet(c, i, j, colors));
           LineHeight = Math.Max(LineHeight, Glyphs[c].Height);
         }
       }
     }
 
-    public Glyph CreateGlyphFromSheet(char c, int col, int row, Color[] colors, SpriteSheet sheet) {
-      int start = (row * sheet.Texture.Width * sheet.Height) + (col * sheet.Width);
+    public Glyph CreateGlyphFromSheet(char c, int col, int row, Color[] colors) {
+      int start = (row * Texture.Width * CellHeight) + (col * CellWidth);
       int top = 0;
       int left = 0;
       int right = 0;
@@ -42,9 +54,9 @@ namespace Utils {
       /*
       Move to top left point
       */
-      while (colors[start + left + (top * sheet.Texture.Width)] == Color.Black && top < sheet.Height) {
+      while (colors[start + left + (top * Texture.Width)] == Color.Black && top < CellHeight) {
         left++;
-        if (left == sheet.Width) {
+        if (left == CellWidth) {
           left = 0;
           top += 1;
         }
@@ -54,8 +66,8 @@ namespace Utils {
       Move to right point
       */
       while (
-        colors[start + left + (top * sheet.Texture.Width) + right] != Color.Black &&
-        right < sheet.Width - left
+        colors[start + left + (top * Texture.Width) + right] != Color.Black &&
+        right < CellWidth - left
       ) {
         right++;
       }
@@ -64,8 +76,8 @@ namespace Utils {
       Move to bottom point
       */
       while (
-        colors[start + left + (top * sheet.Texture.Width) + (bottom * sheet.Texture.Width)] != Color.Black &&
-        bottom < sheet.Height - top
+        colors[start + left + (top * Texture.Width) + (bottom * Texture.Width)] != Color.Black &&
+        bottom < CellHeight - top
       ) {
         bottom++;
       }
@@ -75,8 +87,8 @@ namespace Utils {
       glyph.AdvanceX = right;
       glyph.Height = bottom;
       glyph.C = c;
-      glyph.Texture = sheet.Texture;
-      glyph.Clip = new Rectangle((col * sheet.Width) + left, (row * sheet.Height) + top, right, bottom);
+      glyph.Texture = Texture;
+      glyph.Clip = new Rectangle((col * CellWidth) + left, (row * CellHeight) + top, right, bottom);
 
       return glyph;
     }
