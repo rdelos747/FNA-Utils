@@ -86,9 +86,6 @@ namespace Utils {
       }
     }
 
-    public Color Color = Color.White;
-    public float DrawDepth = 0;
-
     public Label(Font font = null) : this(null, 0, 0, HorizontalAlignment.Left, VerticalAlignment.Top, font) { }
 
     public Label(string text, int x, int y) : this(text, x, y, HorizontalAlignment.Left, VerticalAlignment.Top, null) { }
@@ -123,18 +120,14 @@ namespace Utils {
       }
     }
 
-    public override void Draw(SpriteBatch spriteBatch, float lastX, float lastY) {
-      if (IsHidden) return;
-
-      Vector2 position = new Vector2(lastX + (int)Position.X, lastY + (int)Position.Y);
-
+    protected override void Render() {
       for (int i = 0; i < Points.Count; i++) {
         Glyph glyph = _font.GetGlyph(Points[i].Item1);
-        spriteBatch.Draw(
+        Engine.SpriteBatch.Draw(
           glyph.Texture,
           new Vector2(
-            (Points[i].loc.X + position.X),
-            (Points[i].loc.Y + position.Y)
+            (Points[i].loc.X + DrawPosition.X),
+            (Points[i].loc.Y + DrawPosition.Y)
           ),
           glyph.Clip,
           Color,
@@ -142,11 +135,13 @@ namespace Utils {
           TextOrigin,
           1,
           SpriteEffects.None,
-          DrawDepth
+          Depth
         );
       }
+    }
 
-      base.Draw(spriteBatch, lastX, lastY);
+    public override void Update() {
+      base.Update();
     }
 
     public void SetText(string t) {

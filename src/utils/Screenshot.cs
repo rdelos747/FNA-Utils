@@ -1,22 +1,17 @@
 using System;
 using System.IO;
-using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Utils {
 
-  public class ScreenshotManager {
-    public string DirName;
-    public string Prefix;
-    public GraphicsDevice Graphics;
+  public static class Screenshot {
+    public static string DirName;
+    public static string Prefix;
+    public static GraphicsDevice Graphics;
+    public static Keys Key = Keys.None;
 
-    public ScreenshotManager(GraphicsDevice graphics, string dirName, string prefix) {
-      Graphics = graphics;
-      DirName = dirName;
-      Prefix = prefix + "_";
-    }
-
-    public void Capture(string info = "") {
+    public static void Capture(string info = "") {
       /*
       Load screenshot directory,
       */

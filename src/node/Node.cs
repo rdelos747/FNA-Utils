@@ -13,7 +13,10 @@ namespace Utils {
 
     private bool Disposed = false;
 
-    private List<Node> _nodes = new List<Node>();
+    /*
+    Parent/ child
+    */
+    public Node Parent { get; private set; }
     public List<Node> Nodes {
       get {
         return _nodes;
@@ -22,15 +25,107 @@ namespace Utils {
         _nodes = value;
       }
     }
+    private List<Node> _nodes = new List<Node>();
 
-    public Node Parent { get; private set; }
+    public Collider Collider;
+
+    /*
+    Rendering
+    */
+    internal Vector2 DrawPosition = new Vector2(0, 0);
 
     public Vector2 Position = new Vector2(0, 0);
-
+    public Vector2 Origin = new Vector2(0, 0);
+    public Size Size = new Size(0, 0);
+    public float Rotation = 0f;
+    public float Scale = 1f;
+    public float Direction = 0f;
+    public Color Color = Color.White;
+    public float Alpha = 1;
+    public float Depth = 0f;
     public bool ShowCenter = false;
-    public bool IsHidden = false;
+    public bool Visible = true;
+    public bool Active = true;
 
     public Node() { }
+
+    public void Draw() {
+      if (!Visible) return;
+
+      if (Parent != null) {
+        DrawPosition = Position + Parent.DrawPosition;
+      }
+      else {
+        DrawPosition = Position;
+      }
+
+      Render();
+
+      if (ShowCenter) {
+        RenderCenter();
+      }
+
+      for (int i = 0; i < _nodes.Count; i++) {
+        Node n = _nodes[i];
+        n.Draw();
+      }
+    }
+
+    protected virtual void Render() {
+      Engine.SpriteBatch.Draw(
+        Engine.SystemRect,
+        new Rectangle(
+          (int)(DrawPosition.X),
+          (int)(DrawPosition.Y),
+          (int)Size.Width,
+          (int)Size.Height
+        ),
+        null,
+        Color * Alpha,
+        Rotation,
+        Origin,
+        SpriteEffects.None,
+        Depth
+      );
+    }
+
+    private void RenderCenter() {
+      Engine.SpriteBatch.Draw(
+        Engine.SystemRect,
+        new Rectangle(
+          (int)(DrawPosition.X),
+          (int)(DrawPosition.Y),
+          1,
+          1
+        ),
+        null,
+        Color.Red,
+        0.0f,
+        new Vector2(0, 0),
+        SpriteEffects.None,
+        0.0f
+      );
+    }
+
+    public virtual void Update() {
+      if (!Active) return;
+
+      for (int i = 0; i < _nodes.Count; i++) {
+        Node n = _nodes[i];
+        n.Update();
+      }
+    }
+
+    public void Dispose() {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing) { }
+
+    ~Node() {
+      Dispose(false);
+    }
 
     public void AddChild(Node n) {
       if (n.Parent == null) {
@@ -54,7 +149,6 @@ namespace Utils {
     then use RemoveAll() to do the actual loop to clear and dispose the calling Node and 
     its kiddos.
     */
-
     private void RemoveAll() {
       foreach (Node n in _nodes) {
         n.RemoveAll();
@@ -65,42 +159,27 @@ namespace Utils {
       Dispose();
     }
 
-    public virtual void Draw(SpriteBatch spriteBatch, float lastX = 0, float lastY = 0) {
-      if (IsHidden) return;
-
-      float worldX = lastX + Position.X;
-      float worldY = lastY + Position.Y;
-
-      // for position debugging
-      if (ShowCenter) {
-
-        spriteBatch.Draw(
-          Sprite.SystemRect,
-          new Rectangle((int)(worldX), (int)(worldY), 1, 1),
-          null,
-          Color.Red,
-          0.0f,
-          new Vector2(0, 0),
-          SpriteEffects.None,
-          0.0f
-        );
+    /*
+    Collision
+    */
+    public virtual bool Collides(Collider collider, Vector2 offset = new Vector2()) {
+      if (Collider == null) {
+        return false;
       }
 
-      for (int i = 0; i < _nodes.Count; i++) {
-        Node n = _nodes[i];
-        n.Draw(spriteBatch, worldX, worldY);
-      }
+      return Collider.Collides(collider, offset);
     }
 
-    public void Dispose() {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
+    /*
+    TODO: circlebox
+    */
+    // public virtual bool Collides(Vector2 offset, CircleBox c) {
+    //   //return false;
+    //   if (Collider == null) {
+    //     return false;
+    //   }
 
-    protected virtual void Dispose(bool disposing) { }
-
-    ~Node() {
-      Dispose(false);
-    }
+    //   return Collider.Collides(offset, c);
+    // }
   }
 }

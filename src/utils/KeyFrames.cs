@@ -31,8 +31,8 @@ namespace Utils {
       MaxTime = time;
     }
 
-    public Animation Create(bool loop = true, int startOffset = 0) {
-      return new Animation(this, loop, startOffset);
+    public CurveRunner Create(bool loop = true, int startOffset = 0) {
+      return new CurveRunner(this, loop, startOffset);
     }
 
     public void smoothTangents() {
