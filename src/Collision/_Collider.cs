@@ -2,9 +2,11 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Utils {
+namespace Utils
+{
 
-  public abstract class Collider {
+  public abstract class Collider
+  {
     public Size Size = new Size(0, 0);
     public Vector2 Position = new Vector2(0, 0);
     public Vector2 Origin = new Vector2(0, 0);
@@ -13,11 +15,14 @@ namespace Utils {
     private Node Node;
 
 
-    public Collider(Node node = null) {
+    public Collider(Node node = null)
+    {
       Node = node;
     }
 
     public abstract bool Collides(Hitbox other, Vector2 offset = new Vector2());
+    public abstract bool Collides(Vector2 from, Vector2 to);
+    public abstract bool Collides(Vector2 point);
     public abstract void Render();
     // public abstract bool Collides(Circlebox circlebox);
 
@@ -26,69 +31,93 @@ namespace Utils {
     public abstract float Top { get; }
     public abstract float Bottom { get; }
 
-    public bool Collides(Collider other, Vector2 offset = new Vector2()) {
-      if (other is Hitbox) {
+    public bool Collides(Collider other, Vector2 offset = new Vector2())
+    {
+      if (other is Hitbox)
+      {
         return Collides(other as Hitbox, offset);
       }
-      else {
+      else
+      {
         throw new Exception("Collisions against the collider type are not implemented!");
       }
     }
 
-    public void CenterOrigin() {
+    public void CenterOrigin()
+    {
       Origin = new Vector2(Size.Width / 2, Size.Height / 2);
     }
 
-    public Vector2 WorldPosition {
-      get {
-        if (Node != null) {
+    public Vector2 WorldPosition
+    {
+      get
+      {
+        if (Node != null)
+        {
           return Node.Position + Position;
         }
-        else {
+        else
+        {
           return Position;
         }
       }
     }
 
-    public float WorldLeft {
-      get {
-        if (Node != null) {
+    public float WorldLeft
+    {
+      get
+      {
+        if (Node != null)
+        {
           return Node.Position.X + Left;
         }
-        else {
+        else
+        {
           return Left;
         }
       }
     }
 
-    public float WorldRight {
-      get {
-        if (Node != null) {
+    public float WorldRight
+    {
+      get
+      {
+        if (Node != null)
+        {
           return Node.Position.X + Right;
         }
-        else {
+        else
+        {
           return Right;
         }
       }
     }
 
-    public float WorldTop {
-      get {
-        if (Node != null) {
+    public float WorldTop
+    {
+      get
+      {
+        if (Node != null)
+        {
           return Node.Position.Y + Top;
         }
-        else {
+        else
+        {
           return Top;
         }
       }
     }
 
-    public float WorldBottom {
-      get {
-        if (Node != null) {
+    public float WorldBottom
+    {
+      get
+      {
+        if (Node != null)
+        {
           return Node.Position.Y + Bottom;
         }
-        else {
+        else
+        {
           return Bottom;
         }
       }

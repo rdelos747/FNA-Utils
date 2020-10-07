@@ -4,9 +4,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
-namespace Utils {
+namespace Utils
+{
 
-  public partial class Sprite : Node {
+  public partial class Sprite : Node
+  {
     /*
     Spritesheets create their own internal Animation dictionary, which holds lists of frames
     keyed by a string (Id).
@@ -22,7 +24,8 @@ namespace Utils {
       AddAnimation("run-left", "run-left", 1) // normal speed
       AddAnimation("run-left-slow", "run-left", 2) //slower version
     */
-    private class AnimationData {
+    private class AnimationData
+    {
       public string Name; // User assigned name for animation
       public string Id; // Name of the animation in the spritesheet
       public int Delay; // in milliseconds
@@ -47,14 +50,18 @@ namespace Utils {
     Frame
     */
     private string _currentFrameId;
-    public string CurrentFrameId {
-      get {
+    public string CurrentFrameId
+    {
+      get
+      {
         return _currentFrameId;
       }
-      private set {
+      private set
+      {
         _currentFrameId = value;
 
-        if (Justify.HasValue) {
+        if (Justify.HasValue)
+        {
           Origin = new Vector2(
             Spritesheet.Frames[CurrentFrameId].Rect.Width * Justify.Value.X,
             Spritesheet.Frames[CurrentFrameId].Rect.Height * Justify.Value.Y
@@ -63,12 +70,15 @@ namespace Utils {
       }
     }
 
-    public Sprite(Spritesheet sheet) {
+    public Sprite(Spritesheet sheet)
+    {
       Spritesheet = sheet;
     }
 
-    protected override void Dispose(bool disposing) {
-      if (disposing == true) {
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing == true)
+      {
         // Do not dispose of images or other data
         // that might be managed by the ContentManager,
         // as it keeps a cache of textures and other
@@ -77,12 +87,13 @@ namespace Utils {
       }
     }
 
-    protected override void Render() {
+    protected override void Render()
+    {
       Engine.SpriteBatch.Draw(
         Spritesheet.Texture,
         DrawPosition,
         Spritesheet.Frames[CurrentFrameId].Rect,
-        Color,
+        Color * Alpha,
         Rotation,
         Origin,
         Scale,
@@ -91,38 +102,45 @@ namespace Utils {
       );
     }
 
-    public override void Update() {
+    public override void Update()
+    {
       if (!Active) return;
 
       /*
       Run animation
       */
-      if (Animating) {
+      if (Animating)
+      {
         AnimationTime += Engine.RawDeltaTime * AnimationRate;
 
         /*
         Frame over
         */
-        if (AnimationTime >= CurrentAnimationData.Delay) {
+        if (AnimationTime >= CurrentAnimationData.Delay)
+        {
           AnimationTime = 0;
           AnimationFrameIndex++;
 
           /*
           Animation restart/ ended
           */
-          if (AnimationFrameIndex == Spritesheet.Animations[CurrentAnimationData.Id].Count) {
-            if (CurrentAnimationData.Loop) {
+          if (AnimationFrameIndex == Spritesheet.Animations[CurrentAnimationData.Id].Count)
+          {
+            if (CurrentAnimationData.Loop)
+            {
               AnimationFrameIndex = 0;
               CurrentFrameId = Spritesheet.Animations[CurrentAnimationData.Id][AnimationFrameIndex];
               OnAnimationRestart(CurrentAnimationData.Name);
             }
-            else {
+            else
+            {
               Animating = false;
               OnAnimationEnd(CurrentAnimationData.Name);
               CurrentAnimation = null;
             }
           }
-          else {
+          else
+          {
             CurrentFrameId = Spritesheet.Animations[CurrentAnimationData.Id][AnimationFrameIndex];
           }
         }
@@ -131,8 +149,10 @@ namespace Utils {
       base.Update();
     }
 
-    public void SetFrame(string id) {
-      if (!Spritesheet.Frames.ContainsKey(id)) {
+    public void SetFrame(string id)
+    {
+      if (!Spritesheet.Frames.ContainsKey(id))
+      {
         throw new Exception("No Frame found in spritesheet with id: " + id);
       }
 
@@ -141,12 +161,15 @@ namespace Utils {
       CurrentAnimation = null;
     }
 
-    public void AddAnimation(string name, string id, int delay, bool loop) {
-      if (!Spritesheet.Animations.ContainsKey(id)) {
+    public void AddAnimation(string name, string id, int delay, bool loop)
+    {
+      if (!Spritesheet.Animations.ContainsKey(id))
+      {
         throw new Exception("No Animation found in spritesheet with id: " + id);
       }
 
-      Animations.Add(name, new AnimationData {
+      Animations.Add(name, new AnimationData
+      {
         Name = name,
         Id = id,
         Delay = delay,
@@ -154,12 +177,15 @@ namespace Utils {
       });
     }
 
-    public void Play(string name, bool restart = false) {
-      if (!Animations.ContainsKey(name)) {
+    public void Play(string name, bool restart = false)
+    {
+      if (!Animations.ContainsKey(name))
+      {
         throw new Exception("No Animation found with name: " + name);
       }
 
-      if (CurrentAnimationData == null || CurrentAnimationData.Name != name || restart) {
+      if (CurrentAnimationData == null || CurrentAnimationData.Name != name || restart)
+      {
         AnimationTime = 0;
         Animating = true;
         AnimationFrameIndex = 0;

@@ -4,24 +4,28 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
-namespace Utils {
+namespace Utils
+{
   /*
   Basic unit that the renderer stores and loops over for drawing
   */
 
-  public partial class Node : IDisposable {
-
+  public partial class Node : IDisposable
+  {
     private bool Disposed = false;
 
     /*
     Parent/ child
     */
     public Node Parent { get; private set; }
-    public List<Node> Nodes {
-      get {
+    public List<Node> Nodes
+    {
+      get
+      {
         return _nodes;
       }
-      private set {
+      private set
+      {
         _nodes = value;
       }
     }
@@ -32,8 +36,8 @@ namespace Utils {
     /*
     Rendering
     */
+    public Effect Effect;
     internal Vector2 DrawPosition = new Vector2(0, 0);
-
     public Vector2 Position = new Vector2(0, 0);
     public Vector2 Origin = new Vector2(0, 0);
     public Size Size = new Size(0, 0);
@@ -49,29 +53,40 @@ namespace Utils {
 
     public Node() { }
 
-    public void Draw() {
+    public void Draw()
+    {
       if (!Visible) return;
 
-      if (Parent != null) {
+      if (Parent != null)
+      {
         DrawPosition = Position + Parent.DrawPosition;
       }
-      else {
+      else
+      {
         DrawPosition = Position;
+      }
+
+      if (Engine.CurrentRenderer.CurrentEffect != Effect)
+      {
+        Engine.CurrentRenderer.ApplyEffect(Effect);
       }
 
       Render();
 
-      if (ShowCenter) {
+      if (ShowCenter)
+      {
         RenderCenter();
       }
 
-      for (int i = 0; i < _nodes.Count; i++) {
+      for (int i = 0; i < _nodes.Count; i++)
+      {
         Node n = _nodes[i];
         n.Draw();
       }
     }
 
-    protected virtual void Render() {
+    protected virtual void Render()
+    {
       Engine.SpriteBatch.Draw(
         Engine.SystemRect,
         new Rectangle(
@@ -89,7 +104,8 @@ namespace Utils {
       );
     }
 
-    private void RenderCenter() {
+    private void RenderCenter()
+    {
       Engine.SpriteBatch.Draw(
         Engine.SystemRect,
         new Rectangle(
@@ -107,35 +123,46 @@ namespace Utils {
       );
     }
 
-    public virtual void Update() {
-      if (!Active) return;
+    public virtual void Update()
+    {
 
-      for (int i = 0; i < _nodes.Count; i++) {
+      for (int i = 0; i < _nodes.Count; i++)
+      {
         Node n = _nodes[i];
-        n.Update();
+        if (n.Active)
+        {
+          n.Update();
+        }
       }
     }
 
-    public void Dispose() {
+    public void Dispose()
+    {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
     protected virtual void Dispose(bool disposing) { }
 
-    ~Node() {
+    ~Node()
+    {
       Dispose(false);
     }
 
-    public void AddChild(Node n) {
-      if (n.Parent == null) {
+    public void AddChild(Node n)
+    {
+      if (n.Parent == null)
+      {
         _nodes.Add(n);
         n.Parent = this;
+        //n.Renderer = this.Renderer;
       }
     }
 
-    public void RemoveFromParent() {
-      if (Parent != null) {
+    public void RemoveFromParent()
+    {
+      if (Parent != null)
+      {
         Parent._nodes.Remove(this);
 
         RemoveAll();
@@ -149,8 +176,10 @@ namespace Utils {
     then use RemoveAll() to do the actual loop to clear and dispose the calling Node and 
     its kiddos.
     */
-    private void RemoveAll() {
-      foreach (Node n in _nodes) {
+    private void RemoveAll()
+    {
+      foreach (Node n in _nodes)
+      {
         n.RemoveAll();
       }
 
@@ -162,12 +191,24 @@ namespace Utils {
     /*
     Collision
     */
-    public virtual bool Collides(Collider collider, Vector2 offset = new Vector2()) {
-      if (Collider == null) {
+    public virtual bool Collides(Collider collider, Vector2 offset = new Vector2())
+    {
+      if (Collider == null)
+      {
         return false;
       }
 
       return Collider.Collides(collider, offset);
+    }
+
+    public virtual bool Collides(Vector2 from, Vector2 to)
+    {
+      if (Collider == null)
+      {
+        return false;
+      }
+
+      return Collider.Collides(from, to);
     }
 
     /*
@@ -181,5 +222,18 @@ namespace Utils {
 
     //   return Collider.Collides(offset, c);
     // }
+
+    /*
+    Helpers
+    */
+    public float DistanceTo(Node other)
+    {
+      return Vector2.Distance(Position, other.Position);
+    }
+
+    public float DistanceTo(Vector2 point)
+    {
+      return Vector2.Distance(Position, point);
+    }
   }
 }

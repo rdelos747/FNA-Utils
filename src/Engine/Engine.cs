@@ -9,9 +9,11 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace Utils {
+namespace Utils
+{
 
-  public partial class Engine : Game {
+  public partial class Engine : Game
+  {
     /*
     Instance
     */
@@ -24,7 +26,6 @@ namespace Utils {
     public static SpriteBatch SpriteBatch { get; private set; }
     public static Texture2D SystemRect { get; private set; }
     public static Color ClearColor;
-    //public Camera Camera;
     public static Viewport Viewport { get; private set; }
     private static ContentManager ContentRef;
 
@@ -36,11 +37,14 @@ namespace Utils {
     public static int ViewWidth { get; private set; }
     public static int ViewHeight { get; private set; }
     private static int viewPadding = 0;
-    public static int ViewPadding {
-      get {
+    public static int ViewPadding
+    {
+      get
+      {
         return viewPadding;
       }
-      set {
+      set
+      {
         viewPadding = value;
         Instance.UpdateView();
       }
@@ -54,7 +58,8 @@ namespace Utils {
     private static string AssemblyDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 #endif
 
-    public static string ContentDirectory {
+    public static string ContentDirectory
+    {
 #if PS4
             get { return Path.Combine("/app0/", Instance.Content.RootDirectory); }
 #elif NSWITCH
@@ -70,6 +75,7 @@ namespace Utils {
     Nodes
     */
     public List<Renderer> Renderers = new List<Renderer>();
+    internal static Renderer CurrentRenderer;
 
     /*
     Time
@@ -87,7 +93,8 @@ namespace Utils {
     public static bool ExitOnEscapeKeypress;
     public string Title;
 
-    public Engine(int width, int height) {
+    public Engine(int width, int height)
+    {
       Instance = this;
       Width = width;
       Height = height;
@@ -121,12 +128,14 @@ namespace Utils {
       Window.AllowUserResizing = true;
       Window.ClientSizeChanged += OnClientSizeChanged;
 
-      if (fullscreen) {
+      if (fullscreen)
+      {
         Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
         Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         Graphics.IsFullScreen = true;
       }
-      else {
+      else
+      {
         Graphics.PreferredBackBufferWidth = windowWidth;
         Graphics.PreferredBackBufferHeight = windowHeight;
         Graphics.IsFullScreen = false;
@@ -145,8 +154,10 @@ namespace Utils {
     }
 
 #if !CONSOLE
-    protected virtual void OnClientSizeChanged(object sender, EventArgs e) {
-      if (Window.ClientBounds.Width > 0 && Window.ClientBounds.Height > 0 && !resizing) {
+    protected virtual void OnClientSizeChanged(object sender, EventArgs e)
+    {
+      if (Window.ClientBounds.Width > 0 && Window.ClientBounds.Height > 0 && !resizing)
+      {
         resizing = true;
 
         Graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
@@ -158,7 +169,8 @@ namespace Utils {
     }
 #endif
 
-    protected override void LoadContent() {
+    protected override void LoadContent()
+    {
       Console.WriteLine("Load Content");
       SpriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -179,43 +191,51 @@ namespace Utils {
       base.LoadContent();
     }
 
-    protected override void Initialize() {
+    protected override void Initialize()
+    {
       Console.WriteLine("Initialize");
       Input.Init();
       base.Initialize();
     }
 
-    protected override void Update(GameTime gameTime) {
+    protected override void Update(GameTime gameTime)
+    {
       RawDeltaTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
       DeltaTime = RawDeltaTime * TimeRate;
 
       Input.Update();
 
 #if !CONSOLE
-      if (ExitOnEscapeKeypress && Input.KeyboardState.IsKeyDown(Keys.Escape)) {
+      if (ExitOnEscapeKeypress && Input.KeyboardState.IsKeyDown(Keys.Escape))
+      {
         Exit();
         return;
       }
 
-      if (Screenshot.Key != Keys.None && Input.KeyboardState.IsKeyDown(Screenshot.Key)) {
+      if (Screenshot.Key != Keys.None && Input.KeyboardState.IsKeyDown(Screenshot.Key))
+      {
         string info = $"";
         Screenshot.Capture(info);
       }
 #endif
 
-      foreach (Renderer renderer in Renderers) {
+      foreach (Renderer renderer in Renderers)
+      {
         renderer.Update();
       }
 
       base.Update(gameTime);
     }
 
-    override protected void Draw(GameTime gameTime) {
+    override protected void Draw(GameTime gameTime)
+    {
       GraphicsDevice.SetRenderTarget(null);
       GraphicsDevice.Viewport = Viewport;
       GraphicsDevice.Clear(ClearColor);
 
-      foreach (Renderer renderer in Renderers) {
+      foreach (Renderer renderer in Renderers)
+      {
+        CurrentRenderer = renderer;
         renderer.Draw();
       }
 
@@ -226,7 +246,8 @@ namespace Utils {
       */
       fpsCounter++;
       counterElapsed += gameTime.ElapsedGameTime;
-      if (counterElapsed >= TimeSpan.FromSeconds(1)) {
+      if (counterElapsed >= TimeSpan.FromSeconds(1))
+      {
 #if DEBUG
         Window.Title = Title + " " + fpsCounter.ToString() + " fps - " + (GC.GetTotalMemory(false) / 1048576f).ToString("F") + " MB - DT,rDT: " + DeltaTime + " " + RawDeltaTime;
 #endif
@@ -236,16 +257,60 @@ namespace Utils {
       }
     }
 
-    protected override void OnExiting(object sender, EventArgs args) {
+    protected override void OnExiting(object sender, EventArgs args)
+    {
       base.OnExiting(sender, args);
     }
 
-    protected void Add(Renderer r) {
+    protected void Add(Renderer r)
+    {
       Renderers.Add(r);
     }
 
-    public static Texture2D LoadTexture(string path) {
+    public static Texture2D LoadTexture(string path)
+    {
       return ContentRef.Load<Texture2D>(path);
+    }
+
+    public static Effect LoadEffect(string path)
+    {
+      return ContentRef.Load<Effect>(path);
+    }
+
+    public static void DrawBox(Vector2 position, Size size, Color color)
+    {
+      DrawBox(
+        (int)position.X,
+        (int)position.Y,
+        (int)size.Width,
+        (int)size.Height,
+        color
+      );
+    }
+
+    public static void DrawBox(Vector2 position, int width, int height, Color color)
+    {
+      DrawBox(
+        (int)position.X,
+        (int)position.Y,
+        width,
+        height,
+        color
+      );
+    }
+
+    public static void DrawBox(int x, int y, int width, int height, Color color)
+    {
+      Engine.SpriteBatch.Draw(
+        Engine.SystemRect,
+        new Rectangle(x, y, width, height),
+        null,
+        Color.Red,
+        0.0f,
+        new Vector2(0, 0),
+        SpriteEffects.None,
+        0.0f
+      );
     }
   }
 }

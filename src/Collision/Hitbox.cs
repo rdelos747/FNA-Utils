@@ -1,55 +1,66 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Utils {
+namespace Utils
+{
 
-  public class Hitbox : Collider {
+  public class Hitbox : Collider
+  {
 
-    public Hitbox(Size size, Vector2 position, bool center = false, Node node = null) : base(node) {
+    public Hitbox(Size size, Vector2 position, bool center = false, Node node = null) : base(node)
+    {
       Size = size;
       Position = position;
-      if (center) {
+      if (center)
+      {
         CenterOrigin();
       }
     }
 
     public Hitbox(Size size, bool center = false, Node node = null) :
-    this(size, new Vector2(), center, node) { }
+    this(size, new Vector2(), center, node)
+    { }
 
     public Hitbox(float width = 0, float height = 0, bool center = false, Node node = null) :
-    this(new Size(width, height), new Vector2(), center, node) { }
+    this(new Size(width, height), new Vector2(), center, node)
+    { }
 
 
-    public override float Left {
-      get {
+    public override float Left
+    {
+      get
+      {
         return Position.X - Origin.X;
       }
     }
 
-    public override float Right {
-      get {
+    public override float Right
+    {
+      get
+      {
         return Position.X + (Size.Width - Origin.X);
       }
     }
 
-    public override float Top {
-      get {
+    public override float Top
+    {
+      get
+      {
         return Position.Y - Origin.Y;
       }
     }
 
-    public override float Bottom {
-      get {
+    public override float Bottom
+    {
+      get
+      {
         return Position.Y + (Size.Height - Origin.Y);
       }
     }
 
-    public override bool Collides(Hitbox other, Vector2 offset = new Vector2()) {
+    public override bool Collides(Hitbox other, Vector2 offset = new Vector2())
+    {
       return (
-        // WorldLeft + offset.X < other.WorldRight &&
-        // WorldRight + offset.X > other.WorldLeft &&
-        // WorldBottom + offset.Y > other.WorldTop &&
-        // WorldTop + offset.Y < other.WorldBottom
         WorldLeft < other.WorldRight + offset.X &&
         WorldRight > other.WorldLeft + offset.X &&
         WorldBottom > other.WorldTop + offset.Y &&
@@ -57,7 +68,18 @@ namespace Utils {
       );
     }
 
-    public override void Render() {
+    public override bool Collides(Vector2 from, Vector2 to)
+    {
+      return Collision.RectangleLine(WorldLeft, WorldTop, Size.Width, Size.Height, from, to);
+    }
+
+    public override bool Collides(Vector2 point)
+    {
+      return Collision.RectanglePoint(WorldLeft, WorldTop, Size.Width, Size.Height, point);
+    }
+
+    public override void Render()
+    {
       Engine.SpriteBatch.Draw(
         Engine.SystemRect,
         new Rectangle(
