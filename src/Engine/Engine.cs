@@ -74,8 +74,10 @@ namespace Utils
     /*
     Nodes
     */
-    public List<Renderer> Renderers = new List<Renderer>();
+    //public List<Renderer> Renderers = new List<Renderer>();
     internal static Renderer CurrentRenderer;
+
+    public Scene Scene;
 
     /*
     Time
@@ -186,7 +188,7 @@ namespace Utils
 
       Label.BaseFont = new Atlas("aseprite_font.png", 16, 14);
 
-      Renderers = new List<Renderer>();
+      //Renderers = new List<Renderer>();
 
       base.LoadContent();
     }
@@ -219,10 +221,12 @@ namespace Utils
       }
 #endif
 
-      foreach (Renderer renderer in Renderers)
-      {
-        renderer.Update();
-      }
+      // foreach (Renderer renderer in Renderers)
+      // {
+      //   renderer.Update();
+      // }
+
+      Scene.Update();
 
       base.Update(gameTime);
     }
@@ -233,11 +237,13 @@ namespace Utils
       GraphicsDevice.Viewport = Viewport;
       GraphicsDevice.Clear(ClearColor);
 
-      foreach (Renderer renderer in Renderers)
-      {
-        CurrentRenderer = renderer;
-        renderer.Draw();
-      }
+      // foreach (Renderer renderer in Renderers)
+      // {
+      //   CurrentRenderer = renderer;
+      //   renderer.Draw();
+      // }
+
+      Scene.Draw();
 
       base.Draw(gameTime);
 
@@ -262,10 +268,10 @@ namespace Utils
       base.OnExiting(sender, args);
     }
 
-    protected void Add(Renderer r)
-    {
-      Renderers.Add(r);
-    }
+    // protected void Add(Renderer r)
+    // {
+    //   Renderers.Add(r);
+    // }
 
     public static Texture2D LoadTexture(string path)
     {

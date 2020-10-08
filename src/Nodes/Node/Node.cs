@@ -36,6 +36,7 @@ namespace Utils
     /*
     Rendering
     */
+    //public Renderer Renderer;
     public Effect Effect;
     internal Vector2 DrawPosition = new Vector2(0, 0);
     public Vector2 Position = new Vector2(0, 0);
@@ -155,9 +156,18 @@ namespace Utils
       {
         _nodes.Add(n);
         n.Parent = this;
-        //n.Renderer = this.Renderer;
+        //n.SetRenderer(this.Renderer);
       }
     }
+
+    // internal void SetRenderer(Renderer r)
+    // {
+    //   Renderer = r;
+    //   foreach (Node n in _nodes)
+    //   {
+    //     n.SetRenderer(r);
+    //   }
+    // }
 
     public void RemoveFromParent()
     {
@@ -185,55 +195,8 @@ namespace Utils
 
       _nodes.Clear();
       Parent = null;
+      //Renderer = null;
       Dispose();
-    }
-
-    /*
-    Collision
-    */
-    public virtual bool Collides(Collider collider, Vector2 offset = new Vector2())
-    {
-      if (Collider == null)
-      {
-        return false;
-      }
-
-      return Collider.Collides(collider, offset);
-    }
-
-    public virtual bool Collides(Vector2 from, Vector2 to)
-    {
-      if (Collider == null)
-      {
-        return false;
-      }
-
-      return Collider.Collides(from, to);
-    }
-
-    /*
-    TODO: circlebox
-    */
-    // public virtual bool Collides(Vector2 offset, CircleBox c) {
-    //   //return false;
-    //   if (Collider == null) {
-    //     return false;
-    //   }
-
-    //   return Collider.Collides(offset, c);
-    // }
-
-    /*
-    Helpers
-    */
-    public float DistanceTo(Node other)
-    {
-      return Vector2.Distance(Position, other.Position);
-    }
-
-    public float DistanceTo(Vector2 point)
-    {
-      return Vector2.Distance(Position, point);
     }
   }
 }

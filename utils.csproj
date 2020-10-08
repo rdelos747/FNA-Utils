@@ -115,29 +115,29 @@
 		<Compile Include="src/Input/Input.DecodeAction.cs" />
 		<Compile Include="src/Input/Input.PortControl.cs" />
 
-		<Compile Include="src/Node/Node.cs" />
-		<!-- <Compile Include="src/Node/Node.Collision.cs" /> -->
-		<Compile Include="src/Node/Sprite/Sprite.cs" />
-    <Compile Include="src/Node/Sprite/Spritesheet.cs" />
-		<Compile Include="src/Node/Label/Atlas.cs" />
-		<Compile Include="src/Node/Label/Font.cs" />
-		<Compile Include="src/Node/Label/Label.cs" />
-		<Compile Include="src/Node/Label/TTFFontLib.cs" />
+		<Compile Include="src/Nodes/Node/Node.cs" />
+		<Compile Include="src/Nodes/Node/Node.Collision.cs" />
+    <Compile Include="src/Nodes/Node/Node.Helpers.cs" />
+		<Compile Include="src/Nodes/Sprite/Sprite.cs" />
+    <Compile Include="src/Nodes/Sprite/Spritesheet.cs" />
+		<Compile Include="src/Nodes/Label/Atlas.cs" />
+		<Compile Include="src/Nodes/Label/Font.cs" />
+		<Compile Include="src/Nodes/Label/Label.cs" />
+		<Compile Include="src/Nodes/Label/TTFFontLib.cs" />
 
     <Compile Include="src/Renderer/Camera.cs" />
 		<Compile Include="src/Renderer/Renderer.cs" />
 
+    <Compile Include="src/Scene/Scene.cs" />
+
     <Compile Include="src/utils/Calc.cs" />
     <Compile Include="src/utils/CurveRunner.cs" />
-		<!-- <Compile Include="src/utils/Collision.cs" /> -->
 		<Compile Include="src/utils/EnumHelper.cs" />
 		<Compile Include="src/utils/Hex.cs" />
 		<Compile Include="src/utils/KeyFrames.cs" />
 		<Compile Include="src/utils/Rand.cs" />
 		<Compile Include="src/utils/Screenshot.cs" />
 		<Compile Include="src/utils/Size.cs" />
-		
-		<!-- <Compile Include="src/utils/TextureLoader.cs" /> -->
 		<Compile Include="src/utils/VectorMath.cs" />
 	</ItemGroup>
 

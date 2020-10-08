@@ -8,14 +8,17 @@ using Microsoft.Xna.Framework.Content;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Utils {
+namespace Utils
+{
 
-  public sealed class FrameData {
+  public sealed class FrameData
+  {
     public Rectangle Rect;
     public Size Size;
   }
 
-  public sealed class Spritesheet {
+  public sealed class Spritesheet
+  {
     public Texture2D Texture { get; private set; }
     public int Width { get; private set; }
     public int Height { get; private set; }
@@ -23,10 +26,10 @@ namespace Utils {
     public Dictionary<string, List<string>> Animations { get; private set; }
 
 
-    public Spritesheet() {
-    }
+    public Spritesheet() { }
 
-    public static Spritesheet FromJson(string path) {
+    public static Spritesheet FromJson(string path)
+    {
       JObject json = GetJson(path);
 
       /*
@@ -43,13 +46,16 @@ namespace Utils {
       IList<JToken> frames = json["frames"].Children().ToList();
       Dictionary<string, FrameData> resultFrames = new Dictionary<string, FrameData>();
 
-      foreach (JToken frame in frames) {
+      foreach (JToken frame in frames)
+      {
         string key = frame["filename"].ToString();
-        if (key.EndsWith(".aseprite")) {
+        if (key.EndsWith(".aseprite"))
+        {
           key = key.Replace(".aseprite", "");
         }
 
-        FrameData data = new FrameData {
+        FrameData data = new FrameData
+        {
           Rect = new Rectangle(
             x: (int)frame["frame"]["x"],
             y: (int)frame["frame"]["y"],
@@ -73,26 +79,31 @@ namespace Utils {
       */
       Dictionary<string, List<string>> resultAnimations = new Dictionary<string, List<string>>();
 
-      foreach (KeyValuePair<string, FrameData> pair in resultFrames) {
+      foreach (KeyValuePair<string, FrameData> pair in resultFrames)
+      {
         int splitIdx = pair.Key.LastIndexOf(' ');
-        if (splitIdx == -1) {
+        if (splitIdx == -1)
+        {
           continue;
         }
         string animId = pair.Key.Substring(0, splitIdx);
         string animNum = pair.Key.Substring(splitIdx + 1);
 
-        if (!int.TryParse(animNum, out _)) {
+        if (!int.TryParse(animNum, out _))
+        {
           continue;
         }
 
-        if (!resultAnimations.ContainsKey(animId)) {
+        if (!resultAnimations.ContainsKey(animId))
+        {
           resultAnimations.Add(animId, new List<string>());
         }
 
         resultAnimations[animId].Add(pair.Key);
       }
 
-      return new Spritesheet {
+      return new Spritesheet
+      {
         Texture = resultTexture,
         Frames = resultFrames,
         Animations = resultAnimations,
@@ -101,10 +112,12 @@ namespace Utils {
       };
     }
 
-    public static JObject GetJson(string path) {
+    public static JObject GetJson(string path)
+    {
       JsonSerializer ser = new JsonSerializer();
       using (StreamReader stream = File.OpenText(Path.Combine(Engine.ContentDirectory, path)))
-      using (JsonTextReader reader = new JsonTextReader(stream)) {
+      using (JsonTextReader reader = new JsonTextReader(stream))
+      {
         return JObject.Parse(ser.Deserialize(reader).ToString());
       }
     }

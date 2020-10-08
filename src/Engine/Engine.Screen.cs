@@ -6,10 +6,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Utils {
+namespace Utils
+{
 
-  public partial class Engine : Game {
-    protected virtual void OnGraphicsReset(object sender, EventArgs e) {
+  public partial class Engine : Game
+  {
+    protected virtual void OnGraphicsReset(object sender, EventArgs e)
+    {
       UpdateView();
 
       // if (scene != null)
@@ -18,7 +21,8 @@ namespace Utils {
       //   nextScene.HandleGraphicsReset();
     }
 
-    protected virtual void OnGraphicsCreate(object sender, EventArgs e) {
+    protected virtual void OnGraphicsCreate(object sender, EventArgs e)
+    {
       UpdateView();
 
       // if (scene != null)
@@ -27,16 +31,19 @@ namespace Utils {
       //   nextScene.HandleGraphicsCreate();
     }
 
-    private void UpdateView() {
+    private void UpdateView()
+    {
       float screenWidth = GraphicsDevice.PresentationParameters.BackBufferWidth;
       float screenHeight = GraphicsDevice.PresentationParameters.BackBufferHeight;
 
       // get View Size
-      if (screenWidth / Width > screenHeight / Height) {
+      if (screenWidth / Width > screenHeight / Height)
+      {
         ViewWidth = (int)(screenHeight / Height * Width);
         ViewHeight = (int)screenHeight;
       }
-      else {
+      else
+      {
         ViewWidth = (int)screenWidth;
         ViewHeight = (int)(screenWidth / Width * Height);
       }
@@ -47,7 +54,8 @@ namespace Utils {
       ViewHeight -= (int)(aspect * ViewPadding * 2);
 
       // update viewport
-      Viewport = new Viewport {
+      Viewport = new Viewport
+      {
         X = (int)(screenWidth / 2 - ViewWidth / 2),
         Y = (int)(screenHeight / 2 - ViewHeight / 2),
         Width = ViewWidth,
@@ -56,8 +64,12 @@ namespace Utils {
         MaxDepth = 1
       };
 
-      foreach (Renderer renderer in Renderers) {
-        renderer.UpdateView(GraphicsDevice);
+      if (Scene != null)
+      {
+        foreach (Renderer renderer in Scene.Renderers)
+        {
+          renderer.UpdateView();
+        }
       }
     }
   }

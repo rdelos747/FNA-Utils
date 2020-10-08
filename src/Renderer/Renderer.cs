@@ -8,11 +8,11 @@ namespace Utils
 
   public class Renderer
   {
-    private float ShakeTime = 0;
-    private Vector2 ShakePos = new Vector2();
-    public float MinShake = 0.05f;    // stop shaking when ShakeTime is lower than this
-    public float ShakeMult = 0.8f;    // multiply ShakeTime by this every frame
-    public int ShakeAmt = 2;          // max pan distance the screen can shake
+    // private float ShakeTime = 0;
+    // private Vector2 ShakePos = new Vector2();
+    // public float MinShake = 0.05f;    // stop shaking when ShakeTime is lower than this
+    // public float ShakeMult = 0.8f;    // multiply ShakeTime by this every frame
+    // public int ShakeAmt = 2;          // max pan distance the screen can shake
 
     public int Width { get; private set; }
     public int Height { get; private set; }
@@ -23,14 +23,15 @@ namespace Utils
     public Node Root = new Node();
     public Effect CurrentEffect;
 
-    public Renderer(GraphicsDevice graphics) : this(Engine.Width, Engine.Height, graphics) { }
+    public Renderer() : this(Engine.Width, Engine.Height) { }
 
-    public Renderer(int width, int height, GraphicsDevice graphics)
+    public Renderer(int width, int height)
     {
       Width = width;
       Height = height;
       Camera = new Camera(width, height);
-      UpdateView(graphics);
+      //Root.Renderer = this;
+      UpdateView();
     }
 
     public void ApplyEffect(Effect effect)
@@ -68,8 +69,9 @@ namespace Utils
       Engine.SpriteBatch.End();
     }
 
-    public void UpdateView(GraphicsDevice graphics)
+    public void UpdateView()
     {
+      GraphicsDevice graphics = Engine.Instance.GraphicsDevice;
       float screenWidth = graphics.PresentationParameters.BackBufferWidth;
       float screenHeight = graphics.PresentationParameters.BackBufferHeight;
 
@@ -99,32 +101,37 @@ namespace Utils
       Root.AddChild(n);
     }
 
-    public void Update()
+    public void RemoveFromRoot(Node n)
+    {
+      n.RemoveFromParent();
+    }
+
+    public virtual void Update()
     {
       if (Root.Active)
       {
         Root.Update();
       }
 
-      if (ShakeTime > 0.05f)
-      {
-        ShakePos.X = Rand.RandRange(-ShakeAmt, ShakeAmt) * ShakeTime;
-        ShakePos.Y = Rand.RandRange(-ShakeAmt, ShakeAmt) * ShakeTime;
-        ShakeTime *= ShakeMult;
-      }
-      else
-      {
-        ShakeTime = 0;
-        ShakePos.X = 0;
-        ShakePos.Y = 0;
-      }
+      // if (ShakeTime > 0.05f)
+      // {
+      //   ShakePos.X = Rand.RandRange(-ShakeAmt, ShakeAmt) * ShakeTime;
+      //   ShakePos.Y = Rand.RandRange(-ShakeAmt, ShakeAmt) * ShakeTime;
+      //   ShakeTime *= ShakeMult;
+      // }
+      // else
+      // {
+      //   ShakeTime = 0;
+      //   ShakePos.X = 0;
+      //   ShakePos.Y = 0;
+      // }
 
-      Camera.Origin = ShakePos;
+      // Camera.Origin = ShakePos;
     }
 
-    public void Shake(int power = 1)
-    {
-      ShakeTime = power;
-    }
+    // public void Shake(int power = 1)
+    // {
+    //   ShakeTime = power;
+    // }
   }
 }
