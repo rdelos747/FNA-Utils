@@ -109,6 +109,7 @@
     <Compile Include="src/Collision/Hitbox.cs" />
 
 		<Compile Include="src/Engine/Engine.cs" />
+    <Compile Include="src/Engine/Engine.Draw.cs" />
 		<Compile Include="src/Engine/Engine.Screen.cs" />
 
 		<Compile Include="src/Input/Input.cs" />
@@ -134,6 +135,7 @@
     <Compile Include="src/utils/CurveRunner.cs" />
 		<Compile Include="src/utils/EnumHelper.cs" />
 		<Compile Include="src/utils/Hex.cs" />
+    <Compile Include="src/utils/Json.cs" />
 		<Compile Include="src/utils/KeyFrames.cs" />
 		<Compile Include="src/utils/Rand.cs" />
 		<Compile Include="src/utils/Screenshot.cs" />

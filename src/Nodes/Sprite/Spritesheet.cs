@@ -1,16 +1,12 @@
-using System;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Utils
 {
-
   public sealed class FrameData
   {
     public Rectangle Rect;
@@ -30,7 +26,7 @@ namespace Utils
 
     public static Spritesheet FromJson(string path)
     {
-      JObject json = GetJson(path);
+      JObject json = Json.GetJson(Path.Combine(Engine.ContentDirectory, path));
 
       /*
       Texture
@@ -112,14 +108,6 @@ namespace Utils
       };
     }
 
-    public static JObject GetJson(string path)
-    {
-      JsonSerializer ser = new JsonSerializer();
-      using (StreamReader stream = File.OpenText(Path.Combine(Engine.ContentDirectory, path)))
-      using (JsonTextReader reader = new JsonTextReader(stream))
-      {
-        return JObject.Parse(ser.Deserialize(reader).ToString());
-      }
-    }
+
   }
 }

@@ -36,9 +36,8 @@ namespace Utils
     /*
     Rendering
     */
-    //public Renderer Renderer;
     public Effect Effect;
-    internal Vector2 DrawPosition = new Vector2(0, 0);
+    protected Vector2 DrawPosition { get; private set; }
     public Vector2 Position = new Vector2(0, 0);
     public Vector2 Origin = new Vector2(0, 0);
     public Size Size = new Size(0, 0);
@@ -52,7 +51,10 @@ namespace Utils
     public bool Visible = true;
     public bool Active = true;
 
-    public Node() { }
+    public Node()
+    {
+      DrawPosition = Vector2.Zero;
+    }
 
     public void Draw()
     {
@@ -141,6 +143,7 @@ namespace Utils
     {
       Dispose(true);
       GC.SuppressFinalize(this);
+      Console.WriteLine("disposing node");
     }
 
     protected virtual void Dispose(bool disposing) { }

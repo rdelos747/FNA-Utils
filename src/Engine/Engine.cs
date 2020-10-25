@@ -282,41 +282,5 @@ namespace Utils
     {
       return ContentRef.Load<Effect>(path);
     }
-
-    public static void DrawBox(Vector2 position, Size size, Color color)
-    {
-      DrawBox(
-        (int)position.X,
-        (int)position.Y,
-        (int)size.Width,
-        (int)size.Height,
-        color
-      );
-    }
-
-    public static void DrawBox(Vector2 position, int width, int height, Color color)
-    {
-      DrawBox(
-        (int)position.X,
-        (int)position.Y,
-        width,
-        height,
-        color
-      );
-    }
-
-    public static void DrawBox(int x, int y, int width, int height, Color color)
-    {
-      Engine.SpriteBatch.Draw(
-        Engine.SystemRect,
-        new Rectangle(x, y, width, height),
-        null,
-        Color.Red,
-        0.0f,
-        new Vector2(0, 0),
-        SpriteEffects.None,
-        0.0f
-      );
-    }
   }
 }

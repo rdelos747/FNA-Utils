@@ -5,33 +5,41 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SharpFont;
 
-namespace Utils {
+namespace Utils
+{
 
-  public enum VerticalAlignment {
+  public enum VerticalAlignment
+  {
     Top,
     Center
   }
 
-  public enum HorizontalAlignment {
+  public enum HorizontalAlignment
+  {
     Left,
     Center,
     Right
   }
 
-  public class Label : Node {
+  public class Label : Node
+  {
 
     public static Font BaseFont;
 
     private Font _font;
-    public Font Font {
-      get {
+    public Font Font
+    {
+      get
+      {
         return _font;
       }
-      set {
+      set
+      {
         _font = value;
         Size = new Size(10, _font.LineHeight);
 
-        if (_text != null) {
+        if (_text != null)
+        {
           SetText(_text);
         }
       }
@@ -40,47 +48,60 @@ namespace Utils {
     protected List<(char c, Vector2 loc)> Points;
 
     private string _text;
-    public string Text {
-      get {
+    public string Text
+    {
+      get
+      {
         return _text;
       }
-      set {
+      set
+      {
         SetText(value);
       }
     }
 
     public Vector2 TextOrigin = new Vector2();
     private VerticalAlignment _verticalAlignment;
-    public VerticalAlignment VerticalAlignment {
-      get {
+    public VerticalAlignment VerticalAlignment
+    {
+      get
+      {
         return _verticalAlignment;
       }
-      set {
+      set
+      {
         _verticalAlignment = value;
 
-        if (_font != null) {
+        if (_font != null)
+        {
           Size = new Size(0, _font.LineHeight);
         }
 
-        if (_text != null) {
+        if (_text != null)
+        {
           SetText(_text);
         }
       }
     }
     private HorizontalAlignment _horizontalAlignment;
-    public HorizontalAlignment HorizontalAlignment {
-      get {
+    public HorizontalAlignment HorizontalAlignment
+    {
+      get
+      {
         return _horizontalAlignment;
       }
-      set {
+      set
+      {
         _horizontalAlignment = value;
 
 
-        if (_font != null) {
+        if (_font != null)
+        {
           Size = new Size(0, _font.LineHeight);
         }
 
-        if (_text != null) {
+        if (_text != null)
+        {
           SetText(_text);
         }
       }
@@ -90,9 +111,11 @@ namespace Utils {
 
     public Label(string text, int x, int y) : this(text, x, y, HorizontalAlignment.Left, VerticalAlignment.Top, null) { }
 
-    public Label(string text, int x, int y, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Font font = null) {
+    public Label(string text, int x, int y, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Font font = null)
+    {
       _font = font;
-      if (_font == null) {
+      if (_font == null)
+      {
         _font = BaseFont;
       }
 
@@ -104,24 +127,30 @@ namespace Utils {
       Position.Y = y;
       _horizontalAlignment = horizontalAlignment;
       _verticalAlignment = verticalAlignment;
-      if (text != null) {
+      if (text != null)
+      {
         SetText(text);
       }
-      else {
+      else
+      {
         SetText("");
       }
     }
 
-    protected override void Dispose(bool disposing) {
-      if (disposing == true) {
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing == true)
+      {
         // image.Dispose();
         // TODO:
         // finish this at some point
       }
     }
 
-    protected override void Render() {
-      for (int i = 0; i < Points.Count; i++) {
+    protected override void Render()
+    {
+      for (int i = 0; i < Points.Count; i++)
+      {
         Glyph glyph = _font.GetGlyph(Points[i].Item1);
         Engine.SpriteBatch.Draw(
           glyph.Texture,
@@ -140,18 +169,21 @@ namespace Utils {
       }
     }
 
-    public override void Update() {
+    public override void Update()
+    {
       base.Update();
     }
 
-    public void SetText(string t) {
+    public void SetText(string t)
+    {
       // modfied version of 
       // https://bitbucket.org/jacobalbano/fnt/src/default/
       _text = t;
 
       Points.Clear();
 
-      if (_text.Length == 0) {
+      if (_text.Length == 0)
+      {
         return;
       }
 
@@ -160,11 +192,13 @@ namespace Utils {
       int py = 0;
       int maxWidth = 0;
       int maxHeight = 0;
-      for (int i = 0; i < _text.Length; i++) {
+      for (int i = 0; i < _text.Length; i++)
+      {
         char c = _text[i];
 
         // do special char stuff
-        switch (c) {
+        switch (c)
+        {
           case ' ':
             px += _font.Advance;
             continue;
@@ -180,7 +214,8 @@ namespace Utils {
         }
 
         Glyph glyph = _font.GetGlyph(c);
-        if (glyph == null) {
+        if (glyph == null)
+        {
           glyph = _font.GetGlyph('?');
         }
 
@@ -197,14 +232,17 @@ namespace Utils {
       Size = new Size(maxWidth, maxHeight);
 
       TextOrigin = Vector2.Zero;
-      if (_horizontalAlignment == HorizontalAlignment.Center) {
+      if (_horizontalAlignment == HorizontalAlignment.Center)
+      {
         TextOrigin.X = (float)Math.Ceiling(Size.Width / 2);
       }
-      else if (_horizontalAlignment == HorizontalAlignment.Right) {
+      else if (_horizontalAlignment == HorizontalAlignment.Right)
+      {
         TextOrigin.X = Size.Width;
       }
 
-      if (_verticalAlignment == VerticalAlignment.Center) {
+      if (_verticalAlignment == VerticalAlignment.Center)
+      {
         TextOrigin.Y = (int)Size.Height / 2;
       }
     }

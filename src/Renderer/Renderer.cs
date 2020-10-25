@@ -8,11 +8,7 @@ namespace Utils
 
   public class Renderer
   {
-    // private float ShakeTime = 0;
-    // private Vector2 ShakePos = new Vector2();
-    // public float MinShake = 0.05f;    // stop shaking when ShakeTime is lower than this
-    // public float ShakeMult = 0.8f;    // multiply ShakeTime by this every frame
-    // public int ShakeAmt = 2;          // max pan distance the screen can shake
+
 
     public int Width { get; private set; }
     public int Height { get; private set; }
@@ -30,7 +26,6 @@ namespace Utils
       Width = width;
       Height = height;
       Camera = new Camera(width, height);
-      //Root.Renderer = this;
       UpdateView();
     }
 
@@ -55,7 +50,7 @@ namespace Utils
       CurrentEffect = null;
 
       Engine.SpriteBatch.Begin(
-        SpriteSortMode.BackToFront,
+        SpriteSortMode.Deferred,
         BlendState.AlphaBlend,
         SamplerState.PointClamp,
         DepthStencilState.None,
@@ -112,26 +107,11 @@ namespace Utils
       {
         Root.Update();
       }
-
-      // if (ShakeTime > 0.05f)
-      // {
-      //   ShakePos.X = Rand.RandRange(-ShakeAmt, ShakeAmt) * ShakeTime;
-      //   ShakePos.Y = Rand.RandRange(-ShakeAmt, ShakeAmt) * ShakeTime;
-      //   ShakeTime *= ShakeMult;
-      // }
-      // else
-      // {
-      //   ShakeTime = 0;
-      //   ShakePos.X = 0;
-      //   ShakePos.Y = 0;
-      // }
-
-      // Camera.Origin = ShakePos;
     }
 
-    // public void Shake(int power = 1)
-    // {
-    //   ShakeTime = power;
-    // }
+    public Vector2 GetMouse()
+    {
+      return (Input.MousePos - new Vector2(Engine.Viewport.X, Engine.Viewport.Y)) / new Vector2(ScreenMatrix.M11, ScreenMatrix.M22);
+    }
   }
 }
