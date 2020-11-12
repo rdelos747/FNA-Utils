@@ -8,8 +8,6 @@ namespace Utils
 
   public class Renderer
   {
-
-
     public int Width { get; private set; }
     public int Height { get; private set; }
     public int ViewWidth { get; private set; }
@@ -18,6 +16,45 @@ namespace Utils
     public Camera Camera;
     public Node Root = new Node();
     public Effect CurrentEffect;
+    public Scene Scene;
+
+    RasterizerState RasterizerState = RasterizerState.CullNone;
+    private Rectangle _cropRectScaled = Rectangle.Empty;
+    private Rectangle _cropRect = Rectangle.Empty;
+    public Rectangle CropRect
+    {
+      get
+      {
+        return _cropRect;
+      }
+      set
+      {
+        _cropRect = value;
+        UpdateView();
+      }
+    }
+    private Rectangle OriginalRect;
+    private bool _cropped = false;
+    public bool Cropped
+    {
+      get
+      {
+        return _cropped;
+      }
+      set
+      {
+        _cropped = value;
+        if (_cropped)
+        {
+          RasterizerState.ScissorTestEnable = true;
+        }
+        else
+        {
+          RasterizerState.ScissorTestEnable = false;
+        }
+      }
+    }
+
 
     public Renderer() : this(Engine.Width, Engine.Height) { }
 
@@ -29,37 +66,82 @@ namespace Utils
       UpdateView();
     }
 
-    public void ApplyEffect(Effect effect)
+    public virtual void ApplyEffect(Effect effect)
     {
       CurrentEffect = effect;
+
+      if (Cropped)
+      {
+        Engine.SpriteBatch.GraphicsDevice.ScissorRectangle = OriginalRect;
+      }
+
       Engine.SpriteBatch.End();
 
-      Engine.SpriteBatch.Begin(
-        SpriteSortMode.BackToFront,
-        BlendState.AlphaBlend,
-        SamplerState.PointClamp,
-        DepthStencilState.None,
-        RasterizerState.CullNone,
-        CurrentEffect,
-        Camera.Matrix * ScreenMatrix
-      );
+      if (Cropped)
+      {
+        Engine.SpriteBatch.Begin(
+          SpriteSortMode.Immediate,
+          BlendState.AlphaBlend,
+          SamplerState.PointClamp,
+          DepthStencilState.None,
+          RasterizerState,
+          CurrentEffect,
+          Camera.Matrix * ScreenMatrix
+        );
+
+        Engine.SpriteBatch.GraphicsDevice.ScissorRectangle = _cropRectScaled;
+      }
+      else
+      {
+        Engine.SpriteBatch.Begin(
+          SpriteSortMode.BackToFront,
+          BlendState.AlphaBlend,
+          SamplerState.PointClamp,
+          DepthStencilState.None,
+          RasterizerState,
+          CurrentEffect,
+          Camera.Matrix * ScreenMatrix
+        );
+      }
     }
 
-    public void Draw()
+    public virtual void Draw()
     {
       CurrentEffect = null;
 
-      Engine.SpriteBatch.Begin(
-        SpriteSortMode.Deferred,
-        BlendState.AlphaBlend,
-        SamplerState.PointClamp,
-        DepthStencilState.None,
-        RasterizerState.CullNone,
-        null,
-        Camera.Matrix * ScreenMatrix
-      );
+      if (Cropped)
+      {
+        Engine.SpriteBatch.Begin(
+          SpriteSortMode.Immediate, // for some reason this needs to be immediate :/
+          BlendState.AlphaBlend,
+          SamplerState.PointClamp,
+          DepthStencilState.None,
+          RasterizerState,
+          null,
+          Camera.Matrix * ScreenMatrix
+        );
+
+        Engine.SpriteBatch.GraphicsDevice.ScissorRectangle = _cropRectScaled;
+      }
+      else
+      {
+        Engine.SpriteBatch.Begin(
+          SpriteSortMode.Deferred,
+          BlendState.AlphaBlend,
+          SamplerState.PointClamp,
+          DepthStencilState.None,
+          RasterizerState,
+          null,
+          Camera.Matrix * ScreenMatrix
+        );
+      }
 
       Root.Draw();
+
+      if (Cropped)
+      {
+        Engine.SpriteBatch.GraphicsDevice.ScissorRectangle = OriginalRect;
+      }
 
       Engine.SpriteBatch.End();
     }
@@ -89,6 +171,17 @@ namespace Utils
 
       // update screen matrix
       ScreenMatrix = Matrix.CreateScale(ViewWidth / (float)Width, ViewWidth / (float)Width, 1);
+
+      // Save the original crop rectangle
+      OriginalRect = Engine.SpriteBatch.GraphicsDevice.ScissorRectangle;
+
+      // scale the crop rectangle
+      _cropRectScaled = new Rectangle(
+        (int)(_cropRect.X * ScreenMatrix.M11),
+        (int)(_cropRect.Y * ScreenMatrix.M22),
+        (int)(_cropRect.Width * ScreenMatrix.M11),
+        (int)(_cropRect.Height * ScreenMatrix.M22)
+      );
     }
 
     public void AddToRoot(Node n)

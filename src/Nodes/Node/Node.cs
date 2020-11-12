@@ -153,7 +153,11 @@ namespace Utils
       Dispose(false);
     }
 
-    public void AddChild(Node n)
+    /*
+    Make this virtual so container nodes can do custom
+    logic when they add stuff.
+    */
+    public virtual void AddChild(Node n)
     {
       if (n.Parent == null)
       {
@@ -162,15 +166,6 @@ namespace Utils
         //n.SetRenderer(this.Renderer);
       }
     }
-
-    // internal void SetRenderer(Renderer r)
-    // {
-    //   Renderer = r;
-    //   foreach (Node n in _nodes)
-    //   {
-    //     n.SetRenderer(r);
-    //   }
-    // }
 
     public void RemoveFromParent()
     {
@@ -200,6 +195,38 @@ namespace Utils
       Parent = null;
       //Renderer = null;
       Dispose();
+    }
+
+    public float Left
+    {
+      get
+      {
+        return Position.X;
+      }
+    }
+
+    public float Right
+    {
+      get
+      {
+        return Position.X + Size.Width;
+      }
+    }
+
+    public float Top
+    {
+      get
+      {
+        return Position.Y;
+      }
+    }
+
+    public float Bottom
+    {
+      get
+      {
+        return Position.Y + Size.Height;
+      }
     }
   }
 }

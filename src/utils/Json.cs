@@ -26,6 +26,10 @@ namespace Utils
       {
         return null;
       }
+      catch (DirectoryNotFoundException)
+      {
+        return null;
+      }
     }
 
     public static void WriteJson(string path, JObject json)

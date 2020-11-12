@@ -26,9 +26,10 @@ namespace Utils
       }
     }
 
-    protected void Add(Renderer r)
+    public void Add(Renderer r)
     {
       Renderers.Add(r);
+      r.Scene = this;
     }
   }
 }
