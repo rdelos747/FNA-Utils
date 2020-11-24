@@ -140,6 +140,7 @@
 		<Compile Include="src/utils/Rand.cs" />
 		<Compile Include="src/utils/Screenshot.cs" />
 		<Compile Include="src/utils/Size.cs" />
+    <Compile Include="src/utils/Store.cs" />
 		<Compile Include="src/utils/VectorMath.cs" />
 	</ItemGroup>
 

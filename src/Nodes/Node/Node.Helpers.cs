@@ -18,10 +18,22 @@ namespace Utils
       return Vector2.Distance(Position, point);
     }
 
-    public void DrawOutlineBox(Vector2 pos, Size size, Color outlineColor)
+    public void DrawBox(float x, float y, Size size, Color color)
+    {
+      DrawBox(new Vector2(x, y), size, color);
+    }
+
+    public void DrawBox(Vector2 pos, Size size, Color color)
     {
       Vector2 p = pos + DrawPosition;
       Size s = size + DrawPosition;
+      Engine.DrawBox(p, s, color);
+    }
+
+    public void DrawOutlineBox(Vector2 pos, Size size, Color outlineColor)
+    {
+      Vector2 p = pos + (DrawPosition - (Origin * Size));
+      Size s = size + (DrawPosition - (Origin * Size));
       Engine.DrawOutlineBox(
         new Rectangle(
           (int)p.X,

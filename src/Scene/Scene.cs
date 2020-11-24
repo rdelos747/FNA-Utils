@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Utils
@@ -11,9 +12,14 @@ namespace Utils
 
     public virtual void Update()
     {
-      foreach (Renderer renderer in Renderers)
+      // foreach (Renderer renderer in Renderers)
+      // {
+      //   renderer.Update();
+      // }
+
+      for (int i = 0; i < Renderers.Count; i++)
       {
-        renderer.Update();
+        Renderers[i].Update();
       }
     }
 
@@ -30,6 +36,15 @@ namespace Utils
     {
       Renderers.Add(r);
       r.Scene = this;
+    }
+
+    public virtual void End()
+    {
+      for (int i = Renderers.Count - 1; i >= 0; i--)
+      {
+        Renderers[i].RemoveFromScene();
+      }
+      Console.WriteLine("Ended scene");
     }
   }
 }

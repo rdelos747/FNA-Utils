@@ -194,6 +194,22 @@ namespace Utils
       n.RemoveFromParent();
     }
 
+    public void RemoveFromScene()
+    {
+      if (Scene == null)
+      {
+        Scene.Renderers.Remove(this);
+        Scene = null;
+      }
+
+      for (int i = Root.Nodes.Count - 1; i >= 0; i--)
+      {
+        Root.Nodes[i].RemoveFromParent();
+      }
+
+      Console.WriteLine("Removed renderer");
+    }
+
     public virtual void Update()
     {
       if (Root.Active)

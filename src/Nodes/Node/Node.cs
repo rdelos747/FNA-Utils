@@ -143,7 +143,7 @@ namespace Utils
     {
       Dispose(true);
       GC.SuppressFinalize(this);
-      Console.WriteLine("disposing node");
+      Console.WriteLine("\tdisposing node");
     }
 
     protected virtual void Dispose(bool disposing) { }
@@ -153,19 +153,18 @@ namespace Utils
       Dispose(false);
     }
 
-    /*
-    Make this virtual so container nodes can do custom
-    logic when they add stuff.
-    */
     public virtual void AddChild(Node n)
     {
       if (n.Parent == null)
       {
         _nodes.Add(n);
         n.Parent = this;
+        n.Init();
         //n.SetRenderer(this.Renderer);
       }
     }
+
+    protected virtual void Init() { }
 
     public void RemoveFromParent()
     {

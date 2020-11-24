@@ -11,7 +11,8 @@ namespace Utils
   public enum VerticalAlignment
   {
     Top,
-    Center
+    Center,
+    Bottom
   }
 
   public enum HorizontalAlignment
@@ -244,6 +245,10 @@ namespace Utils
       if (_verticalAlignment == VerticalAlignment.Center)
       {
         TextOrigin.Y = (int)Size.Height / 2;
+      }
+      else if (_verticalAlignment == VerticalAlignment.Bottom)
+      {
+        TextOrigin.Y = (int)Size.Height;
       }
     }
   }

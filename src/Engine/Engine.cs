@@ -77,7 +77,23 @@ namespace Utils
     //public List<Renderer> Renderers = new List<Renderer>();
     internal static Renderer CurrentRenderer;
 
-    public Scene Scene;
+    private Scene _scene;
+    public Scene Scene
+    {
+      get
+      {
+        return _scene;
+      }
+      set
+      {
+        if (_scene != null)
+        {
+          _scene.End();
+        }
+
+        _scene = value;
+      }
+    }
 
     /*
     Time
@@ -226,7 +242,7 @@ namespace Utils
       //   renderer.Update();
       // }
 
-      Scene.Update();
+      _scene.Update();
 
       base.Update(gameTime);
     }
@@ -243,7 +259,7 @@ namespace Utils
       //   renderer.Draw();
       // }
 
-      Scene.Draw();
+      _scene.Draw();
 
       base.Draw(gameTime);
 
