@@ -12,6 +12,7 @@ namespace Utils
 
   public partial class Node : IDisposable
   {
+    internal bool Loaded = false;
     private bool Disposed = false;
 
     /*
@@ -128,6 +129,20 @@ namespace Utils
 
     public virtual void Update()
     {
+      if (!Loaded)
+      {
+        Loaded = true;
+        return;
+      }
+
+      // if (Parent != null)
+      // {
+      //   DrawPosition = Position + Parent.DrawPosition;
+      // }
+      // else
+      // {
+      //   DrawPosition = Position;
+      // }
 
       for (int i = 0; i < _nodes.Count; i++)
       {
@@ -143,7 +158,7 @@ namespace Utils
     {
       Dispose(true);
       GC.SuppressFinalize(this);
-      Console.WriteLine("\tdisposing node");
+      //Console.WriteLine("\tdisposing node");
     }
 
     protected virtual void Dispose(bool disposing) { }
@@ -159,6 +174,7 @@ namespace Utils
       {
         _nodes.Add(n);
         n.Parent = this;
+        n.DrawPosition = n.Position + DrawPosition;
         n.Init();
         //n.SetRenderer(this.Renderer);
       }

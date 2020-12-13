@@ -196,7 +196,7 @@ namespace Utils
 
     public void RemoveFromScene()
     {
-      if (Scene == null)
+      if (Scene != null)
       {
         Scene.Renderers.Remove(this);
         Scene = null;
