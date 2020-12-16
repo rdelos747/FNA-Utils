@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-
+using SDL2;
 
 namespace Utils
 {
@@ -190,6 +190,7 @@ namespace Utils
     protected override void LoadContent()
     {
       Console.WriteLine("Load Content");
+
       SpriteBatch = new SpriteBatch(GraphicsDevice);
 
       SystemRect = new Texture2D(GraphicsDevice, 1, 1);
@@ -214,6 +215,8 @@ namespace Utils
       Console.WriteLine("Initialize");
       Input.Init();
       base.Initialize();
+
+      SDL.SDL_SetEventFilter(_sdlIntercept, IntPtr.Zero);
     }
 
     protected override void Update(GameTime gameTime)
@@ -284,10 +287,21 @@ namespace Utils
       base.OnExiting(sender, args);
     }
 
-    // protected void Add(Renderer r)
-    // {
-    //   Renderers.Add(r);
-    // }
+    private static SDL.SDL_EventFilter _sdlIntercept = SDLIntercept;
+    private static unsafe int SDLIntercept(IntPtr func, IntPtr evtPtr)
+    {
+      SDL.SDL_Event* evt = (SDL.SDL_Event*)evtPtr;
+      if (evt->type == SDL.SDL_EventType.SDL_QUIT)
+      {
+        return Instance.TrapExit();
+      }
+      return 1;
+    }
+
+    protected virtual int TrapExit()
+    {
+      return 1;
+    }
 
     public static Texture2D LoadTexture(string path)
     {
