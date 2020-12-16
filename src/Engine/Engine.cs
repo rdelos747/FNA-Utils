@@ -27,7 +27,7 @@ namespace Utils
     public static Texture2D SystemRect { get; private set; }
     public static Color ClearColor;
     public static Viewport Viewport { get; private set; }
-    private static ContentManager ContentRef;
+    public static ContentManager ContentRef;
 
     /*
     Screen size

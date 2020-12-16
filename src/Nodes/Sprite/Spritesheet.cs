@@ -107,7 +107,5 @@ namespace Utils
         Height = resultHeight
       };
     }
-
-
   }
 }
