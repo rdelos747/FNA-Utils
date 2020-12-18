@@ -12,11 +12,6 @@ namespace Utils
 
     public virtual void Update()
     {
-      // foreach (Renderer renderer in Renderers)
-      // {
-      //   renderer.Update();
-      // }
-
       for (int i = 0; i < Renderers.Count; i++)
       {
         Renderers[i].Update();
@@ -37,6 +32,8 @@ namespace Utils
       Renderers.Add(r);
       r.Scene = this;
     }
+
+    public virtual void Start() { }
 
     public virtual void End()
     {

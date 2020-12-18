@@ -70,6 +70,22 @@ namespace Utils
       }
     }
 
+    public int SpriteWidth
+    {
+      get
+      {
+        return Spritesheet.Frames[CurrentFrameId].Rect.Width;
+      }
+    }
+
+    public int SpriteHeight
+    {
+      get
+      {
+        return Spritesheet.Frames[CurrentFrameId].Rect.Height;
+      }
+    }
+
     public Sprite(Spritesheet sheet)
     {
       Spritesheet = sheet;

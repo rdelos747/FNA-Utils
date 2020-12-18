@@ -74,7 +74,6 @@ namespace Utils
     /*
     Nodes
     */
-    //public List<Renderer> Renderers = new List<Renderer>();
     internal static Renderer CurrentRenderer;
 
     private Scene _scene;
@@ -92,6 +91,7 @@ namespace Utils
         }
 
         _scene = value;
+        _scene.Start();
       }
     }
 
@@ -161,7 +161,6 @@ namespace Utils
 #endif
 
       Content.RootDirectory = @"Content";
-      //SpriteSheet.Content = Content;
       ContentRef = Content;
 
       IsMouseVisible = false;
@@ -200,12 +199,7 @@ namespace Utils
       Screenshot.DirName = "./screenshots";
       Screenshot.Prefix = "sc_";
 
-      //test
-      //Camera = new Camera(Width, Height);
-
       Label.BaseFont = new Atlas("aseprite_font.png", 16, 14);
-
-      //Renderers = new List<Renderer>();
 
       base.LoadContent();
     }
@@ -239,11 +233,6 @@ namespace Utils
         Screenshot.Capture(info);
       }
 #endif
-
-      // foreach (Renderer renderer in Renderers)
-      // {
-      //   renderer.Update();
-      // }
 
       _scene.Update();
 
