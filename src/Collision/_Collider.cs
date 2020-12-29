@@ -63,6 +63,19 @@ namespace Utils
       }
     }
 
+    public Vector2[] WorldPoints
+    {
+      get
+      {
+        return new Vector2[] {
+          new Vector2(WorldLeft,WorldTop),
+          new Vector2(WorldRight, WorldTop),
+          new Vector2(WorldRight, WorldBottom),
+          new Vector2(WorldLeft, WorldBottom)
+        };
+      }
+    }
+
     public float WorldLeft
     {
       get

@@ -25,7 +25,6 @@ namespace Utils
     this(new Size(width, height), new Vector2(), center, node)
     { }
 
-
     public override float Left
     {
       get
