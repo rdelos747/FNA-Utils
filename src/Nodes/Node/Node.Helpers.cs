@@ -26,8 +26,8 @@ namespace Utils
     public void DrawBox(Vector2 pos, Size size, Color color)
     {
       Vector2 p = pos + DrawPosition;
-      Size s = size + DrawPosition;
-      Engine.DrawBox(p, s, color);
+      //Size s = size + DrawPosition;
+      Engine.DrawBox(p, size, color);
     }
 
     public void DrawOutlineBox(Vector2 pos, Size size, Color outlineColor)
@@ -52,6 +52,16 @@ namespace Utils
         new Vector2(x2, y2) + DrawPosition,
         color,
         thickness
+      );
+    }
+
+    public void DrawCircle(Vector2 pos, float rad, Color color, int res)
+    {
+      Engine.DrawCircle(
+        pos + DrawPosition,
+        rad,
+        color,
+        res
       );
     }
   }

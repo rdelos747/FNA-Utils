@@ -18,7 +18,8 @@ namespace Utils
     public Effect CurrentEffect;
     public Scene Scene;
 
-    RasterizerState RasterizerState = RasterizerState.CullNone;
+    public SpriteSortMode SortMode = SpriteSortMode.Immediate;
+    private RasterizerState RasterizerState = RasterizerState.CullNone;
     private Rectangle _cropRectScaled = Rectangle.Empty;
     private Rectangle _cropRect = Rectangle.Empty;
     public Rectangle CropRect
@@ -94,7 +95,7 @@ namespace Utils
       else
       {
         Engine.SpriteBatch.Begin(
-          SpriteSortMode.BackToFront,
+          SortMode,
           BlendState.AlphaBlend,
           SamplerState.PointClamp,
           DepthStencilState.None,
@@ -126,7 +127,7 @@ namespace Utils
       else
       {
         Engine.SpriteBatch.Begin(
-          SpriteSortMode.Deferred,
+          SortMode,
           BlendState.AlphaBlend,
           SamplerState.PointClamp,
           DepthStencilState.None,

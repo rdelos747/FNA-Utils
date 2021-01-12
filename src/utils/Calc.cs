@@ -35,6 +35,11 @@ namespace Utils
       return (float)Math.Atan2(vector.Y, vector.X);
     }
 
+    public static Vector2 Perpendicular(this Vector2 vector)
+    {
+      return new Vector2(-vector.Y, vector.X);
+    }
+
     public static Vector2 AngleToVector(float angleRadians, float length)
     {
       return new Vector2((float)Math.Cos(angleRadians) * length, (float)Math.Sin(angleRadians) * length);

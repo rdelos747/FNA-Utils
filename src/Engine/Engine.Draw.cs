@@ -98,5 +98,24 @@ namespace Utils
         thickness
       );
     }
+
+    public static void DrawCircle(Vector2 pos, float radius, Color color, int res)
+    {
+      Vector2 last = Vector2.UnitX * radius;
+      Vector2 lastP = last.Perpendicular();
+      for (int i = 1; i <= res; i++)
+      {
+        Vector2 at = Calc.AngleToVector(i * MathHelper.PiOver2 / res, radius);
+        Vector2 atP = at.Perpendicular();
+
+        DrawLine(pos + last, pos + at, color);
+        DrawLine(pos - last, pos - at, color);
+        DrawLine(pos + lastP, pos + atP, color);
+        DrawLine(pos - lastP, pos - atP, color);
+
+        last = at;
+        lastP = atP;
+      }
+    }
   }
 }

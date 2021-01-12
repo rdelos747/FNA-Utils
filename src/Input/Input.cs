@@ -8,6 +8,7 @@ namespace Utils
 
   public static partial class Input
   {
+    public static string NoneCode = "None";
 
     private static MouseState MouseState;
     private static MouseState LastMouseState;
@@ -71,6 +72,12 @@ namespace Utils
       return pc.GamePadState.IsConnected;
     }
 
+    public static string[] DecodeAction(string action, PlayerIndex pi = PlayerIndex.One)
+    {
+      PortControl pc = PortControls[pi];
+      return pc.DecodeAction(action);
+    }
+
     public static Keys GetRecentKey(PlayerIndex pi = PlayerIndex.One)
     {
       PortControl PC = PortControls[pi];
@@ -111,12 +118,12 @@ namespace Utils
       return PortControls[pi].InputType;
     }
 
-    public static Keys GetActionKey(string action, PlayerIndex pi = PlayerIndex.One)
+    public static Keys[] GetKeysForAction(string action, PlayerIndex pi = PlayerIndex.One)
     {
       return PortControls[pi].KeyboardMap[action];
     }
 
-    public static Buttons GetActionButton(string action, PlayerIndex pi = PlayerIndex.One)
+    public static Buttons[] GetButtonsForAction(string action, PlayerIndex pi = PlayerIndex.One)
     {
       return PortControls[pi].GamePadMap[action];
     }
@@ -126,24 +133,24 @@ namespace Utils
       PortControls[pi].InputType = inputType;
     }
 
-    public static void SetActionMap(Dictionary<string, Keys> keyboardMap, PlayerIndex pi = PlayerIndex.One)
+    public static void SetActionMap(Dictionary<string, Keys[]> keyboardMap, PlayerIndex pi = PlayerIndex.One)
     {
       PortControls[pi].SetKeyboardMap(keyboardMap);
     }
 
-    public static void SetActionMap(Dictionary<string, Buttons> gamePadMap, PlayerIndex pi = PlayerIndex.One)
+    public static void SetActionMap(Dictionary<string, Buttons[]> gamePadMap, PlayerIndex pi = PlayerIndex.One)
     {
       PortControls[pi].SetGamePadMap(gamePadMap);
     }
 
-    public static void SetAction(string action, Keys val, PlayerIndex pi = PlayerIndex.One)
+    public static void SetAction(string action, Keys[] vals, PlayerIndex pi = PlayerIndex.One)
     {
-      PortControls[pi].SetKeyboardAction(action, val);
+      PortControls[pi].SetKeyboardAction(action, vals);
     }
 
-    public static void SetAction(string action, Buttons val, PlayerIndex pi = PlayerIndex.One)
+    public static void SetAction(string action, Buttons[] vals, PlayerIndex pi = PlayerIndex.One)
     {
-      PortControls[pi].SetGamePadAction(action, val);
+      PortControls[pi].SetGamePadAction(action, vals);
     }
 
     public static bool ActionDown(string action, PlayerIndex pi = PlayerIndex.One)
@@ -151,10 +158,10 @@ namespace Utils
       return PortControls[pi].ActionDown(action);
     }
 
-    public static bool ActionUp(string action, PlayerIndex pi = PlayerIndex.One)
-    {
-      return PortControls[pi].ActionUp(action);
-    }
+    // public static bool ActionUp(string action, PlayerIndex pi = PlayerIndex.One)
+    // {
+    //   return PortControls[pi].ActionUp(action);
+    // }
 
     public static bool ActionPressed(string action, PlayerIndex pi = PlayerIndex.One)
     {
@@ -190,6 +197,14 @@ namespace Utils
         return false;
     }
 
+    public static bool MouseMiddleDown()
+    {
+      if (MouseState.MiddleButton == ButtonState.Pressed)
+        return true;
+      else
+        return false;
+    }
+
     public static bool MouseLeftClicked()
     {
       if (MouseState.LeftButton == ButtonState.Pressed && LastMouseState.LeftButton == ButtonState.Released)
@@ -205,6 +220,15 @@ namespace Utils
       else
         return false;
     }
+
+    public static bool MouseMiddleClicked()
+    {
+      if (MouseState.MiddleButton == ButtonState.Pressed && LastMouseState.MiddleButton == ButtonState.Released)
+        return true;
+      else
+        return false;
+    }
+
 
     public static int MouseScrolled()
     {
