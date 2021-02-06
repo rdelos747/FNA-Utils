@@ -15,6 +15,16 @@ namespace Utils
       return val > target ? Math.Max(val - maxMove, target) : Math.Min(val + maxMove, target);
     }
 
+    public static int Clamp(int value, int min, int max)
+    {
+      return Math.Min(Math.Max(value, min), max);
+    }
+
+    public static float Clamp(float value, float min, float max)
+    {
+      return Math.Min(Math.Max(value, min), max);
+    }
+
     public static bool InRange(float val, float min, float max)
     {
       return val >= min && val <= max;

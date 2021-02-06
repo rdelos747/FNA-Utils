@@ -12,7 +12,7 @@ namespace Utils
 
   public partial class Node : IDisposable
   {
-    internal bool Loaded = false;
+    //internal bool Loaded = false;
     private bool Disposed = false;
 
     /*
@@ -129,11 +129,11 @@ namespace Utils
 
     public virtual void Update()
     {
-      if (!Loaded)
-      {
-        Loaded = true;
-        return;
-      }
+      // if (!Loaded)
+      // {
+      //   Loaded = true;
+      //   return;
+      // }
 
       // if (Parent != null)
       // {
@@ -211,6 +211,22 @@ namespace Utils
       //Renderer = null;
       Dispose();
     }
+
+    // public void SwapChildren(Node other)
+    // {
+    //   List<Node> tmp = other.Nodes;
+    //   other.Nodes = Nodes;
+    //   Nodes = tmp;
+
+    //   foreach (Node n in other.Nodes)
+    //   {
+    //     n.Parent = n;
+    //   }
+    //   foreach (Node n in Nodes)
+    //   {
+    //     n.Parent = this;
+    //   }
+    // }
 
     public float Left
     {

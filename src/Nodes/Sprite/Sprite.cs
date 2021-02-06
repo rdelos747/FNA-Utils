@@ -146,6 +146,7 @@ namespace Utils
             {
               AnimationFrameIndex = 0;
               CurrentFrameId = Spritesheet.Animations[CurrentAnimationData.Id][AnimationFrameIndex];
+              OnAnimationNewFrame(CurrentFrameId);
               OnAnimationRestart(CurrentAnimationData.Name);
             }
             else
@@ -158,6 +159,7 @@ namespace Utils
           else
           {
             CurrentFrameId = Spritesheet.Animations[CurrentAnimationData.Id][AnimationFrameIndex];
+            OnAnimationNewFrame(CurrentFrameId);
           }
         }
       }
@@ -217,5 +219,7 @@ namespace Utils
     public virtual void OnAnimationEnd(string name) { }
 
     public virtual void OnAnimationRestart(string name) { }
+
+    public virtual void OnAnimationNewFrame(string name) { }
   }
 }
