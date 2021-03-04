@@ -221,7 +221,7 @@ namespace Utils
 
     public Vector2 GetMouse()
     {
-      return (Input.MousePos - new Vector2(Engine.Viewport.X, Engine.Viewport.Y)) / new Vector2(ScreenMatrix.M11, ScreenMatrix.M22);
+      return (Input.MousePos - new Vector2(Engine.Viewport.X, Engine.Viewport.Y)) / new Vector2(ScreenMatrix.M11, ScreenMatrix.M22) - Camera.Origin;
     }
   }
 }

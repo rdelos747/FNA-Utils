@@ -160,7 +160,7 @@ namespace Utils
             (Points[i].loc.Y + DrawPosition.Y)
           ),
           glyph.Clip,
-          Color,
+          Color * DrawAlpha,
           0.0f,
           TextOrigin,
           1,

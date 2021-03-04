@@ -39,6 +39,7 @@ namespace Utils
     */
     public Effect Effect;
     protected Vector2 DrawPosition { get; private set; }
+    protected float DrawAlpha { get; private set; }
     public Vector2 Position = new Vector2(0, 0);
     public Vector2 Origin = new Vector2(0, 0);
     public Size Size = new Size(0, 0);
@@ -55,6 +56,7 @@ namespace Utils
     public Node()
     {
       DrawPosition = Vector2.Zero;
+      DrawAlpha = 1f;
     }
 
     public void Draw()
@@ -64,10 +66,12 @@ namespace Utils
       if (Parent != null)
       {
         DrawPosition = Position + Parent.DrawPosition;
+        DrawAlpha = Alpha * Parent.DrawAlpha;
       }
       else
       {
         DrawPosition = Position;
+        DrawAlpha = Alpha;
       }
 
       if (Engine.CurrentRenderer.CurrentEffect != Effect)
@@ -100,9 +104,11 @@ namespace Utils
           (int)Size.Height
         ),
         null,
-        Color * Alpha,
+        Color * DrawAlpha,
         Rotation,
-        Origin,
+        //new Vector2(Size.Width, Size.Height) / Origin,
+        //Origin,
+        Origin / new Vector2(Size.Width, Size.Height),
         SpriteEffects.None,
         Depth
       );
@@ -175,6 +181,7 @@ namespace Utils
         _nodes.Add(n);
         n.Parent = this;
         n.DrawPosition = n.Position + DrawPosition;
+        n.DrawAlpha = n.Alpha * DrawAlpha;
         n.Init();
         //n.SetRenderer(this.Renderer);
       }
@@ -232,7 +239,7 @@ namespace Utils
     {
       get
       {
-        return Position.X;
+        return Position.X - Origin.X;
       }
     }
 
@@ -240,7 +247,7 @@ namespace Utils
     {
       get
       {
-        return Position.X + Size.Width;
+        return (Position.X + Size.Width) - Origin.X;
       }
     }
 
@@ -248,7 +255,7 @@ namespace Utils
     {
       get
       {
-        return Position.Y;
+        return Position.Y - Origin.Y;
       }
     }
 
@@ -256,7 +263,7 @@ namespace Utils
     {
       get
       {
-        return Position.Y + Size.Height;
+        return (Position.Y + Size.Height) - Origin.Y;
       }
     }
   }
