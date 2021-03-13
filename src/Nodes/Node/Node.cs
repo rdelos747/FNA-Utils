@@ -241,6 +241,10 @@ namespace Utils
       {
         return Position.X - Origin.X;
       }
+      set
+      {
+        Position.X = value - Origin.X;
+      }
     }
 
     public float Right
@@ -248,6 +252,10 @@ namespace Utils
       get
       {
         return (Position.X + Size.Width) - Origin.X;
+      }
+      set
+      {
+        Position.X = (value - Size.Width) - Origin.X;
       }
     }
 
@@ -257,6 +265,10 @@ namespace Utils
       {
         return Position.Y - Origin.Y;
       }
+      set
+      {
+        Position.Y = value - Origin.Y;
+      }
     }
 
     public float Bottom
@@ -264,6 +276,10 @@ namespace Utils
       get
       {
         return (Position.Y + Size.Height) - Origin.Y;
+      }
+      set
+      {
+        Position.Y = (value - Size.Height) - Origin.Y;
       }
     }
   }
