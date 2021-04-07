@@ -19,7 +19,9 @@ namespace Utils
     public Scene Scene;
 
     public SpriteSortMode SortMode = SpriteSortMode.Immediate;
-    private RasterizerState RasterizerState = RasterizerState.CullNone;
+    public BlendState BlendState = BlendState.AlphaBlend;
+    public RasterizerState RasterizerState = RasterizerState.CullNone;
+    public SamplerState SamplerState = SamplerState.PointClamp;
     private Rectangle _cropRectScaled = Rectangle.Empty;
     private Rectangle _cropRect = Rectangle.Empty;
     public Rectangle CropRect
@@ -82,8 +84,8 @@ namespace Utils
       {
         Engine.SpriteBatch.Begin(
           SpriteSortMode.Immediate,
-          BlendState.AlphaBlend,
-          SamplerState.PointClamp,
+          BlendState,
+          SamplerState,
           DepthStencilState.None,
           RasterizerState,
           CurrentEffect,
@@ -96,8 +98,8 @@ namespace Utils
       {
         Engine.SpriteBatch.Begin(
           SortMode,
-          BlendState.AlphaBlend,
-          SamplerState.PointClamp,
+          BlendState,
+          SamplerState,
           DepthStencilState.None,
           RasterizerState,
           CurrentEffect,
@@ -114,8 +116,8 @@ namespace Utils
       {
         Engine.SpriteBatch.Begin(
           SpriteSortMode.Immediate, // for some reason this needs to be immediate :/
-          BlendState.AlphaBlend,
-          SamplerState.PointClamp,
+          BlendState,
+          SamplerState,
           DepthStencilState.None,
           RasterizerState,
           null,
@@ -128,8 +130,8 @@ namespace Utils
       {
         Engine.SpriteBatch.Begin(
           SortMode,
-          BlendState.AlphaBlend,
-          SamplerState.PointClamp,
+          BlendState,
+          SamplerState,
           DepthStencilState.None,
           RasterizerState,
           null,
