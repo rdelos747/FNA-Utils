@@ -40,6 +40,7 @@ namespace Utils
     public Effect Effect;
     protected Vector2 DrawPosition { get; private set; }
     protected float DrawAlpha { get; private set; }
+    protected float DrawScale { get; private set; }
     public Vector2 Position = new Vector2(0, 0);
     public Vector2 Origin = new Vector2(0, 0);
     public Size Size = new Size(0, 0);
@@ -57,6 +58,7 @@ namespace Utils
     {
       DrawPosition = Vector2.Zero;
       DrawAlpha = 1f;
+      DrawScale = 1f;
     }
 
     public void Draw()
@@ -67,11 +69,13 @@ namespace Utils
       {
         DrawPosition = Position + Parent.DrawPosition;
         DrawAlpha = Alpha * Parent.DrawAlpha;
+        DrawScale = Scale * Parent.DrawScale;
       }
       else
       {
         DrawPosition = Position;
         DrawAlpha = Alpha;
+        DrawScale = Scale;
       }
 
       if (Engine.CurrentRenderer.CurrentEffect != Effect)
@@ -182,6 +186,7 @@ namespace Utils
         n.Parent = this;
         n.DrawPosition = n.Position + DrawPosition;
         n.DrawAlpha = n.Alpha * DrawAlpha;
+        n.DrawScale = n.Scale * DrawScale;
         n.Init();
         //n.SetRenderer(this.Renderer);
       }
