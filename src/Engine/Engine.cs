@@ -128,7 +128,7 @@ namespace Utils
       Graphics = new GraphicsDeviceManager(this);
       Graphics.DeviceReset += OnGraphicsReset;
       Graphics.DeviceCreated += OnGraphicsCreate;
-      Graphics.SynchronizeWithVerticalRetrace = true;
+      Graphics.SynchronizeWithVerticalRetrace = false;
       Graphics.PreferMultiSampling = false;
       Graphics.GraphicsProfile = GraphicsProfile.HiDef;
       Graphics.PreferredBackBufferFormat = SurfaceFormat.Color;
@@ -164,7 +164,7 @@ namespace Utils
       ContentRef = Content;
 
       IsMouseVisible = false;
-      IsFixedTimeStep = false;
+      IsFixedTimeStep = true;
       ExitOnEscapeKeypress = true;
 
       GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
@@ -263,7 +263,7 @@ namespace Utils
       if (counterElapsed >= TimeSpan.FromSeconds(1))
       {
 #if DEBUG
-        Window.Title = Title + " " + fpsCounter.ToString() + " fps - " + (GC.GetTotalMemory(false) / 1048576f).ToString("F") + " MB - DT,rDT: " + DeltaTime + " " + RawDeltaTime;
+        Window.Title = Title + " " + fpsCounter.ToString() + " fps - " + DeltaTime + " dt - " + (GC.GetTotalMemory(false) / 1048576f).ToString("F") + " MB";
 #endif
         FPS = fpsCounter;
         fpsCounter = 0;

@@ -127,7 +127,7 @@ namespace Utils
       */
       if (Animating)
       {
-        AnimationTime += Engine.RawDeltaTime * AnimationRate;
+        AnimationTime += Engine.DeltaTime * AnimationRate;
 
         /*
         Frame over
