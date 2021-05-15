@@ -25,23 +25,16 @@ namespace Utils
 
     public void DrawBox(Vector2 pos, Size size, Color color)
     {
-      Vector2 p = pos + DrawPosition;
-      //Size s = size + DrawPosition;
-      Engine.DrawBox(p, size, color);
+      Engine.DrawBox(pos + (DrawPosition - Origin), size, color);
     }
 
-    public void DrawOutlineBox(Vector2 pos, Size size, Color outlineColor)
+    public void DrawOutlineBox(Vector2 pos, Size size, Color outlineColor, int thickness = 1)
     {
-      Vector2 p = pos + (DrawPosition - (Origin * Size));
-      Size s = size + (DrawPosition - (Origin * Size));
       Engine.DrawOutlineBox(
-        new Rectangle(
-          (int)p.X,
-          (int)p.Y,
-          (int)s.Width,
-          (int)s.Height
-        ),
-        outlineColor
+        pos: pos + (DrawPosition - Origin),
+        size: size,
+        outlineColor: outlineColor,
+        thickness: thickness
       );
     }
 

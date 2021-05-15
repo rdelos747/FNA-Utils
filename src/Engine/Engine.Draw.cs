@@ -50,25 +50,33 @@ namespace Utils
       );
     }
 
-    public static void DrawOutlineBox(Vector2 pos, Size size, Color outlineColor)
+    public static void DrawOutlineBox(Vector2 pos, Size size, Color outlineColor, int thickness = 1)
     {
-      DrawOutlineBox(
-        new Rectangle(
-          (int)pos.X,
-          (int)pos.Y,
-          (int)size.Width,
-          (int)size.Height
-        ),
-        outlineColor
-      );
+      DrawLine(pos.X, pos.Y, pos.X + size.Width, pos.Y, outlineColor, thickness);
+      DrawLine(pos.X + size.Width, pos.Y, pos.X + size.Width, pos.Y + size.Height, outlineColor, thickness);
+      DrawLine(pos.X + size.Width, pos.Y + size.Height, pos.X, pos.Y + size.Height, outlineColor, thickness);
+      DrawLine(pos.X, pos.Y + size.Height, pos.X, pos.Y, outlineColor, thickness);
     }
 
     public static void DrawOutlineBox(Rectangle rect, Color outlineColor, int thickness = 1)
     {
-      DrawLine(rect.X, rect.Y, rect.Width, rect.Y, outlineColor, thickness);
-      DrawLine(rect.Width, rect.Y, rect.Width, rect.Height, outlineColor, thickness);
-      DrawLine(rect.Width, rect.Height, rect.X, rect.Height, outlineColor, thickness);
-      DrawLine(rect.X, rect.Height, rect.X, rect.Y, outlineColor, thickness);
+      DrawOutlineBox(new Vector2(rect.X, rect.Y), new Size(rect.Width, rect.Height), outlineColor, thickness);
+    }
+
+    public static void DrawLine(Point start, Point end, Color color, int thickness = 1)
+    {
+      DrawLine(
+        new Vector2(
+          start.X,
+          start.Y
+        ),
+        new Vector2(
+          end.X,
+          end.Y
+        ),
+        color,
+        thickness
+      );
     }
 
     public static void DrawLine(Vector2 start, Vector2 end, Color color, int thickness = 1)
@@ -89,7 +97,17 @@ namespace Utils
       );
     }
 
-    public static void DrawLine(int x1, int y1, int x2, int y2, Color color, int thickness = 1)
+    // public static void DrawLine(int x1, int y1, int x2, int y2, Color color, int thickness = 1)
+    // {
+    //   DrawLine(
+    //     new Vector2(x1, y1),
+    //     new Vector2(x2, y2),
+    //     color,
+    //     thickness
+    //   );
+    // }
+
+    public static void DrawLine(float x1, float y1, float x2, float y2, Color color, int thickness = 1)
     {
       DrawLine(
         new Vector2(x1, y1),
