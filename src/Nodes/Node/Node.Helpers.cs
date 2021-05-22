@@ -48,6 +48,16 @@ namespace Utils
       );
     }
 
+    public void DrawLine(Vector2 p1, Vector2 p2, Color color, int thickness = 1)
+    {
+      Engine.DrawLine(
+        p1 + DrawPosition,
+        p2 + DrawPosition,
+        color,
+        thickness
+      );
+    }
+
     public void DrawCircle(Vector2 pos, float rad, Color color, int res)
     {
       Engine.DrawCircle(

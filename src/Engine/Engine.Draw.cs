@@ -50,6 +50,14 @@ namespace Utils
       );
     }
 
+    public static void DrawOutlineBox(float x1, float y1, float x2, float y2, Color outlineColor, int thickness = 1)
+    {
+      DrawLine(x1, y1, x2, y1, outlineColor, thickness);
+      DrawLine(x2, y1, x2, y2, outlineColor, thickness);
+      DrawLine(x2, y2, x1, y2, outlineColor, thickness);
+      DrawLine(x1, y2, x1, y1, outlineColor, thickness);
+    }
+
     public static void DrawOutlineBox(Vector2 pos, Size size, Color outlineColor, int thickness = 1)
     {
       DrawLine(pos.X, pos.Y, pos.X + size.Width, pos.Y, outlineColor, thickness);
