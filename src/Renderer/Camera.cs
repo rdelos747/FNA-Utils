@@ -258,6 +258,12 @@ namespace Utils
       changed = true;
     }
 
+    public void ResetOrigin()
+    {
+      origin = Vector2.Zero;
+      changed = true;
+    }
+
     public void RoundPosition()
     {
       position.X = (float)Math.Round(position.X);

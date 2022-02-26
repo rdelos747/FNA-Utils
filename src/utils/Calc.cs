@@ -84,5 +84,15 @@ namespace Utils
       //assuming Y is small at the top of screen
       return new Rectangle(smallestX, smallestY, width, height);
     }
+
+    public static Vector2 Floor(Vector2 v)
+    {
+      return new Vector2((int)Math.Floor(v.X), (int)Math.Floor(v.Y));
+    }
+
+    public static Vector2 Round(Vector2 v)
+    {
+      return new Vector2((int)Math.Round(v.X), (int)Math.Round(v.Y));
+    }
   }
 }

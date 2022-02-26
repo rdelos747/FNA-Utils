@@ -41,6 +41,7 @@ namespace Utils
     protected Vector2 DrawPosition { get; private set; }
     protected float DrawAlpha { get; private set; }
     protected float DrawScale { get; private set; }
+    //protected float DrawDepth { get; private set; }
     public Vector2 Position = new Vector2(0, 0);
     public Vector2 Origin = new Vector2(0, 0);
     public Size Size = new Size(0, 0);
@@ -49,7 +50,7 @@ namespace Utils
     public float Direction = 0f;
     public Color Color = Color.White;
     public float Alpha = 1;
-    public float Depth = 0f;
+    public float Depth = 1f;
     public bool ShowCenter = false;
     public bool Visible = true;
     public bool Active = true;
@@ -59,6 +60,7 @@ namespace Utils
       DrawPosition = Vector2.Zero;
       DrawAlpha = 1f;
       DrawScale = 1f;
+      //DrawDepth = 1f;
     }
 
     public void Draw()
@@ -70,13 +72,16 @@ namespace Utils
         DrawPosition = Position + Parent.DrawPosition;
         DrawAlpha = Alpha * Parent.DrawAlpha;
         DrawScale = Scale * Parent.DrawScale;
+        //DrawDepth = Depth * Parent.DrawDepth;
       }
       else
       {
         DrawPosition = Position;
         DrawAlpha = Alpha;
         DrawScale = Scale;
+        //DrawDepth = Depth;
       }
+      //DrawPosition = new Vector2((int)Math.Round(DrawPosition.X), (int)Math.Round(DrawPosition.Y));
 
       if (Engine.CurrentRenderer.CurrentEffect != Effect)
       {
@@ -187,6 +192,7 @@ namespace Utils
         n.DrawPosition = n.Position + DrawPosition;
         n.DrawAlpha = n.Alpha * DrawAlpha;
         n.DrawScale = n.Scale * DrawScale;
+        //n.DrawDepth = n.Depth * DrawDepth;
         n.Init();
         //n.SetRenderer(this.Renderer);
       }

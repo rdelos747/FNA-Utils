@@ -61,6 +61,10 @@ namespace Utils
       }
     }
 
+    /*
+    TODO:
+    Why is this its own thing? Why don't we just use node.origin????
+    */
     public Vector2 TextOrigin = new Vector2();
     private VerticalAlignment _verticalAlignment;
     public VerticalAlignment VerticalAlignment
