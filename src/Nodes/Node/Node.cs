@@ -38,7 +38,7 @@ namespace Utils
     Rendering
     */
     public Effect Effect;
-    protected Vector2 DrawPosition { get; private set; }
+    public Vector2 DrawPosition { get; private set; }
     protected float DrawAlpha { get; private set; }
     protected float DrawScale { get; private set; }
     //protected float DrawDepth { get; private set; }
@@ -52,6 +52,7 @@ namespace Utils
     public float Alpha = 1;
     public float Depth = 1f;
     public bool ShowCenter = false;
+    public bool ShowCollider = false;
     public bool Visible = true;
     public bool Active = true;
 
@@ -93,6 +94,11 @@ namespace Utils
       if (ShowCenter)
       {
         RenderCenter();
+      }
+
+      if (ShowCollider && Collider != null)
+      {
+        Collider.Render();
       }
 
       for (int i = 0; i < _nodes.Count; i++)

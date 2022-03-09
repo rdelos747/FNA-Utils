@@ -54,7 +54,7 @@ namespace Utils
       {
         if (Node != null)
         {
-          return Node.Position + Position;
+          return Node.DrawPosition + Position;
         }
         else
         {
@@ -82,7 +82,7 @@ namespace Utils
       {
         if (Node != null)
         {
-          return Node.Position.X + Left;
+          return Node.DrawPosition.X + Left;
         }
         else
         {
@@ -97,7 +97,7 @@ namespace Utils
       {
         if (Node != null)
         {
-          return Node.Position.X + Right;
+          return Node.DrawPosition.X + Right;
         }
         else
         {
@@ -112,7 +112,7 @@ namespace Utils
       {
         if (Node != null)
         {
-          return Node.Position.Y + Top;
+          return Node.DrawPosition.Y + Top;
         }
         else
         {
@@ -127,7 +127,7 @@ namespace Utils
       {
         if (Node != null)
         {
-          return Node.Position.Y + Bottom;
+          return Node.DrawPosition.Y + Bottom;
         }
         else
         {
