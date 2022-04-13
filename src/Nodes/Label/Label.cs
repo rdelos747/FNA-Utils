@@ -160,8 +160,8 @@ namespace Utils
         Engine.SpriteBatch.Draw(
           glyph.Texture,
           new Vector2(
-            (Points[i].loc.X + DrawPosition.X),
-            (Points[i].loc.Y + DrawPosition.Y)
+            (Points[i].loc.X + WorldPosition.X),
+            (Points[i].loc.Y + WorldPosition.Y)
           ),
           glyph.Clip,
           Color * DrawAlpha,

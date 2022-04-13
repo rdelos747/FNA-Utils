@@ -54,7 +54,7 @@ namespace Utils
       {
         if (Node != null)
         {
-          return Node.DrawPosition + Position;
+          return Node.WorldPosition + Position;
         }
         else
         {
@@ -82,7 +82,7 @@ namespace Utils
       {
         if (Node != null)
         {
-          return Node.DrawPosition.X + Left;
+          return Node.WorldPosition.X + Left;
         }
         else
         {
@@ -97,7 +97,7 @@ namespace Utils
       {
         if (Node != null)
         {
-          return Node.DrawPosition.X + Right;
+          return Node.WorldPosition.X + Right;
         }
         else
         {
@@ -112,7 +112,7 @@ namespace Utils
       {
         if (Node != null)
         {
-          return Node.DrawPosition.Y + Top;
+          return Node.WorldPosition.Y + Top;
         }
         else
         {
@@ -127,12 +127,20 @@ namespace Utils
       {
         if (Node != null)
         {
-          return Node.DrawPosition.Y + Bottom;
+          return Node.WorldPosition.Y + Bottom;
         }
         else
         {
           return Bottom;
         }
+      }
+    }
+
+    public Vector2 WorldCenter
+    {
+      get
+      {
+        return new Vector2(WorldLeft + Size.Width / 2, WorldTop + Size.Height / 2);
       }
     }
   }

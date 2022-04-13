@@ -107,7 +107,7 @@ namespace Utils
     {
       Engine.SpriteBatch.Draw(
         Spritesheet.Texture,
-        DrawPosition,
+        WorldPosition,
         Spritesheet.Frames[CurrentFrameId].Rect,
         Color * DrawAlpha,
         Rotation,

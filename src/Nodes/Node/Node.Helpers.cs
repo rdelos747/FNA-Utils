@@ -25,13 +25,13 @@ namespace Utils
 
     public void DrawBox(Vector2 pos, Size size, Color color)
     {
-      Engine.DrawBox(pos + (DrawPosition - Origin), size, color);
+      Engine.DrawBox(pos + (WorldPosition - Origin), size, color);
     }
 
     public void DrawOutlineBox(Vector2 pos, Size size, Color outlineColor, int thickness = 1)
     {
       Engine.DrawOutlineBox(
-        pos: pos + (DrawPosition - Origin),
+        pos: pos + (WorldPosition - Origin),
         size: size,
         outlineColor: outlineColor,
         thickness: thickness
@@ -41,8 +41,8 @@ namespace Utils
     public void DrawLine(int x1, int y1, int x2, int y2, Color color, int thickness = 1)
     {
       Engine.DrawLine(
-        new Vector2(x1, y1) + DrawPosition,
-        new Vector2(x2, y2) + DrawPosition,
+        new Vector2(x1, y1) + WorldPosition,
+        new Vector2(x2, y2) + WorldPosition,
         color,
         thickness
       );
@@ -51,8 +51,8 @@ namespace Utils
     public void DrawLine(Vector2 p1, Vector2 p2, Color color, int thickness = 1)
     {
       Engine.DrawLine(
-        p1 + DrawPosition,
-        p2 + DrawPosition,
+        p1 + WorldPosition,
+        p2 + WorldPosition,
         color,
         thickness
       );
@@ -61,7 +61,7 @@ namespace Utils
     public void DrawCircle(Vector2 pos, float rad, Color color, int res)
     {
       Engine.DrawCircle(
-        pos + DrawPosition,
+        pos + WorldPosition,
         rad,
         color,
         res

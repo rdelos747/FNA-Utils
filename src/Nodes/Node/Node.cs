@@ -35,10 +35,28 @@ namespace Utils
     public Collider Collider;
 
     /*
+    World position
+    */
+    public Vector2 WorldPosition
+    {
+      get
+      {
+        if (Parent != null)
+        {
+          return Parent.WorldPosition + Position;
+        }
+        else
+        {
+          return Position;
+        }
+      }
+      private set { }
+    }
+
+    /*
     Rendering
     */
     public Effect Effect;
-    public Vector2 DrawPosition { get; private set; }
     protected float DrawAlpha { get; private set; }
     protected float DrawScale { get; private set; }
     //protected float DrawDepth { get; private set; }
@@ -58,7 +76,7 @@ namespace Utils
 
     public Node()
     {
-      DrawPosition = Vector2.Zero;
+      WorldPosition = Vector2.Zero;
       DrawAlpha = 1f;
       DrawScale = 1f;
       //DrawDepth = 1f;
@@ -70,19 +88,20 @@ namespace Utils
 
       if (Parent != null)
       {
-        DrawPosition = Position + Parent.DrawPosition;
+        /*
+        TODO: move these to accessors like WorldPosition
+        */
         DrawAlpha = Alpha * Parent.DrawAlpha;
         DrawScale = Scale * Parent.DrawScale;
         //DrawDepth = Depth * Parent.DrawDepth;
       }
       else
       {
-        DrawPosition = Position;
+        //DrawPosition = Position;
         DrawAlpha = Alpha;
         DrawScale = Scale;
         //DrawDepth = Depth;
       }
-      //DrawPosition = new Vector2((int)Math.Round(DrawPosition.X), (int)Math.Round(DrawPosition.Y));
 
       if (Engine.CurrentRenderer.CurrentEffect != Effect)
       {
@@ -113,8 +132,8 @@ namespace Utils
       Engine.SpriteBatch.Draw(
         Engine.SystemRect,
         new Rectangle(
-          (int)(DrawPosition.X),
-          (int)(DrawPosition.Y),
+           (int)(WorldPosition.X),
+          (int)(WorldPosition.Y),
           (int)Size.Width,
           (int)Size.Height
         ),
@@ -134,8 +153,8 @@ namespace Utils
       Engine.SpriteBatch.Draw(
         Engine.SystemRect,
         new Rectangle(
-          (int)(DrawPosition.X),
-          (int)(DrawPosition.Y),
+          (int)(WorldPosition.X),
+          (int)(WorldPosition.Y),
           1,
           1
         ),
@@ -195,10 +214,8 @@ namespace Utils
       {
         _nodes.Add(n);
         n.Parent = this;
-        n.DrawPosition = n.Position + DrawPosition;
         n.DrawAlpha = n.Alpha * DrawAlpha;
         n.DrawScale = n.Scale * DrawScale;
-        //n.DrawDepth = n.Depth * DrawDepth;
         n.Init();
         //n.SetRenderer(this.Renderer);
       }
