@@ -109,7 +109,7 @@ namespace Utils
         Spritesheet.Texture,
         WorldPosition,
         Spritesheet.Frames[CurrentFrameId].Rect,
-        Color * DrawAlpha,
+        Color,
         Rotation,
         Origin,
         Scale,

@@ -142,7 +142,7 @@ namespace Utils
         Rotation,
         //new Vector2(Size.Width, Size.Height) / Origin,
         //Origin,
-        Origin / new Vector2(Size.Width, Size.Height),
+        Calc.Floor(Origin) / new Vector2(Size.Width, Size.Height),
         SpriteEffects.None,
         Depth
       );

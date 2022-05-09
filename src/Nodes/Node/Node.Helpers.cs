@@ -25,13 +25,13 @@ namespace Utils
 
     public void DrawBox(Vector2 pos, Size size, Color color)
     {
-      Engine.DrawBox(pos + (WorldPosition - Origin), size, color);
+      Engine.DrawBox(pos + (WorldPosition - Calc.Floor(Origin)), size, color);
     }
 
     public void DrawOutlineBox(Vector2 pos, Size size, Color outlineColor, int thickness = 1)
     {
       Engine.DrawOutlineBox(
-        pos: pos + (WorldPosition - Origin),
+        pos: pos + (WorldPosition - Calc.Floor(Origin)),
         size: size,
         outlineColor: outlineColor,
         thickness: thickness
