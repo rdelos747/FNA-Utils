@@ -89,17 +89,21 @@ namespace Utils
 
     public static void DrawLine(Vector2 start, Vector2 end, Color color, int thickness = 1)
     {
-      float angle = Calc.Angle(start, end);
-      float dist = Vector2.Distance(start, end);
+      Vector2 startInt = new Vector2((int)start.X, (int)start.Y);
+      Vector2 endInt = new Vector2((int)end.X, (int)end.Y);
+
+      float angle = Calc.Angle(startInt, endInt);
+      int dist = (int)Vector2.Distance(startInt, endInt);
 
       Engine.SpriteBatch.Draw(
         Engine.SystemRect,
-        start,
+        startInt,
         null,
         color,
         angle,
-        new Vector2(0, 0.5f),
-        new Vector2(dist, thickness),
+        //new Vector2(0.0f, dist % 2 != 0 ? 0 : 0.5f),
+        new Vector2(0.0f, 0),
+        new Vector2(dist, (int)thickness),
         SpriteEffects.None,
         0.0f
       );
