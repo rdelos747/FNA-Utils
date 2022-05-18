@@ -35,6 +35,11 @@ namespace Utils
       Index = 0;
     }
 
+    public void SetTime(int millis)
+    {
+      ElapsedTime = millis;
+    }
+
     public float Update(ref float value)
     {
       if (Frames == null)

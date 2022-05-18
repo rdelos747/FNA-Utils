@@ -110,12 +110,14 @@ namespace Utils
     */
     public static bool ExitOnEscapeKeypress;
     public string Title;
+    public static Rand SystemRand;
 
     public Engine(int width, int height)
     {
       Instance = this;
       Width = width;
       Height = height;
+      SystemRand = new Rand();
 
       /*
       Things that will come from loading settings
@@ -233,8 +235,9 @@ namespace Utils
         Screenshot.Capture(info);
       }
 #endif
-
+      _scene.BeforeUpdate();
       _scene.Update();
+      _scene.AfterUpdate();
 
       base.Update(gameTime);
     }

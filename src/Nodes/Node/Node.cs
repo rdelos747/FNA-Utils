@@ -57,7 +57,7 @@ namespace Utils
     Rendering
     */
     public Effect Effect;
-    protected float DrawAlpha { get; private set; }
+    //protected float DrawAlpha { get; private set; }
     protected float DrawScale { get; private set; }
     //protected float DrawDepth { get; private set; }
     public Vector2 Position = new Vector2(0, 0);
@@ -77,7 +77,7 @@ namespace Utils
     public Node()
     {
       WorldPosition = Vector2.Zero;
-      DrawAlpha = 1f;
+      //DrawAlpha = 1f;
       DrawScale = 1f;
       //DrawDepth = 1f;
     }
@@ -91,14 +91,14 @@ namespace Utils
         /*
         TODO: move these to accessors like WorldPosition
         */
-        DrawAlpha = Alpha * Parent.DrawAlpha;
+        //DrawAlpha = Alpha * Parent.DrawAlpha;
         DrawScale = Scale * Parent.DrawScale;
         //DrawDepth = Depth * Parent.DrawDepth;
       }
       else
       {
         //DrawPosition = Position;
-        DrawAlpha = Alpha;
+        //DrawAlpha = Alpha;
         DrawScale = Scale;
         //DrawDepth = Depth;
       }
@@ -138,7 +138,7 @@ namespace Utils
           (int)Size.Height
         ),
         null,
-        Color * DrawAlpha,
+        Color * Alpha,
         Rotation,
         //new Vector2(Size.Width, Size.Height) / Origin,
         //Origin,
@@ -214,7 +214,7 @@ namespace Utils
       {
         _nodes.Add(n);
         n.Parent = this;
-        n.DrawAlpha = n.Alpha * DrawAlpha;
+        //n.DrawAlpha = n.Alpha * DrawAlpha;
         n.DrawScale = n.Scale * DrawScale;
         n.Init();
         //n.SetRenderer(this.Renderer);

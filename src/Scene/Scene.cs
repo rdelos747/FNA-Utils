@@ -10,6 +10,8 @@ namespace Utils
     public bool Active = true;
     public bool Visible = true;
 
+    public virtual void BeforeUpdate() { }
+
     public virtual void Update()
     {
       for (int i = 0; i < Renderers.Count; i++)
@@ -17,6 +19,8 @@ namespace Utils
         Renderers[i].Update();
       }
     }
+
+    public virtual void AfterUpdate() { }
 
     public virtual void Draw()
     {

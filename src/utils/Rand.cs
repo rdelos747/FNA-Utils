@@ -2,26 +2,36 @@ using System;
 
 namespace Utils
 {
-  public static class Rand
+  public class Rand
   {
-    private static Random Random = new Random();
+    public Random Random { get; private set; }
 
-    public static int RandInt(int n)
+    public Rand()
+    {
+      Random = new Random();
+    }
+
+    public Rand(int seed)
+    {
+      Random = new Random(seed);
+    }
+
+    public int RandInt(int n)
     {
       return Random.Next(n);
     }
 
-    public static int RandRange(int n, int m)
+    public int RandRange(int n, int m)
     {
       return Random.Next(n, m + 1);
     }
 
-    public static float RandRange(float n, float m)
+    public float RandRange(float n, float m)
     {
       return (float)Random.NextDouble() * (m - n) + n;
     }
 
-    public static bool Chance(int n)
+    public bool Chance(int n)
     {
       return RandRange(0, 100) < n;
     }
