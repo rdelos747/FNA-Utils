@@ -107,5 +107,17 @@ namespace Utils
         Height = resultHeight
       };
     }
+
+    public Texture2D FindTexture(string path)
+    {
+      Rectangle rect = Frames[path].Rect;
+
+      Texture2D tex = new Texture2D(Engine.SpriteBatch.GraphicsDevice, rect.Width, rect.Height);
+      Color[] data = new Color[rect.Width * rect.Height];
+      Texture.GetData(0, rect, data, 0, data.Length);
+      tex.SetData(data);
+
+      return tex;
+    }
   }
 }

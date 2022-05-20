@@ -54,10 +54,31 @@ namespace Utils
     }
 
     /*
+    Draw alpha
+    */
+    private bool InternalAlphaSet = false;
+    private float _alpha = 1;
+    public float Alpha
+    {
+      get
+      {
+        if (InternalAlphaSet || Parent == null)
+        {
+          return _alpha;
+        }
+        return Parent.Alpha;
+      }
+      set
+      {
+        InternalAlphaSet = true;
+        _alpha = value;
+      }
+    }
+
+    /*
     Rendering
     */
     public Effect Effect;
-    //protected float DrawAlpha { get; private set; }
     protected float DrawScale { get; private set; }
     //protected float DrawDepth { get; private set; }
     public Vector2 Position = new Vector2(0, 0);
@@ -67,7 +88,7 @@ namespace Utils
     public float Scale = 1f;
     public float Direction = 0f;
     public Color Color = Color.White;
-    public float Alpha = 1;
+    //public float Alpha = 1;
     public float Depth = 1f;
     public bool ShowCenter = false;
     public bool ShowCollider = false;
@@ -77,7 +98,6 @@ namespace Utils
     public Node()
     {
       WorldPosition = Vector2.Zero;
-      //DrawAlpha = 1f;
       DrawScale = 1f;
       //DrawDepth = 1f;
     }
@@ -91,14 +111,12 @@ namespace Utils
         /*
         TODO: move these to accessors like WorldPosition
         */
-        //DrawAlpha = Alpha * Parent.DrawAlpha;
         DrawScale = Scale * Parent.DrawScale;
         //DrawDepth = Depth * Parent.DrawDepth;
       }
       else
       {
         //DrawPosition = Position;
-        //DrawAlpha = Alpha;
         DrawScale = Scale;
         //DrawDepth = Depth;
       }
@@ -214,7 +232,6 @@ namespace Utils
       {
         _nodes.Add(n);
         n.Parent = this;
-        //n.DrawAlpha = n.Alpha * DrawAlpha;
         n.DrawScale = n.Scale * DrawScale;
         n.Init();
         //n.SetRenderer(this.Renderer);
