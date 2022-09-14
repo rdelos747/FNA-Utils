@@ -76,20 +76,59 @@ namespace Utils
     }
 
     /*
+    Draw depth
+    */
+    private bool InternalDepthSet = false;
+    private float _depth = 1;
+    public float Depth
+    {
+      get
+      {
+        if (InternalDepthSet || Parent == null)
+        {
+          return _depth;
+        }
+        return Parent.Depth;
+      }
+      set
+      {
+        InternalDepthSet = true;
+        _depth = value;
+      }
+    }
+
+    /*
+    Draw scale
+    */
+    private bool InternalScaleSet = false;
+    private float _scale = 1;
+    public float Scale
+    {
+      get
+      {
+        if (InternalScaleSet || Parent == null)
+        {
+          return _scale;
+        }
+        return Parent.Scale;
+      }
+      set
+      {
+        InternalScaleSet = true;
+        _scale = value;
+      }
+    }
+
+    /*
     Rendering
     */
     public Effect Effect;
-    protected float DrawScale { get; private set; }
-    //protected float DrawDepth { get; private set; }
     public Vector2 Position = new Vector2(0, 0);
     public Vector2 Origin = new Vector2(0, 0);
     public Size Size = new Size(0, 0);
     public float Rotation = 0f;
-    public float Scale = 1f;
     public float Direction = 0f;
     public Color Color = Color.White;
-    //public float Alpha = 1;
-    public float Depth = 1f;
     public bool ShowCenter = false;
     public bool ShowCollider = false;
     public bool Visible = true;
@@ -98,28 +137,11 @@ namespace Utils
     public Node()
     {
       WorldPosition = Vector2.Zero;
-      DrawScale = 1f;
-      //DrawDepth = 1f;
     }
 
     public void Draw()
     {
       if (!Visible) return;
-
-      if (Parent != null)
-      {
-        /*
-        TODO: move these to accessors like WorldPosition
-        */
-        DrawScale = Scale * Parent.DrawScale;
-        //DrawDepth = Depth * Parent.DrawDepth;
-      }
-      else
-      {
-        //DrawPosition = Position;
-        DrawScale = Scale;
-        //DrawDepth = Depth;
-      }
 
       if (Engine.CurrentRenderer.CurrentEffect != Effect)
       {
@@ -187,21 +209,6 @@ namespace Utils
 
     public virtual void Update()
     {
-      // if (!Loaded)
-      // {
-      //   Loaded = true;
-      //   return;
-      // }
-
-      // if (Parent != null)
-      // {
-      //   DrawPosition = Position + Parent.DrawPosition;
-      // }
-      // else
-      // {
-      //   DrawPosition = Position;
-      // }
-
       for (int i = 0; i < _nodes.Count; i++)
       {
         Node n = _nodes[i];
@@ -232,7 +239,6 @@ namespace Utils
       {
         _nodes.Add(n);
         n.Parent = this;
-        n.DrawScale = n.Scale * DrawScale;
         n.Init();
         //n.SetRenderer(this.Renderer);
       }
